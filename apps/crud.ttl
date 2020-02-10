@@ -1,0 +1,19 @@
+@base <https://app.lyncex.com/crud#> .
+@prefix lyncex: <https://lyncex.com/lyncex.xml#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<#crud>
+    rdf:type lyncex:Application ;
+    rdfs:label "CRUD Application of FOAF" ;
+    rdfs:comment "Sample application to imagine an API" ;
+    lyncex:port 9642 ;
+    lyncex:controller <#show_person> .
+
+<#show_person>
+    rdf:type lyncex:Controller ;
+    lyncex:url "/" ;
+     
+
+

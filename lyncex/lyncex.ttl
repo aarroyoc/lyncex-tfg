@@ -1,0 +1,33 @@
+@base <https://lyncex.com/lyncex> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<#Application>
+    rdf:type rdfs:Class .
+
+<#port>
+    rdf:type rdfs:Property ;
+    rdfs:domain <#Application> ;
+    rdfs:range xsd:int .
+
+<#Controller>
+    rdf:type rdfs:Class .
+
+<#url>
+    rdf:type rdfs:Property ;
+    rdfs:domain <#Controller> ;
+    rdfs:range xsd:string .
+
+#QueryString
+#POST
+#GET
+#Templates
+#TemplateController
+#View
+#Auth
+#Middleware
+#DataModel
+#Forms
+#API
