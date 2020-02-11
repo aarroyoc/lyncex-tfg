@@ -20,6 +20,11 @@
     rdfs:domain <#Controller> ;
     rdfs:range xsd:string .
 
+<#response>
+    rdf:type rdfs:Property ;
+    rdfs:domain <#Controller> ;
+    rdfs:range xsd:string .
+
 #QueryString
 #POST
 #GET

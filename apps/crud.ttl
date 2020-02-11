@@ -14,6 +14,7 @@
 <#show_person>
     rdf:type lyncex:Controller ;
     lyncex:url "/" ;
+    lyncex:response "Lyncex First App" .
      
 
 

@@ -1,7 +1,11 @@
 version: "3.6"
 
 services:
-  dev:
+  lyncex:
     build: .
+    command: swipl main.pl
     volumes:
-    - ./:/home/dev
+    - ./lyncex:/opt/lyncex
+    - ./data:/var/lib/lyncex/
+    ports:
+    - 11011:11011
