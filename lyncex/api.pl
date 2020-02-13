@@ -3,6 +3,7 @@
 :- use_module(library(http/http_client)).
 :- use_module(library(http/http_parameters)).
 :- use_module(library(semweb/turtle)).
+:- use_module(library(semweb/rdf11)).
 
 :- http_handler(root('_api'), ingest, [method(post)]).
 :- http_handler(root('_api/query'), query, [method(get)]).
@@ -14,7 +15,10 @@ ingest(Request) :-
         input_encoding('utf-8')
     ]),
     rdf_read_turtle(atom(Input), Triples, []),
-    forall(member(Triple, Triples), assertz(Triple)),
+    forall(member(Triple, Triples), (
+        Triple = rdf(S, P, O),
+        rdf_assert(S, P, O)
+    )),
     format('Content-Type: text/html~n~n'),
     format('OK').
 
@@ -24,12 +28,18 @@ query(Request) :-
         predicate(Predicate, [optional(true)]),
         object(Object, [optional(true)])
     ]),
+    % FILTERING DOESNT WORK
     findall([Subject, Predicate, Object],rdf(Subject,Predicate, Object), Outputs),
     format('Content-Type: text/plain~n~n'),
     forall(member(Output, Outputs),(
-        % TODO: Fails with crud.ttl 
-        atomic_list_concat(Output,' ', OutLine),
-        format(OutLine),
+        forall(member(Field, Output), (
+            (
+                ^^(Literal, _) = Field,
+                format(Literal)
+            );format(Field)
+            ,
+            format(' ')
+        )),
         format('~n')
     )).
 
