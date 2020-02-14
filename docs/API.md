@@ -5,7 +5,14 @@ Lyncex is both a database and a web framework. The main way to interact with Lyn
 API listens at _api
 
 GET /_api
-Prolog query
+
+Optional parameters
+
+subject 
+predicate
+object
+
+Remember to URL Encode all the Parameters!
 
 POST /_api
 Turtle text file

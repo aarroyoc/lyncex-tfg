@@ -7,6 +7,7 @@
 
 :- http_handler(root('_api'), ingest, [method(post)]).
 :- http_handler(root('_api/query'), query, [method(get)]).
+:- http_handler(root('_api/delete'), delete, [method(delete)]).
 
 ingest(Request) :-
     memberchk(content_type('text/turtle'), Request),
@@ -43,3 +44,12 @@ query(Request) :-
         format('~n')
     )).
 
+delete(Request) :-
+    http_parameters(Request, [
+        subject(Subject, [optional(true)]),
+        predicate(Predicate, [optional(true)]),
+        object(Object, [optional(true)])
+    ]),
+    rdf_retractall(Subject, Predicate, Object),
+    format('Content-Type: text/plain~n~n'),
+    format('OK').
