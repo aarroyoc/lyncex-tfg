@@ -1,10 +1,10 @@
 # API
 
-Lyncex is both a database and a web framework. The main way to interact with Lyncex is through the REST API.
+Lyncex is both a database and a web framework. The main way to interact with Lyncex is through the REST API. With the API you can retrieve, add and delete content from the database. All API endpoints are under /_api
 
-API listens at _api
+## Retrieve data
 
-GET /_api
+GET /_api/query
 
 Optional parameters
 
@@ -14,12 +14,27 @@ object
 
 Remember to URL Encode all the Parameters!
 
-POST /_api
-Turtle text file
+## Add data
+**POST** /_api
 
+With Turtle text file as body content
+
+Example:
 ```
 curl -X POST -H "Content-Type: text/turtle" --data-binary "@data.ttl" http://localhost:11011/_api
 ```
 
-DELETE
-Prolog Text File
+## Delete data
+**DELETE** /_api/delete
+
+Optional URL parameters:
+* subject
+* predicate
+* object
+
+If there are no URL parameters, it deletes ALL the database.
+
+Example (delete ALL):
+```
+curl -X DELETE http://localhost:11011/_api/delete
+```

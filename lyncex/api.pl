@@ -23,15 +23,21 @@ ingest(Request) :-
     format('Content-Type: text/html~n~n'),
     format('OK').
 
+% NEEDS SWI PROLOG 8.1.25 to FULLY WORK
+query_filter(S, P, S, P, O, _G) :-
+    rdf(S, P, O).
+
 query(Request) :-
     http_parameters(Request, [
         subject(Subject, [optional(true)]),
         predicate(Predicate, [optional(true)]),
-        object(Object, [optional(true)])
+        object(_Object, [optional(true)])
     ]),
     current_output(Response),
     format('Content-Type: text/turtle~n~n'),
-    rdf_save_turtle(Response, []).
+    rdf_save_turtle(Response, [
+        expand(query_filter(Subject, Predicate))
+    ]).
 
 delete(Request) :-
     http_parameters(Request, [
