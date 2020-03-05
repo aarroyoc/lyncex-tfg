@@ -38,3 +38,8 @@ Example (delete ALL):
 ```
 curl -X DELETE http://localhost:11011/_api/delete
 ```
+
+Example delete with filters:
+```
+curl -G -X DELETE --data-urlencode "predicate=http://www.w3.org/1999/02/22-rdf-syntax-ns\#type" http://localhost:11011/_api/delete
+```
