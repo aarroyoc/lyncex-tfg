@@ -29,20 +29,9 @@ query(Request) :-
         predicate(Predicate, [optional(true)]),
         object(Object, [optional(true)])
     ]),
-    % FILTERING DOESNT WORK
-    findall([Subject, Predicate, Object],rdf(Subject,Predicate, Object), Outputs),
-    format('Content-Type: text/plain~n~n'),
-    forall(member(Output, Outputs),(
-        forall(member(Field, Output), (
-            (
-                ^^(Literal, _) = Field,
-                format(Literal)
-            );format(Field)
-            ,
-            format(' ')
-        )),
-        format('~n')
-    )).
+    current_output(Response),
+    format('Content-Type: text/turtle~n~n'),
+    rdf_save_turtle(Response, []).
 
 delete(Request) :-
     http_parameters(Request, [
