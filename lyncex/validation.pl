@@ -5,39 +5,26 @@
 
 :- use_module('prefix.pl').
 
-valid :- valid_range, valid_domain.
+% Maybe a bug
+rdfs_class_property_custom(Class, Property) :-
+    rdf(Property, rdf:type, rdfs:'Property'),
+    rdf(Property, rdfs:domain, Domain),
+    rdfs_subclass_of(Class, Domain).
 
+% Validation before accepting a file
+
+valid :- valid_range.
+
+% Validates that a propetry from a class defining a 
+% rdfs:range it's linked correctly with a target of an acceptable class
 valid_range :-
     forall(rdf(Class, rdf:type, rdfs:'Class'),(
         forall(rdfs_individual_of(Resource, Class),(
-            forall(rdfs_class_property(Class, Property),(
+            forall(rdfs_class_property_custom(Class, Property),(
                 forall(rdf(Property, rdfs:range, RangeClass),(
                     forall(rdf(Resource, Property, RangeResource),(
                         rdfs_individual_of(RangeResource, RangeClass2),
                         rdfs_subclass_of(RangeClass2, RangeClass)
-                        %forall(rdf(RangeResource, rdf:type, RangeClass2),(
-                        %    rdfs_subclass_of(RangeClass2, RangeClass)
-                        %))
-                    ))
-                ))
-            ))
-        ))
-    )).
-    % rdfs_individual_of(Resource, Class)
-    %rdfs_class_property(Class, Property),
-    %rdf(Property, rdfs:range, RangeClass),
-    %rdf(Resource, Property, RangeResource),
-    %rdf(RangeResource, rdf:type, RangeClass2)
-    %rdfs_subclass_of(RangeClass2, RangeClass).
-
-valid_domain :-
-    forall(rdf(Class, rdf:type, rdfs:'Class'),(
-        forall(rdfs_individual_of(Resource, Class),(
-            forall(rdfs_class_property(Class, Property),(
-                forall(rdf(Property, rdfs:domain, DomainClass),(
-                    forall(rdf(Resource, Property, DomainResource),(
-                        rdfs_individual_of(DomainResource, DomainClass2),
-                        rdfs_subclass_of(DomainClass2, DomainClass)
                     ))
                 ))
             ))

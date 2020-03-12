@@ -22,9 +22,21 @@ ingest(Request) :-
         Triple = rdf(S, P, O),
         rdf_assert(S, P, O)
     )),
-    valid,
-    format('Content-Type: text/html~n~n'),
-    format('OK').
+    (
+        (
+            valid,
+            format('Content-Type: text/html~n~n'),
+            format('OK')
+        );(
+            forall(member(Triple, Triples), (
+                Triple = rdf(S, P, O),
+                rdf_retractall(S, P, O)
+            )),
+            format('Content-Type: text/html~n~n'),
+            format('NOT VALID')
+        )
+    ).
+
 
 % NEEDS SWI PROLOG 8.1.25 to FULLY WORK
 query_filter(S, P, S, P, O, _G) :-
