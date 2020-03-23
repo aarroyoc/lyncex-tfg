@@ -13,7 +13,8 @@ hmargin=3cm
 	linkcolor=black, % enlaces a partes del documento (p.e. índice) en color negro
     urlcolor=blue} % enlaces a recursos fuera del documento en azul
     
-\usepackage[spanish, es-tabla]{babel} 
+\usepackage[spanish, es-tabla]{babel}
+\usepackage{graphicx}
 
 \title{Lyncex: describiendo una aplicación web como conocimiento}
 \author{Adrián Arroyo Calle}
@@ -23,7 +24,8 @@ hmargin=3cm
 
 \maketitle
 
-\section{¿Qué es?}
+\chapter{Introducción}
+
 Lyncex es una base de datos y a la vez un servidor web configurable a través del contenido semántico de la propia base de datos.
 
 \section{Introducción}
@@ -35,9 +37,65 @@ No obstante, considero interesante imaginar y plantear una aplicación web descr
 De forma principalmente declarativa y usando tecnologías maduras como RDF como la base del modelo de datos.
 El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas.
 
-\section{Estado del Arte}
+\chapter{Objetivos}
 
-\bibliographystyle{plain}
+\chapter{Planificación}
+
+\chapter{Estado del Arte}
+
+Antes de adentrarnos en los detalles de Lyncex conviene recapitular ideas similares ya existentes así como herramientas que nos puedan ayudar. 
+
+\section{Apache CouchDB}
+Apache CouchDB es una base de datos NoSQL de tipo documental, almacenados estos en formato JSON.\cite{couchdb}
+Su peculiaridad respecto a otras bases de datos similares como MongoDB viene por la forma de acceder a los datos.
+Aunque en las últimas versiones CouchDB también dispone de un lenguaje de consulta, la forma original de acceder a la información era programando lo que se denominan vistas, en JavaScript.
+Estas vistas generan un endpoint HTTP, que al ser llamado ejecutan el código JavaScript, en dos pasos. Primero un paso de map, para seleccionar los datos y realizar alguna transformación individual.
+Posteriormente un paso de reduce permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
+
+Para interactuar con la base de datos se dispone de una API HTTP, tanto para crear como para borrar y o modificar los documentos.
+Además dispone de un sistema de replicación entre nodos eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
+
+\section{TerminusDB}
+TerminusDB es una base de datos programada en Prolog que comparte junto a CouchDB la característica de ser de tipo NoSQL de tipo documental.\cite{terminusdb}
+Sin embargo, TerminusDB almacena tripletas RDF. RDF, como veremos más adelante, es un modelo de representación del conocimiento basado en tripletas.
+TerminusDB cuenta con un lenguaje de consulta propio, admite ciertas validaciones sobre los datos y también dispone de una API HTTP.
+TerminusDB no dispone de ninguna característica similar a las vistas de CouchDB.
+
+
+\section{Django}
+Django es uno de los frameworks web más populares dentro del mundo Python y es una referencia dentro del mundo de los frameworks web por su potencia y claridad de código.\cite{django}
+Fuertemente inspirado por Ruby on Rails, adopta de él su filosofía DRY (Don't Repeat Yourself) y su \textit{convention over configuration}.
+El framework trabaja con bases de datos relacionales principalmente, pero es una buena base para diseñar la semántica del servidor web. 
+
+\section{Apache Jena}
+Apache Jena es una base de datos de tripletas RDF, una de las más maduras si nos atenemos a su longevidad (Jena 1.0 es del año 2000).\cite{couchdb}
+Implementa gran cantidad de estándares de la web semántica como RDF, RDF Schema, SPARQL, OWL, etc sin embargo no dispone tampoco de la capacidad de generar vistas web.
+
+\section{Virtuoso}
+OpenLink Virtuoso es una base de datos multimodelo, entre ellos el almacenamiento de tripletas.\cite{virtuoso}.
+Es el almacenamiento por detrás de grandes silos de conocimiento como DBPedia o Wikidata. Soporta queries vía SPARQL.
+
+\section{MarkLogic}
+MarkLogic es otra base de datos multimodelo, entre ellos admite el almacenamiento de tripletas.\cite{marklogic}.
+Es también una alternativa madura pero sin versión gratuita. Soporta queries vía SPARQL.
+
+\section{ClioPatria}
+ClioPatria es una aplicación que combina las librerías de RDF y HTTP de SWI-Prolog para ofrecer una base de datos semántica completa.\cite{cliopatria}
+Soporta queries en SPARQL, SeRQL y en código Prolog. Al estar basada la aplicación en componentes independientes, podemos usarlos como base
+de nuestra aplicación.
+
+\chapter{Herramientas utilizadas}
+
+\section{SWI Prolog}
+
+\section{RDF, Turtle}
+
+\section{IDE}
+
+\section{Sistema operativo}
+
+
+\bibliographystyle{acm}
 
 \bibliography{ref}
 
