@@ -1,0 +1,12 @@
+version: "3.6"
+services:
+  builder:
+    build: .
+    command: make
+    volumes:
+    - ./:/opt/tfg
+  cleaner:
+    build: .
+    command: make clean
+    volumes:
+    - ./:/opt/tfg

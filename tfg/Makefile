@@ -1,10 +1,13 @@
-all: tfg.pdf
+all: tfg.pdf 
 
-tfg.pdf:
+tfg.pdf: lyncex.png
 	xelatex tfg
 	bibtex tfg
 	xelatex tfg
 	xelatex tfg
+
+lyncex.png:
+	plantuml lyncex.txt
 
 clean:
 	rm tfg.pdf
@@ -13,4 +16,4 @@ clean:
 	rm tfg.out
 	rm tfg.bbl
 	rm tfg.blg
-	rm tfg.dvi
+	rm lyncex.png

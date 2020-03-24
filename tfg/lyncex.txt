@@ -1,0 +1,13 @@
+@startuml
+
+class Application
+Application : port: xsd:int
+Application "1" - "*" Controller : controller
+
+class Controller
+Controller : url: xsd:string
+Controller : response: xsd:string
+
+hide methods
+
+@enduml
