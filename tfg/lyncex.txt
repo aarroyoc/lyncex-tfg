@@ -6,7 +6,36 @@ Application "1" - "*" Controller : controller
 
 class Controller
 Controller : url: xsd:string
-Controller : response: xsd:string
+Controller : method: xsd:string
+
+class TextController
+TextController <|-- Controller
+TextController : content: xsd:string
+TextController : mime: xsd:string
+
+class TemplateController
+TemplateController <|-- TextController
+TemplateController : template: xsd:string
+
+class StaticController
+StaticController <|-- Controller
+StaticController : path: xsd:string
+StaticController : navigable: xsd:boolean
+
+class AssetController
+AssetController <|-- Controller
+AssetController : content: xsd:string
+AssetController : mime: xsd:string
+
+class Parameter
+Controller "1" - "*" Parameter : parameter
+Parameter : name : xsd:string
+Parameter : format : xsd:string
+Parameter : validation : xsd:string
+
+class Form
+Form : title : xsd:string
+Form : for : rdfs:Class
 
 hide methods
 

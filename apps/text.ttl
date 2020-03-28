@@ -1,0 +1,16 @@
+@base <https://app.lyncex.com/text#> .
+@prefix lcx: <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<TextApp>
+    rdf:type lcx:Application ;
+    lcx:controller <AboutController> .
+
+<AboutController>
+    rdf:type lcx:TextController ;
+    lcx:url "about" ;
+    lcx:method "get" ;
+    lcx:content "Hola Mundo" ;
+    lcx:mime "text/plain" .

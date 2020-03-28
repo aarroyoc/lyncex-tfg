@@ -1,28 +1,47 @@
-@base <https://lyncex.com/lyncex> .
+@base <https://lyncex.com/lyncex#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
-<#Application>
+<Application>
     rdf:type rdfs:Class .
 
-<#port>
+<port>
     rdf:type rdfs:Property ;
-    rdfs:domain <#Application> ;
+    rdfs:domain <Application> ;
     rdfs:range xsd:int .
 
-<#Controller>
+<controller>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Application> ;
+    rdfs:range <Controller> .
+
+<Controller>
     rdf:type rdfs:Class .
 
-<#url>
+<url>
     rdf:type rdfs:Property ;
-    rdfs:domain <#Controller> ;
+    rdfs:domain <Controller> ;
     rdfs:range xsd:string .
 
-<#response>
+<method>
     rdf:type rdfs:Property ;
-    rdfs:domain <#Controller> ;
+    rdfs:domain <Controller> ;
+    rdfs:range xsd:string .
+
+<TextController>
+    rdf:type rdfs:Class ;
+    rdfs:subClassOf <Controller> .
+
+<content>
+    rdf:type rdfs:Property ;
+    rdfs:domain <TextController> ;
+    rdfs:range xsd:string .
+
+<mime>
+    rdf:type rdfs:Property ;
+    rdfs:domain <TextController> ;
     rdfs:range xsd:string .
 
 #QueryString
