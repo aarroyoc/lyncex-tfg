@@ -1,14 +1,16 @@
 :- use_module(library(http/thread_httpd)).
 :- use_module(library(http/http_dispatch)).
+:- use_module(library(http/http_header)).
 :- use_module(library(http/http_unix_daemon)).
+:- use_module(library(http/html_write)).
 :- use_module(library(semweb/rdfs)).
 :- use_module(library(semweb/rdf11)).
 
 :- use_module('api.pl').
 :- use_module('prefix.pl').
+:- use_module('errorpage.pl').
 
 :- http_handler(root(Path), index(Path, Method), [method(Method)]).
-
 
 % TextController
 index(Path, Method, Request) :-
@@ -21,7 +23,7 @@ index(Path, Method, Request) :-
     format('Content-Type: '),format(ContentMIME),format('~n~n'),
     format(Content).
 
-index(Path, Method, Request) :-
+index(_Path, _Method, Request) :-
     http_404([], Request).
 
 run :-

@@ -11,6 +11,28 @@
 :- http_handler(root('_api/query'), query, [method(get)]).
 :- http_handler(root('_api/delete'), delete, [method(delete)]).
 
+:- dynamic bnode/2.
+
+map_bnode(SOrg, OOrg, S, O) :-
+    (   OOrg = node(N) ->
+        (   bnode(N, B) ->
+            O = B
+        ;   rdf_create_bnode(B),
+            O = B,
+            assertz(bnode(N, B))
+        )
+    ;   O = OOrg
+    ),
+    (   SOrg = node(N) ->
+        (   bnode(N, B) ->
+            S = B
+        ;   rdf_create_bnode(B),
+            S = B,
+            assertz(bnode(N, B))
+        )
+    ;   S = SOrg
+    ).
+
 ingest(Request) :-
     memberchk(content_type('text/turtle'), Request),
     http_read_data(Request, Input, [
@@ -19,7 +41,8 @@ ingest(Request) :-
     ]),
     rdf_read_turtle(atom(Input), Triples, []),
     forall(member(Triple, Triples), (
-        Triple = rdf(S, P, O),
+        Triple = rdf(SOrg, P, OOrg),
+        map_bnode(SOrg, OOrg, S, O),
         rdf_assert(S, P, O)
     )),
     (
@@ -29,7 +52,8 @@ ingest(Request) :-
             format('OK')
         );(
             forall(member(Triple, Triples), (
-                Triple = rdf(S, P, O),
+                Triple = rdf(SOrg, P, OOrg),
+                map_bnode(SOrg, OOrg, S, O),
                 rdf_retractall(S, P, O)
             )),
             format('Content-Type: text/html~n~n'),
