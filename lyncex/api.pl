@@ -45,21 +45,19 @@ ingest(Request) :-
         map_bnode(SOrg, OOrg, S, O),
         rdf_assert(S, P, O)
     )),
-    (
-        (
-            valid,
-            format('Content-Type: text/html~n~n'),
-            format('OK')
-        );(
-            forall(member(Triple, Triples), (
-                Triple = rdf(SOrg, P, OOrg),
-                map_bnode(SOrg, OOrg, S, O),
-                rdf_retractall(S, P, O)
-            )),
-            format('Content-Type: text/html~n~n'),
-            format('NOT VALID')
-        )
-    ).
+    (   valid ->
+        format('Content-Type: text/html~n~n'),
+        format('OK')
+    ;
+        forall(member(Triple, Triples), (
+            Triple = rdf(SOrg, P, OOrg),
+            map_bnode(SOrg, OOrg, S, O),
+            rdf_retractall(S, P, O)
+        )),
+        format('Content-Type: text/html~n~n'),
+        format('NOT VALID')
+    ),
+    retractall(bnode(_,_)).
 
 
 % NEEDS SWI PROLOG 8.1.25 to FULLY WORK

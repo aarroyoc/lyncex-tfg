@@ -6,6 +6,15 @@ services:
     command: swipl main.pl
     volumes:
     - ./lyncex:/opt/lyncex
-    - ./data:/var/lib/lyncex/
     ports:
     - 11011:11011
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    command: behave
+    volumes:
+    - ./lyncex:/opt/lyncex
+    - ./features:/opt/lyncex/features
+    depends_on:
+    - lyncex

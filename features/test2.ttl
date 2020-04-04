@@ -1,0 +1,39 @@
+@base <https://app.lyncex.com/text#> .
+@prefix lcx: <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<TextApp>
+    a lcx:Application ;
+    lcx:controller <HomeController> ;
+    lcx:controller <AboutController> ;
+    lcx:controller <PhotoController> ;
+    lcx:controller [
+        a lcx:TextController ;
+        lcx:url "turtle" ;
+        lcx:method "get" ;
+        lcx:content "Holi" ;
+        lcx:mime "text/plain"
+    ] .
+
+<HomeController>
+    a lcx:TextController ;
+    lcx:url "" ;
+    lcx:method "get" ;
+    lcx:content "<a href=about>About</a>" ;
+    lcx:mime "text/html" .
+
+<AboutController>
+    a lcx:TextController ;
+    lcx:url "about" ;
+    lcx:method "get" ;
+    lcx:content "Hola Mundo" ;
+    lcx:mime "text/plain" .
+
+<PhotoController>
+    a lcx:TextController ;
+    lcx:url "photo" ;
+    lcx:method "get" ;
+    lcx:content "<b>Hola</b> Mundo" ;
+    lcx:mime "text/html" .
