@@ -3,12 +3,12 @@ version: "3.6"
 services:
   lyncex:
     build: .
-    command: swipl main.pl
+    command: swipl start.pl
     volumes:
     - ./lyncex:/opt/lyncex
     ports:
     - 11011:11011
-  test:
+  test-e2e:
     build:
       context: .
       dockerfile: Dockerfile.test
@@ -18,3 +18,8 @@ services:
     - ./features:/opt/lyncex/features
     depends_on:
     - lyncex
+  test-unit:
+    build: .
+    command: swipl -s main.pl -g run_tests,halt -t 'halt(1)'
+    volumes:
+    - ./lyncex:/opt/lyncex

@@ -14,21 +14,21 @@
 :- dynamic bnode/2.
 
 map_bnode(SOrg, OOrg, S, O) :-
-    (   OOrg = node(N) ->
-        (   bnode(N, B) ->
-            O = B
-        ;   rdf_create_bnode(B),
-            O = B,
-            assertz(bnode(N, B))
+    (   OOrg = node(N1) ->
+        (   bnode(N1, B1) ->
+            O = B1
+        ;   rdf_create_bnode(B1),
+            O = B1,
+            assertz(bnode(N1, B1))
         )
     ;   O = OOrg
     ),
-    (   SOrg = node(N) ->
-        (   bnode(N, B) ->
-            S = B
-        ;   rdf_create_bnode(B),
-            S = B,
-            assertz(bnode(N, B))
+    (   SOrg = node(N2) ->
+        (   bnode(N2, B2) ->
+            S = B2
+        ;   rdf_create_bnode(B2),
+            S = B2,
+            assertz(bnode(N2, B2))
         )
     ;   S = SOrg
     ).
@@ -86,3 +86,16 @@ delete(Request) :-
     rdf_retractall(Subject, Predicate, Object),
     format('Content-Type: text/plain~n~n'),
     format('OK').
+
+
+:- begin_tests(api).
+
+test(bnode) :-
+    X = rdf(node(1), lyncex:content, node(2)),
+    X = rdf(SOrg, P, OOrg),
+    map_bnode(SOrg, OOrg, S, O),
+    not(S = node(_)),
+    not(O = node(_)).
+
+
+:- end_tests(api).

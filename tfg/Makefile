@@ -7,7 +7,8 @@ tfg.pdf: lyncex.png
 	xelatex tfg
 
 lyncex.png:
-	plantuml lyncex.txt
+	python3 /opt/ontology-visualization/ontology_viz.py -o lyncex.dot lyncex.ttl
+	dot -Tpng -o lyncex.png lyncex.dot
 
 clean:
 	rm tfg.pdf

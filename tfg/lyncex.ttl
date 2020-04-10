@@ -3,6 +3,7 @@
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
 
 <Application>
     rdf:type rdfs:Class .
@@ -30,19 +31,20 @@
     rdfs:domain <Controller> ;
     rdfs:range xsd:string .
 
-<TextController>
+<ContentController>
     rdf:type rdfs:Class ;
     rdfs:subClassOf <Controller> .
 
 <content>
     rdf:type rdfs:Property ;
-    rdfs:domain <TextController> ;
-    rdfs:range xsd:string .
+    rdfs:domain <ContentController> ;
+    rdfs:range cnt:Content .
 
 <mime>
     rdf:type rdfs:Property ;
-    rdfs:domain <TextController> ;
+    rdfs:domain <ContentController> ;
     rdfs:range xsd:string .
+
 
 #QueryString
 #POST

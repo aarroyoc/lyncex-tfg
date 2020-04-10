@@ -9,4 +9,13 @@ jobs:
     - name: Build Docker images
       run: docker-compose build
     - name: Execute E2E test
-      run: docker-compose run test
+      run: docker-compose run test-e2e
+  test-unit:
+    runs-on: ubuntu-18.04
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v1
+    - name: Build Docker images
+      run: docker-compose build
+    - name: Execute unit tests
+      run: docker-compose run test-unit
