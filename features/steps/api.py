@@ -22,9 +22,10 @@ def step_check_empty_response(context):
 
 @step("I get a '{text}' response")
 def step_check_response(context, text):
+    response_text = context.request.text.replace("\n","")
     print(text)
-    print(context.request.text)
-    assert context.request.text == text
+    print(response_text)
+    assert response_text == text
 
 @step("I do a POST request with '{file}' data")
 def step_post_request(context, file):

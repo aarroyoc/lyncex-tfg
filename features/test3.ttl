@@ -1,0 +1,52 @@
+@base <https://app.lyncex.com/text#> .
+@prefix lcx: <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
+
+<Adrian>
+    a foaf:Person ;
+    foaf:name "Adrián Arroyo" ;
+    foaf:age 21 ;
+    foaf:title "Internship" .
+
+<Mario>
+    a foaf:Person ;
+    foaf:name "Mario Arroyo" ;
+    foaf:age 18 ;
+    foaf:title "Student" .
+
+<ShowPerson>
+    a lcx:TemplateController ;
+    lcx:url "person" ;
+    lcx:template <template/person.html> ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person1" ;
+        lcx:subject <Adrian>
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person2" ;
+        lcx:subject <Mario>
+    ] .
+
+<template/person.html>
+    a cnt:ContentAsText ;
+    cnt:chars "<b>Name: </b>{{ person1.name }}<br><b>Age: </b>{{ person1.age }}<br>Other person is: {{ person2.name }}</p>".
+
+<TemplateApp>
+    a lcx:Application ;
+    lcx:controller <HomeController> ;
+    lcx:controller <ShowPerson> .
+
+<HomeController>
+    a lcx:TemplateController ;
+    lcx:url "" ;
+    lcx:method "get" ;
+    lcx:template <template/home.html> .
+
+<template/home.html>
+    a cnt:ContentAsText ;
+    cnt:chars "<h1>Welcome to Lyncex</h1>" .

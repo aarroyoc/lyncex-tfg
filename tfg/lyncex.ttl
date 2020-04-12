@@ -45,6 +45,15 @@
     rdfs:domain <ContentController> ;
     rdfs:range xsd:string .
 
+<TemplateController>
+    rdf:type rdfs:Class ;
+    rdf:subClassOf <Controller> .
+
+<template>
+    rdf:type rdfs:Property ;
+    rdfs:domain <TemplateController> ;
+    rdfs:range cnt:ContentAsText .
+
 
 #QueryString
 #POST
