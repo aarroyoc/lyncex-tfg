@@ -15,3 +15,11 @@ Scenario: Mirror templates in Turtle
     Then I get a 200 status code
     And I get a '<b>Name: </b>Adrián Arroyo<br><b>Age: </b>21<br>Other person is: Mario Arroyo</p>' response
     And I get a 'text/html' response type
+
+Scenario: Code templates
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person2'
+    Then I get a 200 status code
+    And I get a '<b>Name: </b>Adrián Arroyo<br><b>Nombre 2: </b>Mario Arroyo' response
+    And I get a 'text/html' response type

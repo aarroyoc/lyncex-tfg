@@ -18,7 +18,12 @@
 
 :- http_handler(root(Path), index(Path, Method), [method(Method)]).
 
-% TemplateController / Query
+% TemplateController
+:- dynamic handler/2.
+
+db(S, P, O) :-
+    rdf(S, P, O^^_).
+
 index(Path, Method, Request) :-
     rdfs_individual_of(Controller, lyncex:'TemplateController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
@@ -42,8 +47,21 @@ index(Path, Method, Request) :-
         nth1(1, QueryDataL, QueryData),
         atom_string(AtomQueryName, QueryName),
         put_dict(AtomQueryName, _{lyncex: 'Lyncex'}, QueryData, FinalQuery)
-    ),XQuery),
-    dicts_join(lyncex, XQuery, TemplateDataL),
+    ), XQuery),
+    findall(DictHandler, (
+        rdf(Controller, lyncex:handler, Handler),
+        rdf(Handler, lyncex:handler_name, HandlerName^^xsd:string),
+        atom_string(HandlerAtomName, HandlerName),
+        rdf(Handler, lyncex:code, HandlerCode^^xsd:string),
+        atom_string(HandlerAtom, HandlerCode),
+        read_term_from_atom(HandlerAtom, HandlerTerm, []),
+        retractall(handler(_,_)),
+        assertz(HandlerTerm),
+        once(call(handler, Input, OutputHandler)),
+        put_dict(HandlerAtomName, _{lyncex: 'Lyncex'}, OutputHandler, DictHandler)
+    ), XHandler),
+    flatten([XQuery, XHandler], XOutput),
+    dicts_join(lyncex, XOutput, TemplateDataL),
     nth1(1, TemplateDataL, TemplateData),
     format('Content-Type: text/html~n~n'),
     current_output(Output),

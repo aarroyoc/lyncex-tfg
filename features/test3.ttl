@@ -36,10 +36,30 @@
     a cnt:ContentAsText ;
     cnt:chars "<b>Name: </b>{{ person1.name }}<br><b>Age: </b>{{ person1.age }}<br>Other person is: {{ person2.name }}</p>".
 
+<template/person2.html>
+    a cnt:ContentAsText ;
+    cnt:chars "<b>Name: </b>{{ person.name }}<br><b>Nombre 2: </b>{{ person1.name }}" .
+
+<CodeController>
+    a lcx:TemplateController ;
+    lcx:url "person2" ;
+    lcx:template <template/person2.html> ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "person" ;
+        lcx:code "handler(Input, Output) :- db(_, 'http://xmlns.com/foaf/0.1/name', Name), Output = _{name: Name}."
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person1" ;
+        lcx:subject <Mario>
+    ] .
+
 <TemplateApp>
     a lcx:Application ;
     lcx:controller <HomeController> ;
-    lcx:controller <ShowPerson> .
+    lcx:controller <ShowPerson> ;
+    lcx:controller <CodeController> .
 
 <HomeController>
     a lcx:TemplateController ;
