@@ -4,9 +4,12 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_header)).
 :- use_module(library(http/http_unix_daemon)).
+:- use_module(library(http/http_parameters)).
 :- use_module(library(http/html_write)).
 :- use_module(library(semweb/rdfs)).
 :- use_module(library(semweb/rdf11)).
+
+:- use_module(library(pcre)).
 
 :- use_module(library(st/st_render)).
 
@@ -20,6 +23,7 @@
 
 % TemplateController
 :- dynamic handler/2.
+:- dynamic param/3.
 
 db(S, P, O) :-
     rdf(S, P, O^^_).
@@ -30,6 +34,23 @@ index(Path, Method, Request) :-
     rdf(Controller, lyncex:template, Template),
     rdfs_individual_of(Template, cnt:'ContentAsText'),
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
+    % Process parameters
+    retractall(param(_,_,_)),
+    forall(rdf(Controller, lyncex:parameter, Parameter), (
+        rdf(Parameter, lyncex:param_name, ParameterName^^xsd:string),
+        atom_string(AtomParameterName, ParameterName),
+        http_parameters(Request, [], [form_data(FormData)]),
+        member(AtomParameterName=ParameterValue, FormData),
+        (   
+            rdf(Parameter, lyncex:validation, Validation^^xsd:string)
+            ->
+            re_match(Validation, ParameterValue)
+            ;
+            true
+        ),
+        assertz(param(get, AtomParameterName, ParameterValue))
+    )),
+    % Queries and Handlers
     findall(FinalQuery, (
         rdf(Controller, lyncex:query, Query),
         rdf(Query, lyncex:query_name, QueryName^^xsd:string),

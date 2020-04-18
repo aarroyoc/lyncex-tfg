@@ -23,3 +23,25 @@ Scenario: Code templates
     Then I get a 200 status code
     And I get a '<b>Name: </b>Adrián Arroyo<br><b>Nombre 2: </b>Mario Arroyo' response
     And I get a 'text/html' response type
+
+Scenario: Parameters (GET, valid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person3?id=42'
+    Then I get a 200 status code
+    And I get a '<b>ID: </b>42' response
+    And I get a 'text/html' response type
+
+Scenario: Parameters (GET, invalid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person3?id=jojo'
+    Then I get a 500 status code
+
+Scenario: Parameters (GET, no validation)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person4?id=pepo'
+    Then I get a 200 status code
+    And I get a '<b>ID: </b>pepo' response
+    And I get a 'text/html' response type

@@ -40,6 +40,10 @@
     a cnt:ContentAsText ;
     cnt:chars "<b>Name: </b>{{ person.name }}<br><b>Nombre 2: </b>{{ person1.name }}" .
 
+<template/person3.html>
+    a cnt:ContentAsText ;
+    cnt:chars "<b>ID: </b>{{ test }}" .
+
 <CodeController>
     a lcx:TemplateController ;
     lcx:url "person2" ;
@@ -55,11 +59,42 @@
         lcx:subject <Mario>
     ] .
 
+<ParamController>
+    a lcx:TemplateController ;
+    lcx:url "person3" ;
+    lcx:template <template/person3.html> ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "test" ;
+        lcx:code "handler(Input, Output) :- param(get, id, Output)."
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id" ;
+        lcx:validation "^[0-9]+$"
+    ] .
+
+<ParamController2>
+    a lcx:TemplateController ;
+    lcx:url "person4" ;
+    lcx:template <template/person3.html> ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "test" ;
+        lcx:code "handler(Input, Output) :- param(get, id, Output)."
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id"
+    ] .
+
 <TemplateApp>
     a lcx:Application ;
     lcx:controller <HomeController> ;
     lcx:controller <ShowPerson> ;
-    lcx:controller <CodeController> .
+    lcx:controller <CodeController> ;
+    lcx:controller <ParamController> ;
+    lcx:controller <ParamController2> .
 
 <HomeController>
     a lcx:TemplateController ;

@@ -54,6 +54,41 @@
     rdfs:domain <TemplateController> ;
     rdfs:range cnt:ContentAsText .
 
+<query>
+    rdf:type rdfs:Property ;
+    rdfs:domain <TemplateController> ;
+    rdfs:range <Query> .
+
+<handler>
+    rdf:type rdfs:Property ;
+    rdfs:domain <TemplateController> ;
+    rdfs:range <Handler> .
+
+<Query>
+    rdf:type rdfs:Class .
+
+<query_name>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Query> ;
+    rdfs:range xsd:string .
+
+<subject>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Query> .
+
+<Handler>
+    rdf:type rdfs:Class .
+
+<handler_name>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Handler> ;
+    rdfs:range xsd:string .
+
+<code>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Handler> ;
+    rdfs:range xsd:string .
+
 
 #QueryString
 #POST
