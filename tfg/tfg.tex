@@ -116,31 +116,19 @@ de nuestra aplicación.
 
 Esta tabla representa como cumplen los objetivos propuestos en la sección Objetivos en cada uno de los programas analizados.
 
-Referencia:
-\begin{itemize}
-    \item US1: Almacenar tripletas de datos junto a sus ontologías en el mismo espacio, validándose
-    \item US2: Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento
-    \item US3: Servir páginas web estáticas
-    \item US4: Servir páginas web que necesiten leer datos del almacenamiento (plantillas)
-    \item US5: Servir páginas web CRUD con formularios
-    \item OUS1: Servir páginas web con sistemas de autenticación y autorización propios
-    \item OUS2: Servir APIs web de forma similar al contenido HTML
-    \item OUS3: Tener un endpoint de consulta SPARQL
-\end{itemize}
-
 
 \begin{table}[ht]
     \resizebox{\textwidth}{!}{%
     \begin{tabular}{llllllll}
                   & \textbf{CouchDB} & \textbf{TerminusDB} & \textbf{Django} & \textbf{Jena} & \textbf{Virtuoso} & \textbf{ClioPatria} & \textbf{Lyncex} \\
-    \textbf{US1}  & No               & Sí                  & Sí (1)          & Sí            & Sí            & Sí                  & Sí              \\
-    \textbf{US2}  & No               & No                  & No              & No            & No                & No                  & Sí              \\
-    \textbf{US3}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
-    \textbf{US4}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
-    \textbf{US5}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
-    \textbf{OUS1} & Sí               & No                  & Sí              & No            & No                & No                  & No              \\
-    \textbf{OUS2} & Sí               & No                  & Sí (2)          & No            & No                & No                  & No              \\
-    \textbf{OUS3} & No               & No                  & No              & Sí            & Sí                & Sí                  & No             
+    \textbf{Almacén tripletas}  & No               & Sí                  & Sí (1)          & Sí            & Sí            & Sí                  & Sí              \\
+    \textbf{Ontología disponible}  & No               & No                  & No              & No            & No                & No                  & Sí              \\
+    \textbf{Webs estáticas}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
+    \textbf{Webs plantillas}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
+    \textbf{Webs CRUD}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
+    \textbf{Autenticación} & Sí               & No                  & Sí              & No            & No                & No                  & No              \\
+    \textbf{APIs} & Sí               & No                  & Sí (2)          & No            & No                & No                  & No              \\
+    \textbf{SPARQL} & No               & No                  & No              & Sí            & Sí                & Sí                  & No             
     \end{tabular}
     }
 \end{table}
@@ -153,13 +141,47 @@ Notas:
 
 \chapter{Herramientas utilizadas}
 
+A continuación se describen las herramientas utilizadas para Lyncex, tanto de desarrollo como librerías y entornos que necesita en tiempo de ejecución.
 \section{SWI Prolog}
+SWI Prolog\cite{prolog} es un entorno de programación Prolog, ampliamente usado gracias a su condición de software libre, su portabilidad y 
+su estrategia de baterías incluidas, que hace que disponga de gran cantidad de librerías y módulos por defecto.
+La comunidad de SWI Prolog es pequeña pero activa y a parte de la gran cantidad de librerías, existe un sistema de packs, que permiten instalar librerías de terceros.
+
+Entre los módulos que tiene SWI Prolog y que es difícil encontrar en otras implementaciones, debemos destacar los módulos de web semántica y RDF y los de HTTP.
+Sin estos módulos, la realización de Lyncex hubiese sido mucho más compleja y alargada en el tiempo.
 
 \section{RDF, Turtle}
+RDF, siglas de Resource Description Framework, es un modelo de datos para describir datos usando tripletas sujeto-predicado-objeto. 
+Se trata de un estándar del W3C y dispone de una variedad de sintaxis. Se ha elegido Turtle como sintaxis predeterminada ya que es la que en nuestra opinión es la más simple y menos verbosa.
+Otros formatos alternativos como RDF/XML o JSON-LD parten de formatos diseñados para ser usados de forma diferente, añadiendo complejidad y verbosidad en el camino.
 
 \section{IDE}
+Como IDE se ha utilizado Visual Studio Code\cite{vscode}, un editor propiedad de Microsoft, pero multiplataforma.
+Es un IDE con el que ya había familaridad previa y no supone ningún esfuerzo usarlo para este proyecto.
+Visual Studio Code dispone de un sistema de plugins, y entre otros, hay plugins de Prolog y de Turtle.
+El último fue usado para obtener resaltado de sintaxis, mientras que el primero se evaluó y finalmente se deshechó.
+El motivo es que el plugin ejecuta Prolog por debajo para detectar errores de sintaxis, pero al tratarse de una aplicación que es un servidor, al ejecutarse toma los puertos y no podemos usarlos
+en pruebas lanzadas a través de la terminal.
 
 \section{Sistema operativo}
+La totalidad del proyecto se ha realizado sobre Debian, en su versión Sid. Se trata de un sistema operativo con kernel Linux, 
+de amplio uso en servidores, y también usado, en menor medida, en portátiles y workstations.
+
+\section{Docker}
+Para que los entornos de prueba y de ejecución sean reproducibles, se ha optado por usar Docker y su utilidad, Docker Compose.
+Docker es un sistema de contenedores para Linux que proporciona capacidades de aislamiento y reproducibilidad de entornos similares a las máquinas virtuales, sin el overhead que usar estas conlleva.
+Existen otros sistemas parecidos, como LXD, pero Docker tiene varias ventajas: poder describir entornos como código versionable (Dockerfile) y poder orquestar de forma sencilla entornos pequeños y medianos (docker-compose).
+
+\section{Git y GitHub}
+Para versionar el código fuente se ha usado el sistema Git, usando como almacenamiento GitHub. Principalmente se ha usado a través de la línea de comandos.
+No se han aprovechado muchas de sus características de ramas y merges, ya que al ser un proyecto personal, solo se iba modificando una parte del programa a la vez.
+Adicionalmente se ha hecho uso de la integración continua gratuita ofrecida por GitHub llamada GitHub Actions. De este modo se ha definido una acción que se ejecuta al recibir nuevo código en el repositorio.
+Esta acción construía las imágenes de Docker necesarias y pasaba los tests de Behave y de PlUnit.
+
+\section{Behave}
+Para asegurarnos que las historias de usuario se implementaban correctamente se ha decidido usar Behave.
+Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy similar al lenguaje natural. Estos tests se componen de pasos,
+los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
 
 
 \bibliographystyle{acm}
