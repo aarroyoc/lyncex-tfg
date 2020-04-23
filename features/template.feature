@@ -45,3 +45,11 @@ Scenario: Parameters (GET, no validation)
     Then I get a 200 status code
     And I get a '<b>ID: </b>pepo' response
     And I get a 'text/html' response type
+
+Scenario: Parameters (POST, valid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I submit form '/person5' with data 'name=Adrián'
+    Then I get a 200 status code
+    And I get a '<b>ID: </b>Adrián' response
+    And I get a 'text/html' response type

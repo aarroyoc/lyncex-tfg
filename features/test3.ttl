@@ -20,6 +20,7 @@
 <ShowPerson>
     a lcx:TemplateController ;
     lcx:url "person" ;
+    lcx:method "get" ;
     lcx:template <template/person.html> ;
     lcx:query [
         a lcx:Query ;
@@ -47,11 +48,12 @@
 <CodeController>
     a lcx:TemplateController ;
     lcx:url "person2" ;
+    lcx:method "get" ;
     lcx:template <template/person2.html> ;
     lcx:handler [
         a lcx:Handler ;
         lcx:handler_name "person" ;
-        lcx:code "handler(Input, Output) :- db(_, 'http://xmlns.com/foaf/0.1/name', Name), Output = _{name: Name}."
+        lcx:code "handler(Output) :- db(_, 'http://xmlns.com/foaf/0.1/name', Name), Output = _{name: Name}."
     ] ;
     lcx:query [
         a lcx:Query ;
@@ -62,11 +64,12 @@
 <ParamController>
     a lcx:TemplateController ;
     lcx:url "person3" ;
+    lcx:method "get" ;
     lcx:template <template/person3.html> ;
     lcx:handler [
         a lcx:Handler ;
         lcx:handler_name "test" ;
-        lcx:code "handler(Input, Output) :- param(get, id, Output)."
+        lcx:code "handler(Output) :- param(get, id, Output)."
     ] ;
     lcx:parameter [
         a lcx:Parameter ;
@@ -77,15 +80,31 @@
 <ParamController2>
     a lcx:TemplateController ;
     lcx:url "person4" ;
+    lcx:method "get" ;
     lcx:template <template/person3.html> ;
     lcx:handler [
         a lcx:Handler ;
         lcx:handler_name "test" ;
-        lcx:code "handler(Input, Output) :- param(get, id, Output)."
+        lcx:code "handler(Output) :- param(get, id, Output)."
     ] ;
     lcx:parameter [
         a lcx:Parameter ;
         lcx:param_name "id"
+    ] .
+
+<PostController>
+    a lcx:TemplateController ;
+    lcx:url "person5" ;
+    lcx:method "post" ;
+    lcx:template <template/person3.html> ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "test" ;
+        lcx:code "handler(Output) :- param(post, name, Output)."
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "name"
     ] .
 
 <TemplateApp>
@@ -94,7 +113,8 @@
     lcx:controller <ShowPerson> ;
     lcx:controller <CodeController> ;
     lcx:controller <ParamController> ;
-    lcx:controller <ParamController2> .
+    lcx:controller <ParamController2> ;
+    lcx:controller <PostController> .
 
 <HomeController>
     a lcx:TemplateController ;
