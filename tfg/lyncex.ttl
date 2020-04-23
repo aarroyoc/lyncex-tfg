@@ -18,6 +18,11 @@
     rdfs:domain <Application> ;
     rdfs:range <Controller> .
 
+<prefix>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Application> ;
+    rdfs:range <Prefix> .
+
 <Controller>
     rdf:type rdfs:Class .
 
@@ -87,6 +92,19 @@
 <code>
     rdf:type rdfs:Property ;
     rdfs:domain <Handler> ;
+    rdfs:range xsd:string .
+
+<Prefix>
+    rdf:type rdfs:Class .
+
+<namespace>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Prefix> ;
+    rdfs:range xsd:string .
+
+<prefix_name>
+    rdf:type rdfs:Property ;
+    rdfs:domain <Prefix> ;
     rdfs:range xsd:string .
 
 

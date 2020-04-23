@@ -10,6 +10,8 @@
 :- dynamic handler/1.
 :- dynamic param/3.
 
+:- rdf_meta db(r,r,o).
+
 db(S, P, O) :-
     rdf(S, P, O^^_).
 

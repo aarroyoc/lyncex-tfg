@@ -53,3 +53,11 @@ Scenario: Parameters (POST, valid)
     Then I get a 200 status code
     And I get a '<b>ID: </b>Adrián' response
     And I get a 'text/html' response type
+
+Scenario: Register db prefix
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person6'
+    Then I get a 200 status code
+    And I get a '<b>Name: </b>Adrián Arroyo<br><b>Nombre 2: </b>Mario Arroyo' response
+    And I get a 'text/html' response type

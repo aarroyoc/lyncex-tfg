@@ -6,6 +6,7 @@
 :- use_module(library(semweb/rdf11)).
 
 :- use_module('validation.pl').
+:- use_module('setup.pl').
 
 :- http_handler(root('_api'), ingest, [method(post)]).
 :- http_handler(root('_api/query'), query, [method(get)]).
@@ -57,7 +58,8 @@ ingest(Request) :-
         format('Content-Type: text/html~n~n'),
         format('NOT VALID')
     ),
-    retractall(bnode(_,_)).
+    retractall(bnode(_,_)),
+    setup.
 
 
 % NEEDS SWI PROLOG 8.1.25 to FULLY WORK

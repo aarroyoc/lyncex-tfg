@@ -2,20 +2,20 @@
 @prefix lcx: <https://lyncex.com/lyncex#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
-@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix foaf2: <http://xmlns.com/foaf/0.2/> .
 @prefix cnt: <http://www.w3.org/2011/content#> .
 
 <Adrian>
-    a foaf:Person ;
-    foaf:name "Adrián Arroyo" ;
-    foaf:age 21 ;
-    foaf:title "Internship" .
+    a foaf2:Person ;
+    foaf2:name "Adrián Arroyo" ;
+    foaf2:age 21 ;
+    foaf2:title "Internship" .
 
 <Mario>
-    a foaf:Person ;
-    foaf:name "Mario Arroyo" ;
-    foaf:age 18 ;
-    foaf:title "Student" .
+    a foaf2:Person ;
+    foaf2:name "Mario Arroyo" ;
+    foaf2:age 18 ;
+    foaf2:title "Student" .
 
 <ShowPerson>
     a lcx:TemplateController ;
@@ -53,7 +53,7 @@
     lcx:handler [
         a lcx:Handler ;
         lcx:handler_name "person" ;
-        lcx:code "handler(Output) :- db(_, 'http://xmlns.com/foaf/0.1/name', Name), Output = _{name: Name}."
+        lcx:code "handler(Output) :- db(_, 'http://xmlns.com/foaf/0.2/name', Name), Output = _{name: Name}."
     ] ;
     lcx:query [
         a lcx:Query ;
@@ -107,14 +107,36 @@
         lcx:param_name "name"
     ] .
 
+<PrefixController>
+    a lcx:TemplateController ;
+    lcx:url "person6" ;
+    lcx:method "get" ;
+    lcx:template <template/person2.html> ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "person" ;
+        lcx:code "handler(Output) :- db(_, foaf2:name, Name), Output = _{name: Name}."
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person1" ;
+        lcx:subject <Mario>
+    ] .
+
 <TemplateApp>
     a lcx:Application ;
+    lcx:prefix [
+        a lcx:Prefix ;
+        lcx:namespace "http://xmlns.com/foaf/0.2/" ;
+        lcx:prefix_name "foaf2" 
+    ] ;
     lcx:controller <HomeController> ;
     lcx:controller <ShowPerson> ;
     lcx:controller <CodeController> ;
     lcx:controller <ParamController> ;
     lcx:controller <ParamController2> ;
-    lcx:controller <PostController> .
+    lcx:controller <PostController> ;
+    lcx:controller <PrefixController> .
 
 <HomeController>
     a lcx:TemplateController ;
