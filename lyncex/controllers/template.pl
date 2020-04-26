@@ -9,6 +9,7 @@
 
 :- dynamic handler/1.
 :- dynamic param/3.
+:- dynamic validation/1.
 
 :- rdf_meta db(r,r,o).
 
@@ -34,6 +35,17 @@ template_controller(Path, Method, Request) :-
             rdf(Parameter, lyncex:validation, Validation^^xsd:string)
             ->
             re_match(Validation, ParameterValue)
+            ;
+            true
+        ),
+        (
+            rdf(Parameter, lyncex:code, ValidationCode^^xsd:string)
+            ->
+            atom_string(ValidationAtom, ValidationCode),
+            read_term_from_atom(ValidationAtom, ValidationTerm, []),
+            retractall(validation(_)),
+            assertz(ValidationTerm),
+            once(call(validation, ParameterValue))
             ;
             true
         ),

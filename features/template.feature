@@ -61,3 +61,17 @@ Scenario: Register db prefix
     Then I get a 200 status code
     And I get a '<b>Name: </b>Adrián Arroyo<br><b>Nombre 2: </b>Mario Arroyo' response
     And I get a 'text/html' response type
+
+Scenario: Validate parameter with Prolog (valid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person7?age=14'
+    Then I get a 200 status code
+    And I get a '<b>ID: </b>14' response
+    And I get a 'text/html' response type
+
+Scenario: Validate parameter with Prolog (invalid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person7?age=Pepe'
+    Then I get a 500 status code
