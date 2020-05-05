@@ -139,6 +139,26 @@
         lcx:code "validation(X) :- atom_number(X,Y), integer(Y)."
     ] .
 
+<QuerySearchController>
+    a lcx:TemplateController ;
+    lcx:url "person8" ;
+    lcx:method "get" ;
+    lcx:template <template/person.html> ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person1" ;
+        lcx:subject <Adrian>
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person2" ;
+        lcx:template_subject "https://app.lyncex.com/{{ person }}"
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "person"
+    ] .
+
 <TemplateApp>
     a lcx:Application ;
     lcx:prefix [
@@ -153,7 +173,8 @@
     lcx:controller <ParamController2> ;
     lcx:controller <PostController> ;
     lcx:controller <PrefixController> ;
-    lcx:controller <ValidationController> .
+    lcx:controller <ValidationController> ;
+    lcx:controller <QuerySearchController> .
 
 <HomeController>
     a lcx:TemplateController ;

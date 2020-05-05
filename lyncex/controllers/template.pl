@@ -51,11 +51,29 @@ template_controller(Path, Method, Request) :-
         ),
         assertz(param(Method, AtomParameterName, ParameterValue))
     )),
+    % Process Query Templates
+    % TEST
+    % DOC
+    findall(Pair, (
+        param(_, ParamName, ParamValue),
+        Pair = ParamName-ParamValue
+    ), ListPair),
+    dict_pairs(ParamDict, _, ListPair),
     % Queries and Handlers
     findall(FinalQuery, (
         rdf(Controller, lyncex:query, Query),
         rdf(Query, lyncex:query_name, QueryName^^xsd:string),
-        rdf(Query, lyncex:subject, QuerySubject),
+        (
+            rdf(Query, lyncex:subject, QuerySubject)
+        ->
+            true
+        ;
+            rdf(Query, lyncex:template_subject, TemplateQuerySubject^^xsd:string),
+            with_output_to(atom(QuerySubject),(
+                current_output(O1),
+                st_render_string(TemplateQuerySubject, ParamDict, O1, '/dev/null', _{frontend:semblance})
+            ))
+        ),
         findall(Value, (
             rdf(QuerySubject, QueryProperty, QueryValue^^_),
             atom_string(QueryProperty, QueryPropertyString),
