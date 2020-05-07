@@ -5,6 +5,8 @@
 
 :- use_module(library(pcre)).
 
+:- dynamic validation/1.
+
 process_parameters(FormData, Controller, ParamDict) :-
     findall(Pair, (
         rdf(Controller, lyncex:parameter, Parameter),

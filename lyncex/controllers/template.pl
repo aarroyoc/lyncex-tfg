@@ -9,7 +9,6 @@
 :- use_module('../parameters.pl').
 
 :- dynamic handler/1.
-:- dynamic validation/1.
 
 :- rdf_meta db(r,r,o).
 
@@ -63,7 +62,7 @@ template_controller(Path, Method, Request) :-
         rdf(Handler, lyncex:code, HandlerCode^^xsd:string),
         atom_string(HandlerAtom, HandlerCode),
         read_term_from_atom(HandlerAtom, HandlerTerm, []),
-        retractall(handler(_)),
+        retractall(handler(_,_)),
         assertz(HandlerTerm),
         once(call(handler, Parameters, OutputHandler)),
         DictHandler = HandlerAtomName-OutputHandler
