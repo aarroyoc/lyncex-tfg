@@ -5,10 +5,10 @@
 :- use_module(library(http/http_parameters)).
 
 :- use_module(library(st/st_render)).
-:- use_module(library(pcre)).
+
+:- use_module('../parameters.pl').
 
 :- dynamic handler/1.
-:- dynamic param/3.
 :- dynamic validation/1.
 
 :- rdf_meta db(r,r,o).
@@ -25,40 +25,8 @@ template_controller(Path, Method, Request) :-
     rdfs_individual_of(Template, cnt:'ContentAsText'),
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
     % Process parameters
-    retractall(param(_,_,_)),
-    forall(rdf(Controller, lyncex:parameter, Parameter), (
-        rdf(Parameter, lyncex:param_name, ParameterName^^xsd:string),
-        atom_string(AtomParameterName, ParameterName),
-        http_parameters(Request, [], [form_data(FormData)]),
-        member(AtomParameterName=ParameterValue, FormData),
-        (   
-            rdf(Parameter, lyncex:validation, Validation^^xsd:string)
-            ->
-            re_match(Validation, ParameterValue)
-            ;
-            true
-        ),
-        (
-            rdf(Parameter, lyncex:code, ValidationCode^^xsd:string)
-            ->
-            atom_string(ValidationAtom, ValidationCode),
-            read_term_from_atom(ValidationAtom, ValidationTerm, []),
-            retractall(validation(_)),
-            assertz(ValidationTerm),
-            once(call(validation, ParameterValue))
-            ;
-            true
-        ),
-        assertz(param(Method, AtomParameterName, ParameterValue))
-    )),
-    % Process Query Templates
-    % TEST
-    % DOC
-    findall(Pair, (
-        param(_, ParamName, ParamValue),
-        Pair = ParamName-ParamValue
-    ), ListPair),
-    dict_pairs(ParamDict, _, ListPair),
+    http_parameters(Request, [], [form_data(FormData)]),
+    process_parameters(FormData, Controller, Parameters),
     % Queries and Handlers
     findall(FinalQuery, (
         rdf(Controller, lyncex:query, Query),
@@ -71,7 +39,7 @@ template_controller(Path, Method, Request) :-
             rdf(Query, lyncex:template_subject, TemplateQuerySubject^^xsd:string),
             with_output_to(atom(QuerySubject),(
                 current_output(O1),
-                st_render_string(TemplateQuerySubject, ParamDict, O1, '/dev/null', _{frontend:semblance})
+                st_render_string(TemplateQuerySubject, Parameters, O1, '/dev/null', _{frontend:semblance})
             ))
         ),
         findall(Value, (
@@ -86,7 +54,7 @@ template_controller(Path, Method, Request) :-
         dicts_join(lyncex, XS, QueryDataL),
         nth1(1, QueryDataL, QueryData),
         atom_string(AtomQueryName, QueryName),
-        put_dict(AtomQueryName, _{lyncex: 'Lyncex'}, QueryData, FinalQuery)
+        FinalQuery = AtomQueryName-QueryData
     ), XQuery),
     findall(DictHandler, (
         rdf(Controller, lyncex:handler, Handler),
@@ -97,17 +65,17 @@ template_controller(Path, Method, Request) :-
         read_term_from_atom(HandlerAtom, HandlerTerm, []),
         retractall(handler(_)),
         assertz(HandlerTerm),
-        once(call(handler, OutputHandler)),
-        put_dict(HandlerAtomName, _{lyncex: 'Lyncex'}, OutputHandler, DictHandler)
+        once(call(handler, Parameters, OutputHandler)),
+        DictHandler = HandlerAtomName-OutputHandler
     ), XHandler),
     flatten([XQuery, XHandler], XOutput),
-    dicts_join(lyncex, XOutput, TemplateDataL),
-    nth1(1, TemplateDataL, TemplateData),
+    dict_pairs(TemplateData, _, XOutput),
     format('Content-Type: text/html~n~n'),
+    %format(TemplateData).
     current_output(Output),
     st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
-template_controller(Path, Method, Request) :-
+template_controller(Path, _Method, _Request) :-
     rdfs_individual_of(Controller, lyncex:'TemplateController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:template, Template),

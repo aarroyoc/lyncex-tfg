@@ -14,6 +14,7 @@ def step_get_request(context):
 
 @step("I get a {code:d} status code")
 def step_check_response(context, code):
+    print(context.request.text)
     assert context.request.status_code == code
 
 @step("I get an empty response")

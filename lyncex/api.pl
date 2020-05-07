@@ -94,7 +94,7 @@ delete(Request) :-
 
 test(bnode) :-
     X = rdf(node(1), lyncex:content, node(2)),
-    X = rdf(SOrg, P, OOrg),
+    X = rdf(SOrg, _, OOrg),
     map_bnode(SOrg, OOrg, S, O),
     not(S = node(_)),
     not(O = node(_)).

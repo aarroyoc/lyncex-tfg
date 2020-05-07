@@ -4,7 +4,7 @@
 :- use_module(library(semweb/rdf11)).
 
 % ContentController / Base64
-content_controller(Path, Method, Request) :-
+content_controller(Path, _Method, _Request) :-
     rdfs_individual_of(Controller, lyncex:'ContentController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:content, Content),
@@ -17,7 +17,7 @@ content_controller(Path, Method, Request) :-
 
 
 % ContentController / Text
-content_controller(Path, Method, Request) :-
+content_controller(Path, _Method, _Request) :-
     rdfs_individual_of(Controller, lyncex:'ContentController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     %rdf(Controller, lyncex:method, ControllerMethod^^xsd:string),
