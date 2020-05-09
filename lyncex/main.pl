@@ -13,11 +13,13 @@
 :- use_module('prefix.pl').
 :- use_module('errorpage.pl').
 
+:- use_module('controllers/form.pl').
 :- use_module('controllers/template.pl').
 :- use_module('controllers/content.pl').
 
 :- http_handler(root(Path), controller(Path, Method), [method(Method)]).
 
+controller(P, M, R) :- form_controller(P, M, R).
 controller(P, M, R) :- template_controller(P, M, R).
 controller(P, M, R) :- content_controller(P, M, R).
 

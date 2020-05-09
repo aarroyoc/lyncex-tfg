@@ -1,0 +1,52 @@
+@base <https://app.lyncex.com/text#> .
+@prefix lcx: <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<Book>
+    a rdfs:Class .
+
+<name>
+    a rdfs:Property ;
+    rdfs:domain <Book> ;
+    rdfs:range xsd:string .
+
+<TemplateApp>
+    a lcx:Application ;
+    lcx:prefix [
+        a lcx:Prefix ;
+        lcx:namespace "http://xmlns.com/foaf/0.2/" ;
+        lcx:prefix_name "foaf2" 
+    ] ;
+    lcx:controller <ProcessFormController> ;
+    lcx:controller <BookController> .
+
+<ProcessFormController>
+    a lcx:FormController ;
+    lcx:url "form1" ;
+    lcx:template_subject "https://app.lyncex.com/book/" ;
+    lcx:class <Book> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "{{ form }}"
+    ] .
+
+<BookController>
+    a lcx:TemplateController ;
+    lcx:url "book" ;
+    lcx:method "get" ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "<b>Name: </b>{{ book.name }}"
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "book" ;
+        lcx:template_subject "https://app.lyncex.com/book/{{ id }}"
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id"
+    ] .

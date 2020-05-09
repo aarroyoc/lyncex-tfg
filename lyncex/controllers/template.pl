@@ -70,7 +70,6 @@ template_controller(Path, Method, Request) :-
     flatten([XQuery, XHandler], XOutput),
     dict_pairs(TemplateData, _, XOutput),
     format('Content-Type: text/html~n~n'),
-    %format(TemplateData).
     current_output(Output),
     st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
