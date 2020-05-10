@@ -9,7 +9,7 @@
     a rdfs:Class .
 
 <name>
-    a rdfs:Property ;
+    a rdf:Property ;
     rdfs:domain <Book> ;
     rdfs:range xsd:string .
 
@@ -26,7 +26,7 @@
 <ProcessFormController>
     a lcx:FormController ;
     lcx:url "form1" ;
-    lcx:template_subject "https://app.lyncex.com/book/" ;
+    lcx:base_subject "https://app.lyncex.com/book/" ;
     lcx:class <Book> ;
     lcx:template [
         a cnt:ContentAsText ;

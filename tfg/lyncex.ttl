@@ -9,17 +9,17 @@
     rdf:type rdfs:Class .
 
 <port>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Application> ;
     rdfs:range xsd:int .
 
 <controller>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Application> ;
     rdfs:range <Controller> .
 
 <prefix>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Application> ;
     rdfs:range <Prefix> .
 
@@ -27,12 +27,12 @@
     rdf:type rdfs:Class .
 
 <url>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Controller> ;
     rdfs:range xsd:string .
 
 <method>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Controller> ;
     rdfs:range xsd:string .
 
@@ -41,12 +41,12 @@
     rdfs:subClassOf <Controller> .
 
 <content>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <ContentController> ;
     rdfs:range cnt:Content .
 
 <mime>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <ContentController> ;
     rdfs:range xsd:string .
 
@@ -55,17 +55,17 @@
     rdf:subClassOf <Controller> .
 
 <template>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <TemplateController> ;
     rdfs:range cnt:ContentAsText .
 
 <query>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <TemplateController> ;
     rdfs:range <Query> .
 
 <handler>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <TemplateController> ;
     rdfs:range <Handler> .
 
@@ -73,24 +73,24 @@
     rdf:type rdfs:Class .
 
 <query_name>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Query> ;
     rdfs:range xsd:string .
 
 <subject>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Query> .
 
 <Handler>
     rdf:type rdfs:Class .
 
 <handler_name>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Handler> ;
     rdfs:range xsd:string .
 
 <code>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Handler> ;
     rdfs:range xsd:string .
 
@@ -98,12 +98,12 @@
     rdf:type rdfs:Class .
 
 <namespace>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Prefix> ;
     rdfs:range xsd:string .
 
 <prefix_name>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <Prefix> ;
     rdfs:range xsd:string .
 
