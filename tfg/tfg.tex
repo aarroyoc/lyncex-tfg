@@ -17,6 +17,11 @@ hmargin=3cm
 \usepackage{graphicx}
 \usepackage{float}
 
+% REVISAR FUENTES
+% REVISAR FOTOS
+% REVISAR NEGRITAS
+% REVISAR CURSIVA
+
 \title{Lyncex: describiendo una aplicación web como conocimiento}
 \author{Adrián Arroyo Calle}
 \date{Curso 2019-2020}
@@ -58,6 +63,25 @@ Otros objetivos que estaría bien cumplir, pero no son necesarios para tener una
 \end{itemize}
 
 \chapter{Planificación}
+Para el proyecto se ha tratado de seguir una metodología similar a SCRUM, obviando ciertas diferencias inherentes al trabajo invididual.
+Primero se realizó una estimación, basada en puntos de historia, de cada una de las historias de usuario, pasando a formar parte del product backlog.
+Estas historias de usuario representan los 5 objetivos mencionados anteriormente y existen ciertas dependencias entre ellas tal y como se puede ver en el gráfico.
+
+MAPA DE DEPENDENCIAS
+
+Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
+se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
+
+Cada una de estas historias de usuario tenía asociadas diferentes condiciones de aceptación. Se trata de frases que siguen el estilo: Dado/Cuando/Entonces. 
+Una implementación completa de la historia de usuario hará que todas las frases sean ciertas. Gracias a Behave, estas condiciones de aceptación no solo existen en el papel, sino en el código también que comprueba de forma activa además que no haya regresiones en etapas posteriores.
+
+Estas historias de usuario a su vez se descompusieron en tareas lo más atómicas posibles, normalmente con una condición de aceptación asociada para saber que la tarea había acabado.
+
+En metodología SCRUM, el trabajo se divide en sprints de varias semanas. En este caso en particular se eligieron sprints de tres semanas, aunque el tiempo real se decidía al inicio del sprint.
+En esta reunión se elegían las tareas que debían a formar parte del sprint, formando parte de una lista conocida como sprint backlog.
+
+En nuestra implementación particular de SCRUM, no había equipo, por tanto ciertos roles y ceremonias dejaban de tener interés. 
+En este sentido, no se realizaron dailies y tanto el Product Owner como el equipo de desarrollo recayeron en mi persona, pudiendo asimilar el rol de Scrum Master al tutor del proyecto, Miguel Ángel Martínez Prieto.
 
 \chapter{Estado del Arte}
 
@@ -183,6 +207,46 @@ Para asegurarnos que las historias de usuario se implementaban correctamente se 
 Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy similar al lenguaje natural. Estos tests se componen de pasos,
 los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
 
+\chapter{Análisis del sistema}
+
+\chapter{Diseño de la ontología}
+
+\chapter{Componentes del sistema}
+Lyncex es una aplicación Prolog que se ejecuta a modo de servidor. Se recomienda utilizar la aplicación desde un contenedor Docker, si bien no es estrictamente necesario. 
+Una vez lanzado, la única forma de interactuar con el sistema es mediante la API.
+
+\section{API}
+La API de Lyncex se encarga de que el sistema interactúe con el exterior.
+Un programador que desee crear una aplicación de Lyncex es lo único que debería tocar.
+Externamente se trata de una API HTTP, que define varias rutas bajo la ruta $_api.
+Las operaciones que soporta la API son:
+\begin{itemize}
+    \item Creación de tripletas en la base de datos (POST, $_api)
+    \item Borrado de tripletas de la base de datos (DELETE, $_api/delete) con posibilidad de aplicar filtros
+    \item Lectura de tripletas de la base de datos (GET, $_api/query) con posibilidad de aplicar filtros
+\end{itemize}
+
+La creación de tripletas toma como entrada un fichero de tipo Turtle, mismo formato que se encuentra a la salida de la lectura de tripletas.
+De esta forma, se pueden realizar backups rápidos de la aplicación.
+
+El componente API además dispone de una validación elemental de RDF Schema.
+Esto se consigue si tanto los datos como las ontologías que los definen coexisten en la aplicación.
+Se verifica básicamente el uso correcto de instancias y propiedades mediante rdfs:domain.
+Técnicamente, RDF Schema no es un lenguaje de validación al uso, sino más bien de descripción de datos, pero demasiado abierto como para hacer comprobaciones estrictas.
+Es por ello que solo se valida este único comportamiento.
+
+
+\section{Controladores}
+
+\section{Enrutado}
+
+\chapter{Validación y pruebas}
+
+\chapter{Manuales}
+
+\chapter{Conclusiones}
+
+\chapter{Trabajo futuro}
 
 \bibliographystyle{acm}
 
