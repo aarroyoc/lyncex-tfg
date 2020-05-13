@@ -13,6 +13,15 @@
     rdfs:domain <Book> ;
     rdfs:range xsd:string .
 
+<BookValidation>
+    a rdfs:Class .
+
+<xname>
+    a rdf:Property ;
+    rdfs:domain <BookValidation> ;
+    lcx:validation "^[A-Z][a-z]+$" .
+    lcx:code_validation "validation(X) :- atom_length(X, N), N<20."
+
 <TemplateApp>
     a lcx:Application ;
     lcx:prefix [
@@ -21,13 +30,25 @@
         lcx:prefix_name "foaf2" 
     ] ;
     lcx:controller <ProcessFormController> ;
-    lcx:controller <BookController> .
+    lcx:controller <BookController> ;
+    lcx:controller <ProcessFormControllerValidation> ;
+    lcx:controller <BookValidController> .
 
 <ProcessFormController>
     a lcx:FormController ;
     lcx:url "form1" ;
     lcx:base_subject "https://app.lyncex.com/book/" ;
     lcx:class <Book> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "{{ form }}"
+    ] .
+
+<ProcessFormControllerValidation>
+    a lcx:FormController ;
+    lcx:url "form2" ;
+    lcx:base_subject "https://app.lyncex.com/book/" ;
+    lcx:class <BookValidation> ;
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars "{{ form }}"
@@ -40,6 +61,24 @@
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars "<b>Name: </b>{{ book.name }}"
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "book" ;
+        lcx:template_subject "https://app.lyncex.com/book/{{ id }}"
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id"
+    ] .
+
+<BookValidController>
+    a lcx:TemplateController ;
+    lcx:url "book2" ;
+    lcx:method "get" ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "<b>Name: </b>{{ book.xname }}"
     ] ;
     lcx:query [
         a lcx:Query ;

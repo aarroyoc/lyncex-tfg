@@ -9,6 +9,22 @@ Scenario: Save content of a form
     And I get a '<b>Name: </b>Don Quijote' response
     And I get a 'text/html' response type
 
+Scenario: Save content of a form (valid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    When I submit the form '/form2' with data '_id=https://app.lyncex.com/book/Quijote' and 'xname=Quijote'
+    Then I visit '/book2?id=Quijote'
+    And I get a 200 status code
+    And I get a '<b>Name: </b>Quijote' response
+    And I get a 'text/html' response type
+
+Scenario: Save content of a form (invalid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    When I submit the form '/form2' with data '_id=https://app.lyncex.com/book/Quijote' and 'xname=Don Quijote'
+    Then I visit '/book2?id=Quijote'
+    And I get a 500 status code
+
 Scenario: Autogenerate form
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test4.ttl' data
