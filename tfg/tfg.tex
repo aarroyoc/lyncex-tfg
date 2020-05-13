@@ -43,6 +43,8 @@ No obstante, considero interesante imaginar y plantear una aplicación web descr
 De forma principalmente declarativa y usando tecnologías maduras como RDF como la base del modelo de datos.
 El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas.
 
+\section{Tripletas}
+
 \section{Objetivos}
 
 Los objetivos principales que se propusieron para Lyncex y que debían ser cumplidas son:
@@ -218,12 +220,12 @@ Una vez lanzado, la única forma de interactuar con el sistema es mediante la AP
 \section{API}
 La API de Lyncex se encarga de que el sistema interactúe con el exterior.
 Un programador que desee crear una aplicación de Lyncex es lo único que debería tocar.
-Externamente se trata de una API HTTP, que define varias rutas bajo la ruta $_api.
+Externamente se trata de una API HTTP, que define varias rutas bajo la ruta \_api.
 Las operaciones que soporta la API son:
 \begin{itemize}
-    \item Creación de tripletas en la base de datos (POST, $_api)
-    \item Borrado de tripletas de la base de datos (DELETE, $_api/delete) con posibilidad de aplicar filtros
-    \item Lectura de tripletas de la base de datos (GET, $_api/query) con posibilidad de aplicar filtros
+    \item Creación de tripletas en la base de datos (POST, \_api)
+    \item Borrado de tripletas de la base de datos (DELETE, \_api/delete) con posibilidad de aplicar filtros
+    \item Lectura de tripletas de la base de datos (GET, \_api/query) con posibilidad de aplicar filtros
 \end{itemize}
 
 La creación de tripletas toma como entrada un fichero de tipo Turtle, mismo formato que se encuentra a la salida de la lectura de tripletas.
@@ -237,10 +239,58 @@ Es por ello que solo se valida este único comportamiento.
 
 
 \section{Controladores}
+Los controladores son los componentes que implementan la funcionalidad principal definida por la ontología.
+Al llegar una petición, se van probando los diferentes tipos de controladores hasta encontrar uno que sea del tipo al definido en la tripleta: (Controlador, rdf:type, lyncex:TipoControlador).
+Inicialmente se han diseñado tres controladores.
+
+\subsection{ContentController}
+El más básico de todos, simplemente devuelve lo que tenga definido en la tripleta (Controlador, lyncex:content, Content) con el tipo MIME 
+de la tripleta (Controlador, lyncex:mime, MimeType). El nodo Content es del tipo ContentAsText o ContentAsBase64, permitiendo ambos modos de representación del contenido.
+Ambos tipos forman parte de la ontología de W3C llamada \textit{Representing Content in RDF 1.0}\cite{cnt}.
+El tipo ContentAsText está pensado para formatos de tipo texto (HTML, CSS, JavaScript) mientras que ContentAsBase64 está pensado para formatos binarios (imágenes, sonidos, etc).
+Hay que mencionar, que en ningún caso almacenar ficheros binarios codificados en base 64 es una opción óptima y esta opción se ofrece más como una conveniencia.
+
+\subsection{TemplateController}
+El TemplateController se encarga de gestionar las plantillas. Estas plantillas se definen siguiendo la sintaxis Semblance de la librería simple-template.
+El TemplateController realiza las siguientes operaciones en orden:
+\begin{enumerate}
+    \item Procesado de parámetros GET y POST definidos previamente por instancias lyncex:Parameter
+    \item Templatizado de queries (si lo hubiera) especificadas (instancias de lyncex:Query)
+    \item Resolución de las queries (si hubiera)
+    \item Ejecución de los handlers (si hubiera) (instancias de lyncex:Handler)
+    \item Templatizado final
+\end{enumerate}
+
+\subsection{FormController}
+El FormController es una abstracción por encima del TemplateController a nivel interno, pero de cara a la ontología no es una subclase.
+Su funcionamiento depende de si se realiza una petición POST o GET. Ante una petición POST, el controlador procesará los parámetros.
+Buscará la existencia de un parámetro llamado \_id en primer lugar, ya que definirá el sujeto sobre el que se van a almacenar tripletas.
+A continuación recorrerá el resto de parámetros. El nombre de cada parámetro es la URL de la propiedad y el valor será el valor de la propiedad.
+Actualmente no se soporta crear dos tripletas de la misma propiedad en el mismo procesado.
+
+Si tenemos una operación GET, el controlador leerá la clase base y todas las propiedades que pueda extraer de la clase. Para ello es importante que la ontología de los datos esté cargada, si no, no será capaz de adivinar qué propiedades admite la clase.
+Una vez tenga el listado de propiedades, generará un formulario HTML ajustando todos los valores de forma adecuada al formato de aceptación del POST.
+
+\section{Procesado de parámetros}
+El procesado de parámetros es llamado por diferentes controladores para adaptar el formato de entrada HTTP GET y POST a un formato común (un diccionario Prolog).
+Solo saldrán del procesado aquellos parámetros indicados de forma explícita, ignorando aquellos que no lo estén.
+Durante el procesado se ejecutan las validaciones si las hubiera. Existen dos tipos de validaciones: Regex y Prolog.
+Cualquier parámetro puede tener cero, una o ambas validaciones.
+
+La validación regex, simplemente comprueba que el valor del parámetro cumpla con el patrón de una expresión regular estándar. Por debajo se implementa mediante la librería PCRE.
+
+La validación Prolog es código Prolog que define un término validation(X). Dentro de este código se puede llamar a cualquier código Prolog.
+La validación será exitosa si el término se puede evaluar a true, en caso contrario, se considerará que el parámetro está mal y fallará.
 
 \section{Enrutado}
 
 \chapter{Validación y pruebas}
+
+\section{Pruebas manuales}
+
+\section{Tests unitarios}
+
+\section{Test E2E}
 
 \chapter{Manuales}
 
