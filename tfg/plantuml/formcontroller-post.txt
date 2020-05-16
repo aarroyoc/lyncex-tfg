@@ -1,0 +1,38 @@
+@startuml
+
+title Form Controller (POST)
+
+actor User
+participant HTTP
+participant FormController
+database RDF
+participant Parameter
+participant PCRE
+participant Prolog
+
+User -> HTTP: POST /form
+HTTP -> FormController: form_controller(RequestPath, Request)
+loop Path != RequestPath
+    FormController -> RDF: rdf(Controller, 'lyncex:FormController')
+    RDF -> FormController: Controller, Path, Template, Class
+end
+
+loop forall FormProperties
+    FormController -> RDF: rdf(Class, FormProperty)
+    FormController -> RDF: rdf(FormProperty, 'lyncex:validation')
+    RDF -> FormController: ValidationRegex
+    alt ValidationRegex exists
+        FormController -> PCRE: re_match(FormValue, ValidationRegex)
+    end
+
+    FormController -> RDF: rdf(FormProperty, 'lyncex:code_validation')
+    RDF -> FormController: ValidationCode
+    alt ValidationCode exists
+        FormController -> Prolog: call(ValidationCode, FormValue)
+    end
+    FormController -> RDF: save(FormProperty, FormValue)
+end
+
+FormController -> FormController: form_controller(GET)
+
+@enduml

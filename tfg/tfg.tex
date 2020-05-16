@@ -214,6 +214,10 @@ los cuáles son implementados en Python. Como las historias de usuario nos habla
 
 \chapter{Diseño de la ontología}
 
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{lyncex.png}
+\end{figure}
+
 \chapter{Componentes del sistema}
 Lyncex es una aplicación Prolog que se ejecuta a modo de servidor. Se recomienda utilizar la aplicación desde un contenedor Docker, si bien no es estrictamente necesario. 
 Una vez lanzado, la única forma de interactuar con el sistema es mediante la API.
@@ -251,6 +255,10 @@ Ambos tipos forman parte de la ontología de W3C llamada \textit{Representing Co
 El tipo ContentAsText está pensado para formatos de tipo texto (HTML, CSS, JavaScript) mientras que ContentAsBase64 está pensado para formatos binarios (imágenes, sonidos, etc).
 Hay que mencionar, que en ningún caso almacenar ficheros binarios codificados en base 64 es una opción óptima y esta opción se ofrece más como una conveniencia.
 
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{plantuml/contentcontroller.png}
+\end{figure}
+
 \subsection{TemplateController}
 El TemplateController se encarga de gestionar las plantillas. Estas plantillas se definen siguiendo la sintaxis Semblance de la librería simple-template.
 El TemplateController realiza las siguientes operaciones en orden:
@@ -262,6 +270,10 @@ El TemplateController realiza las siguientes operaciones en orden:
     \item Templatizado final
 \end{enumerate}
 
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{plantuml/templatecontroller.png}
+\end{figure}
+
 \subsection{FormController}
 El FormController es una abstracción por encima del TemplateController a nivel interno, pero de cara a la ontología no es una subclase.
 Su funcionamiento depende de si se realiza una petición POST o GET. Ante una petición POST, el controlador procesará los parámetros.
@@ -271,6 +283,14 @@ Actualmente no se soporta crear dos tripletas de la misma propiedad en el mismo 
 
 Si tenemos una operación GET, el controlador leerá la clase base y todas las propiedades que pueda extraer de la clase. Para ello es importante que la ontología de los datos esté cargada, si no, no será capaz de adivinar qué propiedades admite la clase.
 Una vez tenga el listado de propiedades, generará un formulario HTML ajustando todos los valores de forma adecuada al formato de aceptación del POST.
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{plantuml/formcontroller-get.png}
+\end{figure}
+
+\begin{figure}[h]
+\includegraphics[width=\textwidth]{plantuml/formcontroller-post.png}
+\end{figure}
 
 \section{Procesado de parámetros}
 El procesado de parámetros es llamado por diferentes controladores para adaptar el formato de entrada HTTP GET y POST a un formato común (un diccionario Prolog).
@@ -283,6 +303,10 @@ La validación regex, simplemente comprueba que el valor del parámetro cumpla c
 La validación Prolog es código Prolog que define un término validation(X). Dentro de este código se puede llamar a cualquier código Prolog.
 La validación será exitosa si el término se puede evaluar a true, en caso contrario, se considerará que el parámetro está mal y fallará.
 
+En el caso del FormController, las validaciones tienen que ubicarse en otro lugar. Ya que el FormController importa implícitamente todos los parámetros de una ontología, no se puede adjutar una validación de la misma forma.
+La solución si usamos un FormController es extender la propia ontología.
+Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyncex:code\_validation, que funcionan como validación regex y validación Prolog, respectivamente.
+
 \section{Enrutado}
 
 \chapter{Validación y pruebas}
@@ -292,6 +316,8 @@ La validación será exitosa si el término se puede evaluar a true, en caso con
 \section{Tests unitarios}
 
 \section{Test E2E}
+
+\chapter{Aplicación de ejemplo}
 
 \chapter{Manuales}
 

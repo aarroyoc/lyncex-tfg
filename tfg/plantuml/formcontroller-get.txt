@@ -1,0 +1,59 @@
+@startuml
+
+title Form Controller (GET)
+
+actor User
+participant HTTP
+participant FormController
+database RDF
+participant SimpleTemplate
+participant Query
+participant Handler
+participant Parameter
+participant PCRE
+participant Prolog
+
+User -> HTTP: GET /user
+HTTP -> FormController: form_controller(RequestPath, Request)
+loop Path != RequestPath
+    FormController -> RDF: rdf(Controller, 'lyncex:FormController')
+    RDF -> FormController: Controller, Path, Template, Class
+end
+
+FormController -> RDF: rdf(Class, Property)
+RDF -> FormController: Properties
+
+FormController -> FormController: render_form(Class, Properties)
+
+FormController -> Query: resolve_query(Controller, Parameters)
+loop forall queries
+    Query -> RDF: rdf(Query, QueryTemplate)
+    RDF -> Query: QueryTemplate
+    alt QueryTemplate exists
+        Query -> SimpleTemplate: render_template(QueryTemplate, Parameters)
+        SimpleTemplate -> Query: QueryString
+    else
+        Query -> RDF: rdf(Query, QueryString)
+        RDF -> Query: QueryString
+    end
+    Query -> RDF: rdf(QueryString)
+    RDF -> Query: QueryData
+end
+Query -> FormController: QueryOutput
+
+FormController -> Handler: resolve_handler(Controller, Parameters)
+loop forall handlers
+    Handler -> RDF: rdf(Handler, HandlerCode)
+    RDF -> Handler: HandlerCode
+    Handler -> Prolog: call(HandlerCode, Parameters)
+    Prolog -> Handler: HandlerData
+end
+Handler -> FormController: HandlerOutput
+
+FormController -> SimpleTemplate: render_template(Template, Parameters, HandlerOutput, QueryOutput)
+SimpleTemplate -> FormController: HTMLOutput
+
+FormController -> HTTP: Response(HTMLOutput, text/html)
+HTTP -> User: HTTP response with HTML data
+
+@enduml

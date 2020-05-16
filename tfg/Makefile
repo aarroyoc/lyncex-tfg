@@ -1,6 +1,6 @@
 all: tfg.pdf 
 
-tfg.pdf: lyncex.png
+tfg.pdf: lyncex.png plantuml/*.png
 	xelatex tfg
 	bibtex tfg
 	xelatex tfg
@@ -18,3 +18,7 @@ clean:
 	rm tfg.bbl
 	rm tfg.blg
 	rm lyncex.png
+	rm plantuml/*.png
+
+plantuml/*.png:
+	cd plantuml; plantuml *.txt

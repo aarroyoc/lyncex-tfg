@@ -1,0 +1,23 @@
+@startuml
+
+title ContentController
+
+actor User
+participant HTTP
+participant ContentController
+participant Base64
+database RDF
+
+User -> HTTP: GET image.jpg
+HTTP -> ContentController: content_controller(RequestPath)
+loop Path != RequestPath
+    ContentController -> RDF: rdf(Controller, 'lyncex:ContentController')
+    RDF -> ContentController: Controller, Path, MIME
+end
+ContentController -> RDF: rdf(Controller, Bytes)
+ContentController -> Base64: decode(Bytes)
+Base64 -> ContentController: DecodedBytes
+ContentController -> HTTP: Response(DecodedBytes, MIME)
+HTTP -> User: HTTP Response with data
+
+@enduml
