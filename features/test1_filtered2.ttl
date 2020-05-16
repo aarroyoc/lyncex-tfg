@@ -1,0 +1,8 @@
+@prefix lyncex: <https://lyncex.com/lyncex#> .
+@prefix    rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+# Named toplevel resources (1)
+
+lyncex:quijote
+	a lyncex:Book ;
+	lyncex:author lyncex:cervantes .

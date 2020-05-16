@@ -74,10 +74,10 @@ query(Request) :-
     ]),
     current_output(Response),
     format('Content-Type: text/turtle~n~n'),
-    rdf_save_turtle(Response, []).
-    %rdf_save_turtle(Response, [
-    %    expand(query_filter(Subject, Predicate))
-    %]).
+    %rdf_save_turtle(Response, []).
+    rdf_save_turtle(Response, [
+        expand(query_filter(Subject, Predicate))
+    ]).
 
 delete(Request) :-
     http_parameters(Request, [

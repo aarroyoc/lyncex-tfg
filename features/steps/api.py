@@ -12,6 +12,10 @@ def step_start_lyncex(context):
 def step_get_request(context):
     context.request = requests.get("http://lyncex:11011/_api/query")
 
+@step("I do a filtered (subject='{subject}') GET request")
+def step_get_request_filter(context, subject):
+    context.request = requests.get(f"http://lyncex:11011/_api/query?subject={subject}")
+
 @step("I get a {code:d} status code")
 def step_check_response(context, code):
     assert context.request.status_code == code

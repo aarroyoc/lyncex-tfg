@@ -1,5 +1,5 @@
-FROM python:3.8.2
+FROM python:3.8.3
 
 WORKDIR /opt/lyncex
 
-RUN pip install behave==1.2.6 requests==2.23.0 rdflib==4.2.2
+RUN pip install behave==1.2.6 requests==2.23.0 rdflib==5.0.0

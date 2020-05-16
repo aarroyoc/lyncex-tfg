@@ -19,6 +19,13 @@ Scenario: GET with a non-empty database
     Then I get a 200 status code
     And I get the contents of 'features/test1.ttl'
 
+Scenario: GET with filter
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test1.ttl' data
+    When I do a filtered (subject='https://lyncex.com/lyncex#quijote') GET request
+    Then I get a 200 status code
+    And I get the contents of 'features/test1_filtered2.ttl'
+
 Scenario: DELETE a non-empty database
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test1.ttl' data
