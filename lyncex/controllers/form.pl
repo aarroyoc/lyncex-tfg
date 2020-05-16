@@ -8,21 +8,41 @@
 
 :- use_module(library(st/st_render)).
 
+:- use_module('../query.pl').
+:- use_module('../handler.pl').
+
 
 form_controller(Path, get, Request) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
     rdf(Controller, lyncex:base_subject, BaseSubject^^xsd:string),
-    % Templating
-    format('Content-Type: text/html~n~n'),
-    format('<form method="POST">'),
-    format('<input type="url" name="_id" value="~w">', [BaseSubject]),
-    forall((rdfs_class_property(Class, Property)),(
-        format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
+    % Build form
+    with_output_to(atom(Form),(
+        format('<form method="POST">'),
+        format('<input type="url" name="_id" value="~w">', [BaseSubject]),
+        forall((rdfs_class_property(Class, Property)),(
+            format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
+        )),
+        format('<input type="submit">'),
+        format('</form>')
     )),
-    format('<input type="submit">'),
-    format('</form>').
+    % Read template
+    rdf(Controller, lyncex:template, Template),
+    rdfs_individual_of(Template, cnt:'ContentAsText'),
+    rdf(Template, cnt:chars, TemplateString^^xsd:string),
+    % Parameters
+    %http_parameters(Request, [], [form_data(FormData)]),
+    %process_parameters(FormData, Controller, Parameters),
+    Parameters = _{},
+    % Queries and Handlers
+    resolve_query(Controller, Parameters, XQuery),
+    resolve_handler(Controller, Parameters, XHandler),
+    flatten([XQuery, XHandler, 'form'-Form], XOutput),
+    dict_pairs(TemplateData, _, XOutput),
+    format('Content-Type: text/html~n~n'),
+    current_output(Output),
+    st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
 
 form_controller(Path, post, Request) :-

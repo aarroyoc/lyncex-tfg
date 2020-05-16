@@ -19,8 +19,8 @@
 <xname>
     a rdf:Property ;
     rdfs:domain <BookValidation> ;
-    lcx:validation "^[A-Z][a-z]+$" .
-    lcx:code_validation "validation(X) :- atom_length(X, N), N<20."
+    lcx:validation "^[A-Z][a-z]+$" ;
+    lcx:code_validation "validation(X) :- atom_length(X, N), N<20." .
 
 <TemplateApp>
     a lcx:Application ;
@@ -41,7 +41,7 @@
     lcx:class <Book> ;
     lcx:template [
         a cnt:ContentAsText ;
-        cnt:chars "{{ form }}"
+        cnt:chars "{% unescape form %}"
     ] .
 
 <ProcessFormControllerValidation>
@@ -51,7 +51,7 @@
     lcx:class <BookValidation> ;
     lcx:template [
         a cnt:ContentAsText ;
-        cnt:chars "{{ form }}"
+        cnt:chars "{% unescape form %}"
     ] .
 
 <BookController>
