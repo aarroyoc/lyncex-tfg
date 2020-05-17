@@ -17,6 +17,9 @@ hmargin=3cm
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\usepackage[titletoc,toc,page]{appendix}
+\renewcommand{\appendixtocname}{Ap\'endices}
+\renewcommand{\appendixpagename}{Ap\'endices}
 
 % REVISAR FUENTES
 % REVISAR FOTOS
@@ -30,6 +33,12 @@ hmargin=3cm
 \begin{document}
 
 \maketitle
+
+\tableofcontents
+
+\listoffigures
+
+\listoftables
 
 \chapter{Introducción}
 
@@ -45,6 +54,86 @@ De forma principalmente declarativa y usando tecnologías maduras como RDF como 
 El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas.
 
 \section{Tripletas}
+Las tripletas son un modo de representar la información mediante tríos, ordenados, de datos.
+Es uno de los modos fundamentales de representación de información
+
+En una tripleta, los elementos se denominan, en este orden, sujeto, predicado y objeto. La estructura básica sigue la de la gramática del lenguaje humano para afirmar hechos.
+El sujeto es el ente sobre el que vamos a afirmar algo, el predicado es la acción y/o propiedad del sujeto y el objeto, que es el contenido de la propiedad que se define.
+Veamos algunos ejemplos de este concepto:
+\begin{verbatim}
+maria -> likes -> chocolate
+maria -> is -> human
+adrian -> likes -> maria
+\end{verbatim}
+Con estos tres elementos, y suponiendo que podemos combinar sujetos, predicados y objetos en otras tripletas, podemos crear grandes redes interrelacionadas, ideales para el almacenamiento de conocimiento.
+Estas se denominan grafos.
+Tres es el número mínimo necesario para poder modelar cualquier descriptible. Las duplas (dos elementos) también son populares en bases de datos, pero necesitan de un contexto externo para su interpretación correcta.
+Este sistema además tiene varias ventajas, por ejemplo, la duplicación de las tripletas no es un problema, ya que simplemente se reafirma lo mismo una y otra vez.
+
+La idea de las tripletas es bastante genérica y existen diferentes implementaciones de la idea. La más popular, sin lugar a dudas, es RDF, que describiremos a continuación.
+Las tripletas tienen numerosas ventajas pero también diversos inconvenientes, entre ellos: rendimiento inferior y mayor dificultad a la hora de actualizar el contenido de las tripletas.
+Esto, sumado a la falta de educación en este concepto, ha provocado que actualmente, el uso de tripletas sea minoritario.
+
+\section{Tripletas en RDF}
+
+RDF (Resource Description Framework) es un estándar desarrollado por Tim Berners-Lee en los años 90.
+RDF define un modelo concreto para usar tripletas derivado de la World Wide Web, para ello se impone que los elementos o términos puedan ser solo de tres tipos: IRIs, blank nodes y literales.
+Las IRIs son la versión internacionalizada y ampliada de las famosas URL. Cada IRI representa un recurso, tratándose de un identificadores universal y son la base de las interconexiones entre tripletas. En RDF se pueden usar IRIs en el sujeto, el predicado y el objeto.
+Los literales son datos puros, sin conexión entre sí. Pueden ser cadenas de texto, números enteros, números decimales, etc... Solo los objetos pueden ser literales.
+Los blank nodes son conexiones anónimas, sin definir explícitamente, entre varias tripletas. Solo pueden ser blank nodes los sujetos y los objetos.
+
+Además RDF define ciertos recursos de utilidad como un tipado y una distinción entre varios tipos elementales de recurso.
+
+RDF se define sin representación textual por defecto, aunque existen varios estándares. Uno de los originales es RDF-XML, que usa la sintaxis de XML para definir RDF. Esta sintaxis es especialmente compleja, ya que es verbosa y admite varios modos de uso.
+Otros estándares definen JSON-LD que usa sintaxis de JSON, otro formato genérico popular o RDFa que se integra en HTML. Sin embargo, también existen sintaxis expresamente diseñadas para RDF, que por lo general son más claras que tratar de adaptar otro formato a RDF.
+Algunos ejemplos de estas sintaxis son Turtle, N3, NTriples y TriG.
+
+En Lyncex se ha decidido usar sintaxis Turtle. Un ejemplo de esta sintaxis a continuación:
+
+\begin{lstlisting}
+@base <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+
+<Richard_Feynman>
+    a foaf:Person ;
+    foaf:name "Richard Feynman" ;
+    foaf:birthday "02-15" ;
+    foaf:knows [
+        a foaf:Person ;
+        foaf:name "Albert Einstein"
+    ] ;
+    foaf:knows <Von_Neumman> .
+
+<Von_Neumman>
+    a foaf:Person ;
+    foaf:name "John Von Neumman" .
+\end{lstlisting}
+
+Que es equivalente a:
+\begin{verbatim}
+https://lyncex.com/lyncex#Richard_Feynman -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type -> http://xmlns.com/foaf/0.1/Person
+https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/name -> Richard Feynman
+https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/birthday -> "02-15"
+https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/knows -> _:1
+https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/knows -> https://lyncex.com/lyncex#Von_Neumman
+_:1 -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type -> http://xmlns.com/foaf/0.1/Person
+_:1 -> http://xmlns.com/foaf/0.1/name -> Albert Einstein
+https://lyncex.com/lyncex#Von_Neumman -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type -> http://xmlns.com/foaf/0.1/Person
+https://lyncex.com/lyncex#Von_Neumman -> http://xmlns.com/foaf/0.1/name -> John Von Neumman
+\end{verbatim}
+
+En Turtle primero se inicia definiendo una base para las IRIs y prefijos para no tener que escribir IRIs largas y poco legibles en el resto del documento.
+Las IRIs se definen usando los símbolos < y >. Las IRIs con prefijo llevan el prefijo y el símbolo :. 
+Los literales llevan comillas y los blank nodes se definen con [ y ] y en su interior se definen las tripletas teniendo como sujeto el propio blank node.
+
+En Turtle existe una forma sencilla de no repetir el sujeto, útil para afirmar varias cosas sobre un mismo sujeto. Se utiliza el símbolo ; para iniciar una nueva tripleta sobre el mismo sujeto.
+
+Al acabar de afirmar cosas sobre un sujeto, se pone un punto. Un azúcar sintáctico usado en el ejemplo es que la propiedad a es equivalente a http://www.w3.org/1999/02/22-rdf-syntax-ns#type.
+
+\section{RDF Schema y ontologías}
+
+\section{Código como datos}
 
 \section{Objetivos}
 
@@ -55,7 +144,7 @@ Los objetivos principales que se propusieron para Lyncex y que debían ser cumpl
     \item US2: Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento
     \item US3: Servir páginas web estáticas
     \item US4: Servir páginas web que necesiten leer datos del almacenamiento (plantillas)
-    \item US5: Servir páginas web CRUD con formularios
+    \item US5: Servir páginas web con formularios
 \end{itemize}
 
 Otros objetivos que estaría bien cumplir, pero no son necesarios para tener una versión funcional son:
@@ -70,7 +159,12 @@ Para el proyecto se ha tratado de seguir una metodología similar a SCRUM, obvia
 Primero se realizó una estimación, basada en puntos de historia, de cada una de las historias de usuario, pasando a formar parte del product backlog.
 Estas historias de usuario representan los 5 objetivos mencionados anteriormente y existen ciertas dependencias entre ellas tal y como se puede ver en el gráfico.
 
-MAPA DE DEPENDENCIAS
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/dependency.png}
+    \caption{Dependencias entre las historias de usuario}
+    \label{fig:dependencia}
+\end{figure}
 
 Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
 se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
@@ -215,7 +309,10 @@ los cuáles son implementados en Python. Como las historias de usuario nos habla
 \chapter{Diseño de la ontología}
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{lyncex.png}
+    \centering
+    \includegraphics[width=\textwidth]{lyncex.png}
+    \caption{Ontología de Lyncex}
+    \label{fig:ontologia}
 \end{figure}
 
 \chapter{Componentes del sistema}
@@ -256,7 +353,10 @@ El tipo ContentAsText está pensado para formatos de tipo texto (HTML, CSS, Java
 Hay que mencionar, que en ningún caso almacenar ficheros binarios codificados en base 64 es una opción óptima y esta opción se ofrece más como una conveniencia.
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{plantuml/contentcontroller.png}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/contentcontroller.png}
+    \caption{Diagrama de secuencia del ContentController}
+    \label{fig:contentcontroller}
 \end{figure}
 
 \subsection{TemplateController}
@@ -271,7 +371,10 @@ El TemplateController realiza las siguientes operaciones en orden:
 \end{enumerate}
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{plantuml/templatecontroller.png}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/templatecontroller.png}
+    \caption{Diagrama de secuencia del TemplateController}
+    \label{fig:templatecontroller}
 \end{figure}
 
 \subsection{FormController}
@@ -285,11 +388,17 @@ Si tenemos una operación GET, el controlador leerá la clase base y todas las p
 Una vez tenga el listado de propiedades, generará un formulario HTML ajustando todos los valores de forma adecuada al formato de aceptación del POST.
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{plantuml/formcontroller-get.png}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/formcontroller-get.png}
+    \caption{Diagrama de secuencia del FormController ante un GET}
+    \label{fig:formcontrollerget}
 \end{figure}
 
 \begin{figure}[h]
-\includegraphics[width=\textwidth]{plantuml/formcontroller-post.png}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/formcontroller-post.png}
+    \caption{Diagrama de secuencia del FormController ante un POST}
+    \label{fig:formcontrollerpost}
 \end{figure}
 
 \section{Procesado de parámetros}
@@ -325,9 +434,10 @@ Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyn
 
 \chapter{Trabajo futuro}
 
-\chapter{Anexo I: Ontología}
+\begin{appendices}
+\chapter{Ontología}
 \lstinputlisting{lyncex.ttl}
-
+\end{appendices}
 \bibliographystyle{acm}
 
 \bibliography{ref}

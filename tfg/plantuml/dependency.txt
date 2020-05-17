@@ -1,0 +1,16 @@
+@startuml
+
+start
+
+fork
+:Almacenamiento de tripletas;
+:Servir webs estaticas;
+:Servir webs vistas dinamicas;
+:Servir webs con formularios;
+fork again
+:Desarrollo ontologia;
+end fork
+
+stop
+
+@enduml
