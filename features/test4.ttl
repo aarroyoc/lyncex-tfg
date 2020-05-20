@@ -41,7 +41,8 @@
     lcx:controller <BookController> ;
     lcx:controller <ProcessFormControllerValidation> ;
     lcx:controller <BookValidController> ;
-    lcx:controller <ProcessFormMultiple> .
+    lcx:controller <ProcessFormMultiple> ;
+    lcx:controller <BookMultiple> .
 
 <ProcessFormController>
     a lcx:FormController ;
@@ -71,6 +72,24 @@
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars "{% unescape form %}"
+    ] .
+
+<BookMultiple>
+    a lcx:TemplateController ;
+    lcx:url "book3" ;
+    lcx:method "get" ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "<b>Authors: </b>{% each authors, author %}{{ author }},{% end %}"
+    ] ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id"
+    ] ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "authors" ;
+        lcx:code "handler(Param, Output) :- get_dict(id, Param, Id), atom_concat('https://app.lyncex.com/book/', Id, Book), findall(Author, db(Book, 'https://app.lyncex.com/author', Author), Output)."
     ] .
 
 <BookController>

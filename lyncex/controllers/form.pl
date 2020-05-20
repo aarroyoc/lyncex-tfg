@@ -63,27 +63,32 @@ form_controller(Path, post, Request) :-
     ),(
         rdfs_class_property(Class, DataKey),
         (
-            rdf(DataKey, lyncex:validation, Validation^^xsd:string)
+            rdf(DataKey, lyncex:multiple, true)
             ->
-            re_match(Validation, DataValue)
+            atom_string(DataValue, DataValueString), split_string(DataValueString, "\n\r", "", Values)
             ;
-            true
+            [DataValue] = Values
         ),
-        (
-            rdf(DataKey, lyncex:code_validation, ValidationCode^^xsd:string)
-            ->
-            atom_string(ValidationAtom, ValidationCode),
-            read_term_from_atom(ValidationAtom, ValidationTerm, []),
-            retractall(validation(_)),
-            assertz(ValidationTerm),
-            once(call(validation, DataValue))
-            ;
-            true
-        )
-    )),
-    forall((
-        member(DataKey=DataValue, FormData), DataKey \= '_id'
-        ), (
-        rdf_assert(Resource, DataKey, DataValue^^xsd:string)
+        forall(member(Value, Values),(
+            (
+                rdf(DataKey, lyncex:validation, Validation^^xsd:string)
+                ->
+                re_match(Validation, Value)
+                ;
+                true
+            ),
+            (
+                rdf(DataKey, lyncex:code_validation, ValidationCode^^xsd:string)
+                ->
+                atom_string(ValidationAtom, ValidationCode),
+                read_term_from_atom(ValidationAtom, ValidationTerm, []),
+                retractall(validation(_)),
+                assertz(ValidationTerm),
+                once(call(validation, Value))
+                ;
+                true
+            ),
+            rdf_assert(Resource, DataKey, Value^^xsd:string)
+        ))
     )),
     form_controller(Path, get, Request).
