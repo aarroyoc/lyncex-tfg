@@ -22,6 +22,14 @@
     lcx:validation "^[A-Z][a-z]+$" ;
     lcx:code_validation "validation(X) :- atom_length(X, N), N<20." .
 
+<BookMultiply>
+    a rdfs:Class .
+
+<author>
+    a rdf:Property ;
+    rdfs:domain <BookMultiply> ;
+    lcx:multiple true.
+
 <TemplateApp>
     a lcx:Application ;
     lcx:prefix [
@@ -32,7 +40,8 @@
     lcx:controller <ProcessFormController> ;
     lcx:controller <BookController> ;
     lcx:controller <ProcessFormControllerValidation> ;
-    lcx:controller <BookValidController> .
+    lcx:controller <BookValidController> ;
+    lcx:controller <ProcessFormMultiple> .
 
 <ProcessFormController>
     a lcx:FormController ;
@@ -49,6 +58,16 @@
     lcx:url "form2" ;
     lcx:base_subject "https://app.lyncex.com/book/" ;
     lcx:class <BookValidation> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "{% unescape form %}"
+    ] .
+
+<ProcessFormMultiple>
+    a lcx:FormController ;
+    lcx:url "form3" ;
+    lcx:base_subject "https://app.lyncex.com/book/" ;
+    lcx:class <BookMultiply> ;
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars "{% unescape form %}"

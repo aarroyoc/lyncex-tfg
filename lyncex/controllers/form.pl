@@ -22,7 +22,13 @@ form_controller(Path, get, Request) :-
         format('<form method="POST">'),
         format('<input type="url" name="_id" value="~w">', [BaseSubject]),
         forall((rdfs_class_property(Class, Property)),(
-            format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
+            (
+                rdf(Property, lyncex:multiple, true)
+            ->
+                format('<textarea placeholder="~w" name="~w"></textarea>', [Property, Property])
+            ;
+                format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
+            )
         )),
         format('<input type="submit">'),
         format('</form>')
