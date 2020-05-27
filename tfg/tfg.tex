@@ -42,9 +42,8 @@ hmargin=3cm
 
 \chapter{Introducción}
 
-Lyncex es una base de datos y a la vez un servidor web configurable a través del contenido semántico de la propia base de datos.
+\section{Motivación}
 
-\section{Introducción}
 En ciencias de la computación, de forma recurrente se divide entre código, lo que va a ejecutar la máquina, y datos.
 Esta diferencia, aunque pueda resultar evidente, es innecesaria, ya que el código no deja de ser dato, solo que con una semántica diferente.
 Von Neuman, en su modelo de computadora, elimina las diferencias a nivel de hardware entre código y datos, de modo muy exitoso, hasta tal punto que esta idea sigue siendo la base de los procesadores modernos actuales.
@@ -53,7 +52,57 @@ No obstante, considero interesante imaginar y plantear una aplicación web descr
 De forma principalmente declarativa y usando tecnologías maduras como RDF como la base del modelo de datos.
 El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas.
 
-\section{Tripletas}
+De este modo, podríamos resumir este sistema como una base de datos y a la vez un servidor web configurable a través del contenido semántico de la propia base de datos.
+
+La idea surge principalmente de estudiar la base de datos CouchDB (se detallará más adelante) y su concepto de integrar código JavaScript como un tipo de documento más.
+
+\section{Objetivos}
+
+El objetivo principal de este trabajo es construir una entorno de desarrollo que implemente el concepto de base de datos y servidor web en un mismo entorno, usando tripletas para su representación. Sobre esta plataforma deberán poder ejecutarse aplicaciones simples y la llamaremos a partir de ahora, Lyncex.
+
+La implementación resultante no deberá ser de un nivel de producción, pero deberá ser útil para validar los conceptos con los que se va a trabajar, así como el estado de ciertas tecnologías con de relativa poca popularidad en el mundo empresarial.
+
+Además de la implementación en código, se definirá una ontología que define el funcionamiento de la aplicación web. Esta ontología es una interfaz sobre la que un trabajo posterior podría diseñar implementaciones alternativas, mejorando el código original o extendiendo la funcionalidad.
+
+En este proyecto se reforzarán los conocimientos del lenguaje Prolog, en concreto en una vertiente altamente práctica, como es su utilidad para desarrollo de aplicaciones web.
+
+\section{Alcance}
+
+\section{Aplicación de ejemplo (visión general)}
+
+De nada serviría una plataforma de desarrollo completa sin aplicaciones que la utilicen. Para demostrar la funcionalidad del sistema, en entornos reales, se diseñará una aplicación basada en datos abiertos ya existentes.
+
+Se usarán los datos de Bibliotecas de Castilla y León, en formato RDF/XML y se tratará de hacer un ejemplo práctico de aplicación modelo que usa Lyncex.
+
+\section{Estructura de la memoria}
+La memoria se estructura en diferentes capítulos. En primer lugar, se repasarán conocimientos previos necesarios para entender, desde una base técnica pero no especializada, el conjunto de este trabajo. Posteriormente se realizará el análisis de diferentes tecnologías similares, que cubren parte de los objetivos de este trabajo de alguna u otra forma, el conocido como estado del arte.
+
+Posteriormente se tratará la planificación del proyecto, haciendo un inciso en la metodología SCRUM. Posteriormente se pasará a la etapa de análisis, donde se descompondrán los requisitos del proyecto y las historias de usuario a realizar.
+
+El siguiente capítulo está dedicado al diseño, tanto del propio software, como de la ontología que lo acompaña. A continuación, se encuentra el capítulo de la implementación. En este capítulo primero veremos herramientas que se han usado para la construcción de este proyecto. Después veremos la implementación del software en sí, haciendo especial hincapié en aquellos elementos que no sean del todo evidentes para el lector.
+
+El capítulo dedicado a la validación y las pruebas se ubica inmediatamente después. En este capítulo se describirán las pruebas realizadas y la metodología empleada para comprobar que efectivamente, se está implementando correctamente el software.
+
+Le sigue el capítulo dedicado a la aplicación de ejemplo, donde se llevará a cabo un mini proyecto (objetivo, análisis, diseño, implementación y pruebas) para ver que el software como plataforma de desarrollo para otras aplicaciones tiene sentido o no, y poder identificar posibles inconvenientes prácticos que se hayan encontrado.
+
+A modo de referencia, el capítulo de manuales, incluye instrucciones de instalación y de uso de Lyncex.
+
+Por último, se hablará sobre las conclusiones que podemos extraer del proyecto así como trabajo que podría realizarse en el futuro siguiendo por este camino.
+
+
+\chapter{Conocimientos previos}
+
+En este capítulo trataremos de explicar de la forma más clara posible, conocimientos que creemos necesarios para entender el proyecto en su totalidad.
+
+\section{Web Semántica}
+
+La web semántica es un concepto amplio, surgido a finales de los 90 y en un principio impulsado por Tim Berners-Lee y su organización, el W3C. La idea principal es dar un paso cualtitativo más en el acceso y descripción de datos respecto al modelo de la web HTML. Dentro de este paraguas existen numerosos proyectos como RDF, SPARQL, LinkedData, ... En este proyecto solo utilizamos algunas de ellas.
+
+\subsection{RDF}
+
+RDF es una de las tecnologías base, sobre las que se asienta prácticamente toda la web semántica. Se trata de un modelo de representación de la información basado en tripletas.
+
+\subsubsection{Tripletas}
 Las tripletas son un modo de representar la información mediante tríos, ordenados, de datos.
 Es uno de los modos fundamentales de representación de información
 
@@ -74,7 +123,7 @@ La idea de las tripletas es bastante genérica y existen diferentes implementaci
 Las tripletas tienen numerosas ventajas pero también diversos inconvenientes, entre ellos: rendimiento inferior y mayor dificultad a la hora de actualizar el contenido de las tripletas.
 Esto, sumado a la falta de educación en este concepto, ha provocado que actualmente, el uso de tripletas sea minoritario.
 
-\section{Tripletas en RDF}
+\subsubsection{Tripletas en RDF}
 
 RDF (Resource Description Framework) es un estándar desarrollado por Tim Berners-Lee en los años 90.
 RDF define un modelo concreto para usar tripletas derivado de la World Wide Web, para ello se impone que los elementos o términos puedan ser solo de tres tipos: IRIs, blank nodes y literales.
@@ -129,79 +178,35 @@ Los literales llevan comillas y los blank nodes se definen con [ y ] y en su int
 
 En Turtle existe una forma sencilla de no repetir el sujeto, útil para afirmar varias cosas sobre un mismo sujeto. Se utiliza el símbolo ; para iniciar una nueva tripleta sobre el mismo sujeto.
 
-Al acabar de afirmar cosas sobre un sujeto, se pone un punto. Un azúcar sintáctico usado en el ejemplo es que la propiedad a es equivalente a http://www.w3.org/1999/02/22-rdf-syntax-ns#type.
+Al acabar de afirmar cosas sobre un sujeto, se pone un punto. Un azúcar sintáctico usado en el ejemplo es que la propiedad a es equivalente a \begin{verbatim}http://www.w3.org/1999/02/22-rdf-syntax-ns#type\end{verbatim}.
 
-\section{RDF Schema y ontologías}
+\subsection{RDF schema y ontologías}
 
-\section{Código como datos}
+RDF es un modelo de representación de la información muy potente, sin embargo, tal y como lo hemos definido, puede volverse muy caótico en poco tiempo.
 
-\section{Objetivos}
+La razón es que no hay ningún requisito per sé de como tienen que estructurarse los datos dentro de las tripletas. El principal inconveniente de esto es la interoperabilidad entre diferentes fuentes de información y entre diferentes programas.
 
-Los objetivos principales que se propusieron para Lyncex y que debían ser cumplidas son:
+Para solucionarlo, una idea que se puede tener es disponer de unos metadatos que informen de como se debe manejar esta información. Esta información que describe la estructura de otra información se denomina ontología. Ya que las ontologías no son más que información, se incorpora como tripletas también y no existe diferencia física de entre las tripletas de una ontología y la de una información cualquiera, la diferencia es puramente semántica. 
 
-\begin{itemize}
-    \item US1: Almacenar tripletas de datos junto a sus ontologías en el mismo espacio, validándose
-    \item US2: Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento
-    \item US3: Servir páginas web estáticas
-    \item US4: Servir páginas web que necesiten leer datos del almacenamiento (plantillas)
-    \item US5: Servir páginas web con formularios
-\end{itemize}
+Existen numerosos lenguajes de ontologías bajo RDF, uno de los primeros, impulsado como estándar por el W3C es RDF Schema. Existen otros lenguajes más avanzados como OWL, que incluyen soporte para descripciones más elaboradas.
 
-Otros objetivos que estaría bien cumplir, pero no son necesarios para tener una versión funcional son:
-\begin{itemize}
-    \item OUS1: Servir páginas web con sistemas de autenticación y autorización propios
-    \item OUS2: Servir APIs web de forma similar al contenido HTML
-    \item OUS3: Tener un endpoint de consulta SPARQL
-\end{itemize}
+La base de RDF Schema es la clase, o rdfs:Class, usando la IRI con prefijos. Las clases a su vez pueden ser subclases de otra con rdfs:subClassOf. Las clases podemos usarlas para definir tipos nuevos, que luego se referencian usando la propiedad rdf:type.
 
-\chapter{Planificación}
-Para el proyecto se ha tratado de seguir una metodología similar a SCRUM, obviando ciertas diferencias inherentes al trabajo invididual.
-Primero se realizó una estimación, basada en puntos de historia, de cada una de las historias de usuario, pasando a formar parte del product backlog.
-Estas historias de usuario representan los 5 objetivos mencionados anteriormente y existen ciertas dependencias entre ellas tal y como se puede ver en el gráfico.
+A su vez, también podemos definir los predicados, también llamados propiedades. Esto ya venía en RDF, bajo el tipo rdf:Property, pero RDF Schema añade predicados extras como rdfs:domain y rdfs:range. El primero permite definir en una tripleta que usa esta propiedad los elementos de que tipo pueden ser sujetos. Y en el caso del range que clase de valores de aceptan como objeto. Las propiedades se pueden heredar también mediante rdfs:subPropertyOf.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{plantuml/dependency.png}
-    \caption{Dependencias entre las historias de usuario}
-    \label{fig:dependencia}
-\end{figure}
+Con estos elementos podemos crear ontologías con esquemas similares a los que tendríamos en programación orientada a objetos, aunque de forma mucho más flexible.
 
-Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
-se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
+\subsection{SPARQL}
 
-Cada una de estas historias de usuario tenía asociadas diferentes condiciones de aceptación. Se trata de frases que siguen el estilo: Dado/Cuando/Entonces. 
-Una implementación completa de la historia de usuario hará que todas las frases sean ciertas. Gracias a Behave, estas condiciones de aceptación no solo existen en el papel, sino en el código también que comprueba de forma activa además que no haya regresiones en etapas posteriores.
-
-Estas historias de usuario a su vez se descompusieron en tareas lo más atómicas posibles, normalmente con una condición de aceptación asociada para saber que la tarea había acabado.
-
-En metodología SCRUM, el trabajo se divide en sprints de varias semanas. En este caso en particular se eligieron sprints de tres semanas, aunque el tiempo real se decidía al inicio del sprint.
-En esta reunión se elegían las tareas que debían a formar parte del sprint, formando parte de una lista conocida como sprint backlog.
-
-En nuestra implementación particular de SCRUM, no había equipo, por tanto ciertos roles y ceremonias dejaban de tener interés. 
-En este sentido, no se realizaron dailies y tanto el Product Owner como el equipo de desarrollo recayeron en mi persona, pudiendo asimilar el rol de Scrum Master al tutor del proyecto, Miguel Ángel Martínez Prieto.
+\section{Prolog}
 
 \chapter{Estado del Arte}
 
 Antes de adentrarnos en los detalles de Lyncex conviene recapitular ideas similares ya existentes así como herramientas que nos puedan ayudar. 
 
-\section{Apache CouchDB}
-Apache CouchDB es una base de datos NoSQL de tipo documental, almacenados estos en formato JSON.\cite{couchdb}
-Su peculiaridad respecto a otras bases de datos similares como MongoDB viene por la forma de acceder a los datos.
-Aunque en las últimas versiones CouchDB también dispone de un lenguaje de consulta, la forma original de acceder a la información era programando lo que se denominan vistas, en JavaScript.
-Estas vistas generan un endpoint HTTP, que al ser llamado ejecutan el código JavaScript, en dos pasos. Primero un paso de map, para seleccionar los datos y realizar alguna transformación individual.
-Posteriormente un paso de reduce permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
+\section{Frameworks web}
 
-Para interactuar con la base de datos se dispone de una API HTTP, tanto para crear como para borrar y o modificar los documentos.
-Además dispone de un sistema de replicación entre nodos eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
-
-\section{TerminusDB}
-TerminusDB es una base de datos programada en Prolog que comparte junto a CouchDB la característica de ser de tipo NoSQL de tipo documental.\cite{terminusdb}
-Sin embargo, TerminusDB almacena tripletas RDF. RDF, como veremos más adelante, es un modelo de representación del conocimiento basado en tripletas.
-TerminusDB cuenta con un lenguaje de consulta propio, admite ciertas validaciones sobre los datos y también dispone de una API HTTP.
-TerminusDB no dispone de ninguna característica similar a las vistas de CouchDB.
-
-
-\section{Django}
+\subsection{Django}
 Django es uno de los frameworks web más populares dentro del mundo Python y es una referencia dentro del mundo de los frameworks web por su potencia y claridad de código.\cite{django}
 Fuertemente inspirado por \textbf{Ruby on Rails}, adopta de él su filosofía DRY (Don't Repeat Yourself) y su \textit{convention over configuration}.
 El framework trabaja con bases de datos relacionales principalmente, pero es una buena base para diseñar la semántica del servidor web.
@@ -220,20 +225,39 @@ Con esta clase Django puede generar parte de la plantilla automáticamente. Post
 
 Por último, existe un componente llamado \textbf{Django REST Framework}, que añade funcionalidad para diseñar una API REST con los mismos patrones y facilidades que el desarrollo web HTML.
 
-\section{Apache Jena}
+\section{Bases de datos}
+\subsection{Apache CouchDB}
+Apache CouchDB es una base de datos NoSQL de tipo documental, almacenados estos en formato JSON.\cite{couchdb}
+Su peculiaridad respecto a otras bases de datos similares como MongoDB viene por la forma de acceder a los datos.
+Aunque en las últimas versiones CouchDB también dispone de un lenguaje de consulta, la forma original de acceder a la información era programando lo que se denominan vistas, en JavaScript.
+Estas vistas generan un endpoint HTTP, que al ser llamado ejecutan el código JavaScript, en dos pasos. Primero un paso de map, para seleccionar los datos y realizar alguna transformación individual.
+Posteriormente un paso de reduce permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
+
+Para interactuar con la base de datos se dispone de una API HTTP, tanto para crear como para borrar y o modificar los documentos.
+Además dispone de un sistema de replicación entre nodos eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
+
+\subsection{TerminusDB}
+TerminusDB es una base de datos programada en Prolog que comparte junto a CouchDB la característica de ser de tipo NoSQL de tipo documental.\cite{terminusdb}
+Sin embargo, TerminusDB almacena tripletas RDF. RDF, como veremos más adelante, es un modelo de representación del conocimiento basado en tripletas.
+TerminusDB cuenta con un lenguaje de consulta propio, admite ciertas validaciones sobre los datos y también dispone de una API HTTP.
+TerminusDB no dispone de ninguna característica similar a las vistas de CouchDB.
+
+\section{Triplestores}
+
+\subsection{Apache Jena}
 Apache Jena es una base de datos de tripletas RDF, una de las más maduras si nos atenemos a su longevidad (Jena 1.0 es del año 2000).\cite{couchdb}
 Implementa gran cantidad de estándares de la web semántica como RDF, RDF Schema, SPARQL, OWL, etc sin embargo no dispone tampoco de la capacidad de generar vistas web.
 
-\section{Virtuoso y Marklogic}
+\subsection{Virtuoso y Marklogic}
 OpenLink Virtuoso y MarkLogic son bases de datos multimodelo, entre ellos soportan el almacenamiento de tripletas.\cite{virtuoso}\cite{marklogic}.
 Virtuoso tiene una versión opensource usada detrás de grandes silos de conocimiento como DBPedia o Wikidata. Ambas soportan queries vía SPARQL.
 
-\section{ClioPatria}
+\subsection{ClioPatria}
 ClioPatria es una aplicación que combina las librerías de RDF y HTTP de SWI-Prolog para ofrecer una base de datos semántica completa.\cite{cliopatria}
 Soporta queries en SPARQL, SeRQL y en código Prolog. Al estar basada la aplicación en componentes independientes, podemos usarlos como base
 de nuestra aplicación.
 
-\section{Comparativa final}
+\section{Análisis}
 
 Esta tabla representa como cumplen los objetivos propuestos en la sección Objetivos en cada uno de los programas analizados.
 
@@ -260,53 +284,54 @@ Notas:
     \item A través de Django REST Framework, un componente independiente pero altamente acoplado
 \end{enumerate}
 
-\chapter{Herramientas utilizadas}
+\chapter{Planificación}
 
-A continuación se describen las herramientas utilizadas para Lyncex, tanto de desarrollo como librerías y entornos que necesita en tiempo de ejecución.
-\section{SWI Prolog}
-SWI Prolog\cite{prolog} es un entorno de programación Prolog, ampliamente usado gracias a su condición de software libre, su portabilidad y 
-su estrategia de baterías incluidas, que hace que disponga de gran cantidad de librerías y módulos por defecto.
-La comunidad de SWI Prolog es pequeña pero activa y a parte de la gran cantidad de librerías, existe un sistema de packs, que permiten instalar librerías de terceros.
+\section{SCRUM}
+\subsection{Introducción}
+\subsection{Actores}
+\subsection{Eventos}
+\subsection{Artefactos}
+\section{Metodología de trabajo}
+\section{Plan de gestión de riesgos}
+\section{Suposiciones y restricciones}
+Para el proyecto se ha tratado de seguir una metodología similar a SCRUM, obviando ciertas diferencias inherentes al trabajo invididual.
+Primero se realizó una estimación, basada en puntos de historia, de cada una de las historias de usuario, pasando a formar parte del product backlog.
+Estas historias de usuario representan los 5 objetivos mencionados anteriormente y existen ciertas dependencias entre ellas tal y como se puede ver en el gráfico.
 
-Entre los módulos que tiene SWI Prolog y que es difícil encontrar en otras implementaciones, debemos destacar los módulos de web semántica y RDF y los de HTTP.
-Sin estos módulos, la realización de Lyncex hubiese sido mucho más compleja y alargada en el tiempo.
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/dependency.png}
+    \caption{Dependencias entre las historias de usuario}
+    \label{fig:dependencia}
+\end{figure}
 
-\section{RDF, Turtle}
-RDF, siglas de Resource Description Framework, es un modelo de datos para describir datos usando tripletas sujeto-predicado-objeto. 
-Se trata de un estándar del W3C y dispone de una variedad de sintaxis. Se ha elegido Turtle como sintaxis predeterminada ya que es la que en nuestra opinión es la más simple y menos verbosa.
-Otros formatos alternativos como RDF/XML o JSON-LD parten de formatos diseñados para ser usados de forma diferente, añadiendo complejidad y verbosidad en el camino.
+Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
+se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
 
-\section{IDE}
-Como IDE se ha utilizado Visual Studio Code\cite{vscode}, un editor propiedad de Microsoft, pero multiplataforma.
-Es un IDE con el que ya había familaridad previa y no supone ningún esfuerzo usarlo para este proyecto.
-Visual Studio Code dispone de un sistema de plugins, y entre otros, hay plugins de Prolog y de Turtle.
-El último fue usado para obtener resaltado de sintaxis, mientras que el primero se evaluó y finalmente se deshechó.
-El motivo es que el plugin ejecuta Prolog por debajo para detectar errores de sintaxis, pero al tratarse de una aplicación que es un servidor, al ejecutarse toma los puertos y no podemos usarlos
-en pruebas lanzadas a través de la terminal.
+Cada una de estas historias de usuario tenía asociadas diferentes condiciones de aceptación. Se trata de frases que siguen el estilo: Dado/Cuando/Entonces. 
+Una implementación completa de la historia de usuario hará que todas las frases sean ciertas. Gracias a Behave, estas condiciones de aceptación no solo existen en el papel, sino en el código también que comprueba de forma activa además que no haya regresiones en etapas posteriores.
 
-\section{Sistema operativo}
-La totalidad del proyecto se ha realizado sobre Debian, en su versión Sid. Se trata de un sistema operativo con kernel Linux, 
-de amplio uso en servidores, y también usado, en menor medida, en portátiles y workstations.
+Estas historias de usuario a su vez se descompusieron en tareas lo más atómicas posibles, normalmente con una condición de aceptación asociada para saber que la tarea había acabado.
 
-\section{Docker}
-Para que los entornos de prueba y de ejecución sean reproducibles, se ha optado por usar Docker y su utilidad, Docker Compose.
-Docker es un sistema de contenedores para Linux que proporciona capacidades de aislamiento y reproducibilidad de entornos similares a las máquinas virtuales, sin el overhead que usar estas conlleva.
-Existen otros sistemas parecidos, como LXD, pero Docker tiene varias ventajas: poder describir entornos como código versionable (Dockerfile) y poder orquestar de forma sencilla entornos pequeños y medianos (docker-compose).
+En metodología SCRUM, el trabajo se divide en sprints de varias semanas. En este caso en particular se eligieron sprints de tres semanas, aunque el tiempo real se decidía al inicio del sprint.
+En esta reunión se elegían las tareas que debían a formar parte del sprint, formando parte de una lista conocida como sprint backlog.
 
-\section{Git y GitHub}
-Para versionar el código fuente se ha usado el sistema Git, usando como almacenamiento GitHub. Principalmente se ha usado a través de la línea de comandos.
-No se han aprovechado muchas de sus características de ramas y merges, ya que al ser un proyecto personal, solo se iba modificando una parte del programa a la vez.
-Adicionalmente se ha hecho uso de la integración continua gratuita ofrecida por GitHub llamada GitHub Actions. De este modo se ha definido una acción que se ejecuta al recibir nuevo código en el repositorio.
-Esta acción construía las imágenes de Docker necesarias y pasaba los tests de Behave y de PlUnit.
+En nuestra implementación particular de SCRUM, no había equipo, por tanto ciertos roles y ceremonias dejaban de tener interés. 
+En este sentido, no se realizaron dailies y tanto el Product Owner como el equipo de desarrollo recayeron en mi persona, pudiendo asimilar el rol de Scrum Master al tutor del proyecto, Miguel Ángel Martínez Prieto.
 
-\section{Behave}
-Para asegurarnos que las historias de usuario se implementaban correctamente se ha decidido usar Behave.
-Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy similar al lenguaje natural. Estos tests se componen de pasos,
-los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
+\chapter{Análisis y diseño}
 
-\chapter{Análisis del sistema}
+\section{Requisitos}
 
-\chapter{Diseño de la ontología}
+\section{Diseño de Lyncex}
+
+\subsection{Arquitectura}
+
+\subsection{API}
+
+\subsection{Controladores}
+
+\section{Diseño de la ontología}
 
 \begin{figure}[h]
     \centering
@@ -416,7 +441,50 @@ En el caso del FormController, las validaciones tienen que ubicarse en otro luga
 La solución si usamos un FormController es extender la propia ontología.
 Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyncex:code\_validation, que funcionan como validación regex y validación Prolog, respectivamente.
 
-\section{Enrutado}
+\chapter{Implementación}
+
+\section{Herramientas de desarrollo}
+\subsection{SWI Prolog}
+SWI Prolog\cite{prolog} es un entorno de programación Prolog, ampliamente usado gracias a su condición de software libre, su portabilidad y 
+su estrategia de baterías incluidas, que hace que disponga de gran cantidad de librerías y módulos por defecto.
+La comunidad de SWI Prolog es pequeña pero activa y a parte de la gran cantidad de librerías, existe un sistema de packs, que permiten instalar librerías de terceros.
+
+Entre los módulos que tiene SWI Prolog y que es difícil encontrar en otras implementaciones, debemos destacar los módulos de web semántica y RDF y los de HTTP.
+Sin estos módulos, la realización de Lyncex hubiese sido mucho más compleja y alargada en el tiempo.
+
+\subsection{RDF, Turtle}
+RDF, siglas de Resource Description Framework, es un modelo de datos para describir datos usando tripletas sujeto-predicado-objeto. 
+Se trata de un estándar del W3C y dispone de una variedad de sintaxis. Se ha elegido Turtle como sintaxis predeterminada ya que es la que en nuestra opinión es la más simple y menos verbosa.
+Otros formatos alternativos como RDF/XML o JSON-LD parten de formatos diseñados para ser usados de forma diferente, añadiendo complejidad y verbosidad en el camino.
+
+\subsection{IDE}
+Como IDE se ha utilizado Visual Studio Code\cite{vscode}, un editor propiedad de Microsoft, pero multiplataforma.
+Es un IDE con el que ya había familaridad previa y no supone ningún esfuerzo usarlo para este proyecto.
+Visual Studio Code dispone de un sistema de plugins, y entre otros, hay plugins de Prolog y de Turtle.
+El último fue usado para obtener resaltado de sintaxis, mientras que el primero se evaluó y finalmente se deshechó.
+El motivo es que el plugin ejecuta Prolog por debajo para detectar errores de sintaxis, pero al tratarse de una aplicación que es un servidor, al ejecutarse toma los puertos y no podemos usarlos
+en pruebas lanzadas a través de la terminal.
+
+\subsection{Sistema operativo}
+La totalidad del proyecto se ha realizado sobre Debian, en su versión Sid. Se trata de un sistema operativo con kernel Linux, 
+de amplio uso en servidores, y también usado, en menor medida, en portátiles y workstations.
+
+\subsection{Docker}
+Para que los entornos de prueba y de ejecución sean reproducibles, se ha optado por usar Docker y su utilidad, Docker Compose.
+Docker es un sistema de contenedores para Linux que proporciona capacidades de aislamiento y reproducibilidad de entornos similares a las máquinas virtuales, sin el overhead que usar estas conlleva.
+Existen otros sistemas parecidos, como LXD, pero Docker tiene varias ventajas: poder describir entornos como código versionable (Dockerfile) y poder orquestar de forma sencilla entornos pequeños y medianos (docker-compose).
+
+\subsection{Git y GitHub}
+Para versionar el código fuente se ha usado el sistema Git, usando como almacenamiento GitHub. Principalmente se ha usado a través de la línea de comandos.
+No se han aprovechado muchas de sus características de ramas y merges, ya que al ser un proyecto personal, solo se iba modificando una parte del programa a la vez.
+Adicionalmente se ha hecho uso de la integración continua gratuita ofrecida por GitHub llamada GitHub Actions. De este modo se ha definido una acción que se ejecuta al recibir nuevo código en el repositorio.
+Esta acción construía las imágenes de Docker necesarias y pasaba los tests de Behave y de PlUnit.
+
+\subsection{Behave}
+Para asegurarnos que las historias de usuario se implementaban correctamente se ha decidido usar Behave.
+Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy similar al lenguaje natural. Estos tests se componen de pasos,
+los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
+
 
 \chapter{Validación y pruebas}
 
@@ -430,9 +498,11 @@ Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyn
 
 \chapter{Manuales}
 
-\chapter{Conclusiones}
+\section{Manual de instalación}
 
-\chapter{Trabajo futuro}
+\section{Manual de usuario}
+
+\chapter{Conclusiones y trabajo futuro}
 
 \begin{appendices}
 \chapter{Ontología}
@@ -443,3 +513,21 @@ Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyn
 \bibliography{ref}
 
 \end{document}
+
+
+% Los objetivos principales que se propusieron para Lyncex y que debían ser cumplidas son:
+
+% \begin{itemize}
+%     \item US1: Almacenar tripletas de datos junto a sus ontologías en el mismo espacio, validándose
+%     \item US2: Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento
+%     \item US3: Servir páginas web estáticas
+%     \item US4: Servir páginas web que necesiten leer datos del almacenamiento (plantillas)
+%     \item US5: Servir páginas web con formularios
+% \end{itemize}
+
+% Otros objetivos que estaría bien cumplir, pero no son necesarios para tener una versión funcional son:
+% \begin{itemize}
+%     \item OUS1: Servir páginas web con sistemas de autenticación y autorización propios
+%     \item OUS2: Servir APIs web de forma similar al contenido HTML
+%     \item OUS3: Tener un endpoint de consulta SPARQL
+% \end{itemize}
