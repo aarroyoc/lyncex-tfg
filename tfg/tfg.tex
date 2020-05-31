@@ -68,6 +68,17 @@ En este proyecto se reforzarán los conocimientos del lenguaje Prolog, en concre
 
 \section{Alcance}
 
+Para cumplir los objetivos identificamos cinco historias de usuario diferentes. En este proyecto intentaremos completar las cinco historias de usuario al completo. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/dependency.png}
+    \caption{Dependencias entre las historias de usuario}
+    \label{fig:dependencia}
+\end{figure}
+
+
+
 \section{Aplicación de ejemplo (visión general)}
 
 De nada serviría una plataforma de desarrollo completa sin aplicaciones que la utilicen. Para demostrar la funcionalidad del sistema, en entornos reales, se diseñará una aplicación basada en datos abiertos ya existentes.
@@ -77,7 +88,7 @@ Se usarán los datos de Bibliotecas de Castilla y León, en formato RDF/XML y se
 \section{Estructura de la memoria}
 La memoria se estructura en diferentes capítulos. En primer lugar, se repasarán conocimientos previos necesarios para entender, desde una base técnica pero no especializada, el conjunto de este trabajo. Posteriormente se realizará el análisis de diferentes tecnologías similares, que cubren parte de los objetivos de este trabajo de alguna u otra forma, el conocido como estado del arte.
 
-Posteriormente se tratará la planificación del proyecto, haciendo un inciso en la metodología SCRUM. Posteriormente se pasará a la etapa de análisis, donde se descompondrán los requisitos del proyecto y las historias de usuario a realizar.
+Posteriormente se tratará la planificación del proyecto, haciendo un inciso en la metodología Scrum. Posteriormente se pasará a la etapa de análisis, donde se descompondrán los requisitos del proyecto y las historias de usuario a realizar.
 
 El siguiente capítulo está dedicado al diseño, tanto del propio software, como de la ontología que lo acompaña. A continuación, se encuentra el capítulo de la implementación. En este capítulo primero veremos herramientas que se han usado para la construcción de este proyecto. Después veremos la implementación del software en sí, haciendo especial hincapié en aquellos elementos que no sean del todo evidentes para el lector.
 
@@ -196,9 +207,302 @@ A su vez, también podemos definir los predicados, también llamados propiedades
 
 Con estos elementos podemos crear ontologías con esquemas similares a los que tendríamos en programación orientada a objetos, aunque de forma mucho más flexible.
 
+Veamos un ejemplo de ontología sencilla definida con RDF Schema.
+
+\begin{lstlisting}
+@base <https://lyncex.com/> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<Book>
+    a rdfs:Class ;
+    rdfs:label "Book" ;
+    rdfs:comment "A work printed on sheets of paper bound together within covers" .
+
+<name>
+    a rdf:Property ;
+    rdfs:domain <Book> ;
+    rdfs:range xsd:string .
+
+<Comic>
+    a rdfs:Class .
+    rdfs:subClassOf <Book> ;
+    rdfs:label "Comic" ;
+    rdfs:comment "A book containing comic strips" .
+
+\end{lstlisting}
+
+En este ejemplo se usa además la ontología XMLSchema, que provee de tipos básicos derivados de XML (entre otras cosas).
+
+Una de las ideas básicas de la web semántica es que las ontologías puedan ser reutilizables por distintas partes. Para describir cierta información muy común existen ontologías establecidas tanto de forma general como para nichos específicos (bioinformática, geografía). Algunos de los hogares de ontologías más importantes son la propia W3C, la iniciativa Dublin Core y Schema.org, iniciativa esta última de los grandes buscadores (Google, Bing, Yandex). Estas ontologías pueden ir versionadas.
+
+
 \subsection{SPARQL}
 
+Otro de los estándares definidos por W3C bajo el paraguas de la web semántica es SPARQL. Se trata de un lenguaje de consulta sobre RDF. Además existe una extensión del estándar SPARQL Update, que permite modificar el contenido de la base de datos. Sin embargo, a pesar de llamarse "Update", no existe ninguna operación para esto. Solo existe borrado y creación de nuevas tripletas. Esto es un problema que en Lyncex hemos visto también y que tiene que ver con las bases de RDF y su dificultad de actualización.
+
+Una consulta SPARQL empieza opcionalmente con prefijos, muy similares a los de Turtle y con el mismo objetivo. Posteriormente le sigue un SELECT, que indica que variables se deben sacar como resultado. La salida será un listado de una tupla de los valores que hayamos indicado. Si quisiésemos añadir operaciones de agregación, las indicaríamos aquí también.
+
+Las variables empiezan siempre por interrogación y adoptan los valores que cumplen con todas las afirmaciones del WHERE. Las afirmaciones del WHERE, son tripletas que deben existir todas ellas en la base de datos (es decir, es un AND implícito). Para combinar tripletas entre sí podemos usar variables intermedias o property paths, que es una sintaxis más corta. Si queremos excluir algunas tripletas de este AND podemos usar OPTIONAL, donde se intentará cumplir los criterios pero si no se cumple, será como si no existiera este bloque. Dentro de los WHERE podemos incluir FILTER, que realizan comprobaciones sobre las variables.
+
+Veamos un ejemplo de consulta:
+
+\begin{lstlisting}
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>
+PREFIX lyncex: <https://lyncex.com/>
+
+SELECT ?name ?author
+WHERE {
+    ?id rdf:type lyncex:Book .
+    ?id lyncex:name ?name .
+    ?id lyncex:author ?author .
+}
+\end{lstlisting}
+
+Un ejemplo algo más avanzado, con datos de Wikidata:
+
+\begin{lstlisting}
+PREFIX wd: <http://www.wikidata.org/entity/>
+PREFIX wdt: <http://www.wikidata.org/prop/direct/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+
+SELECT ?city_name ?brother_name
+WHERE {
+    ?city wdt:P31 wd:Q515 .
+    ?city wdt:P17 wd:Q29 .
+    ?city rdfs:label ?city_name .
+    OPTIONAL {
+        ?city wdt:P190/rdfs:label ?brother_name .
+        FILTER (lang(?brother_name) = 'es') .
+    }
+    FILTER (lang(?city_name) = 'es')
+}
+\end{lstlisting}
+
+Existen más modos de consulta además de SELECT. En particular ASK, que simplemente verifica si se cumplen las condiciones de un WHERE en la base de datos, y CONSTRUCT, que permite sacar por salida tripletas, en vez de un listado de tuplas.
+
 \section{Prolog}
+
+Prolog es un lenguaje de programación lógico diseñado por Alain Colmerauer, Philippe Roussel y Robert Kowalski en 1972 en Marsella, Francia. Se trata de uno de los primeros y más populares lenguajes de programación lógica. Este se basa en la lógica de primer orden con una base de conocimiento compuesta de hechos y reglas. 
+
+El flujo de ejecución de Prolog es una búsqueda con backtracking. Ante un predicado, Prolog trata de demostrar su veracidad, identificando valores para variables si es necesario. En caso de encontrarse con algo indemostrable, vuelve para atrás deshaciendo todo lo hecho hasta llegar a un punto de elección, donde toma otro valor para las variables o elige otra regla que satisfaga el predicado.
+
+Para una implementación eficiente de estos conceptos, Prolog usa cláusulas Horn y un procedimiento conocido como unificación.
+
+\subsection{Base de conocimiento}
+
+Un programa Prolog se define por su base de conocimiento. La forma principal de construir una base de conocimiento es mediante ficheros de texto, sin embargo, esta base de conocimiento también se puede modificar en tiempo de ejecución mediante los predicados assert y retractall, es por ello que se dice que Prolog es un lenguaje homoicónico, ya que la diferencia entre código y datos es inexistente.
+
+Un código cualquiera está compuesto de comentarios y términos. Los términos pueden ser hechos o reglas. La única diferencia es que las reglas tienen condiciones que tienen que verificarse también para poder verificar la validez del término. Con un hecho, su mera definición es suficiente. A su vez los términos de componen de átomos (simples o compuestos), que son elementos constantes y variables, que pueden adoptar un valor. Los átomos empiezan en minúscula y las variables empiezan por mayúscula.
+
+\begin{lstlisting}[language=Prolog]
+
+human(socrates).
+human(kant).
+mortal(X) :- human(X).
+
+\end{lstlisting}
+
+Si cargamos una base de conocimiento con ese fichero podremos ejecutar las siguientes consultas.
+
+\begin{verbatim}
+Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
+SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
+Please run ?- license. for legal details.
+
+For online help and background, visit https://www.swi-prolog.org
+For built-in help, use ?- help(Topic). or ?- apropos(Word).
+
+?- human(socrates).
+true.
+
+?- human(pepito).
+false.
+
+?- mortal(X).
+X = socrates ;
+X = kant.
+
+?- assertz(god(zeus)).
+true.
+
+?- god(X).
+X = zeus.
+
+?- retractall(god(zeus)).
+true.
+
+?- god(X).
+false.
+
+?- 
+\end{verbatim}
+
+A pesar de ser un lenguaje enfocado a consultas, estas pueden ser transparentes al usuario, ya que existen muchos tipos de predicados especiales como, leer de teclado, imprimir pantalla o incluso ejecutar un servidor HTTP.
+
+\subsection{Operadores y aritmética}
+
+En Prolog, muchos operadores tradicionales son ligeramente diferentes por lo que haremos un repaso. El operador lógico AND es simplemente la coma, usado frecuentemente en reglas complejas. El operador lógico OR es el punto y coma, aunque normalmente se redefine otra regla, y propiciar el funcionamiento del backtracking, ya que queda más legible. Por último, el operador NOT se define como \\+. En Prolog la negación es negación por fallo. Es decir, tratará como fallo aquello que no puede demostrar como true. Esto solo tiene sentido bajo ciertas suposiciones, algunas de las cuales RDF no tiene como la de mundo cerrado (RDF es mundo abierto).
+
+En Prolog existen varios operadores con un funcionamiento similar a la igualdad. Por un lado el operador = realiza la operación de unificación a ambos lados (simétrico). La operación de unificación trata de que los átomos o variables que tengan a los lados coincidan. Por poner un ejemplo sencillo, si en un lado del = tenemos un átomo y en otro una variable, la forma de que coincidan es que la variable adopte el valor del átomo y siempre se verificará a no ser que la variable ya hubiese adoptado otro valor antes que no sea del del átomo. Si por ejemplo hay dos átomos, se comprueba que sean exactamente iguales.
+
+Merece especial mención el caso de las operaciones aritméticas, ya que en Prolog los símbolos aritméticos se quedan formando parte del átomo y no se evalúan, salvo que se pida explícitamente. Por ello, podemos decir que 4+5 no unifica no 3+6, aunque sus evaluaciones matemáticas sí unificarían entre sí.
+
+Para forzar la evaluación podemos usar el operador is, que es asimétrico y evalúa solo el lado derecho. También existe el operador =:= que evalúa de forma simétrica.
+
+Veamos algunos ejemplos de todo esto:
+\begin{lstlisting}[language=Prolog]
+Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
+SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
+Please run ?- license. for legal details.
+
+For online help and background, visit https://www.swi-prolog.org
+For built-in help, use ?- help(Topic). or ?- apropos(Word).
+
+?- write('Un término '), write('Otro término').
+Un término Otro término
+true.
+
+?- write('Un término '); write('Otro término').
+Un término 
+true .
+
+?- fail.
+false.
+
+?- \+ fail.
+true.
+
+?- X = Y.
+X = Y.
+
+?- socrates = X.
+X = socrates.
+
+?- socrates = platon.
+false.
+
+?- book(Name, 'Cervantes') = book('Don Quijote', Author).
+Name = 'Don Quijote',
+Author = 'Cervantes'.
+
+?- 4+5=3+6.
+false.
+
+?- X is 3+6.
+X = 9.
+
+?- 4+5=:=3+6.
+true.
+
+?- 
+\end{lstlisting}
+
+\subsection{Listas y diccionarios}
+
+Aparte de los términos, existen otros tipos de estructuras de datos como las listas y los diccionarios. En el fondo siguen siendo combinaciones de átomos y variables, pero disponen de sintaxis especial.
+
+Las listas se definen usando corchetes, y sus elementos se separan por comas. Además, podemos incluir una barra vertical para separar el primer elemento (head) del resto (tail). Una regla de suma de una lista sería así:
+
+\begin{lstlisting}[language=Prolog]
+sum([], 0).
+sum([H|T], Out) :-
+    sum(T, X),
+    Out is H+X.
+\end{lstlisting}
+
+\begin{lstlisting}
+?- sum([1,2,3], X).
+X = 6.
+\end{lstlisting}
+
+Algunos términos de interés para trabajar con listas son: member, append, length, nth1 y nth0.
+
+Los diccionarios por otro lado son estructuras de datos clave valor. Se definen mediante llaves y se separan los pares por coma, mientras que cada elemento del par se separa por dos puntos. Los diccionarios en Prolog además pueden tener una etiqueta, aunque si no queremos, podemos usar la barra baja para aceptar todo tipo de etiqueta. Existe un acceso mediante la sintaxis punto, pero además existen diversos términos por defecto como dict\_create, dict\_pairs, get\_dict, put\_dict, dicts\_join y operadores como :< y >:<.
+
+\begin{lstlisting}
+?- X = _{world:mundo, hello:hola}, write(X.hello), write(X.world).
+holamundo
+X = _9158{hello:hola, world:mundo}.
+\end{lstlisting}
+
+\subsection{Metapredicados}
+
+Uno de los detalles más importantes de Prolog son sus capacidades de metaprogramación. Además de la flexibilidad que ofrecen, permiten hacer código mucho más compacto.
+
+El metapredicado principal es call, que permite llamar al término que deseemos. La interfaz de comandos de Prolog no deja de ser un call por debajo. La flexibilidad es que el término al que llamamos no tiene por qué ser siempre el mismo. Sin embargo, este término suele ser demasiado bajo nivel para la mayoría de casos.
+
+Por encima tenemos forall. forall toma primero un término que generan varios puntos de elección (por ejemplo, con member, generará un punto por cada elemento de la lista). El segundo parámetro es un término que tiene que ser verdadero para todos los puntos de elección.
+
+\begin{lstlisting}
+?- List = [1,3,5,7], forall(member(X, List), 1 is X mod 2).
+List = [1, 3, 5, 7].
+
+?- List = [1,3,5,7], forall(member(X, List), 0 is X mod 2).
+false.
+\end{lstlisting}
+
+El término findall nos permite encontrar todos los posibles resultados de un término. Para ello, primero indicaremos la variable que vamos a tratar de obtener todos sus valores, después el término en sí que genera soluciones diferentes para las variables y por último la lista donde se van a almacenar las soluciones.
+
+\begin{lstlisting}
+?- findall(Name, human(Name), Names).
+Names = [socrates, kant].
+\end{lstlisting}
+
+Por último, maplist nos permite realizar un map sobre una lista. En primera posición marcamos el término que se va a aplicar para cada elemento, con N parámetros. A continuación N listas correspondientes a los N parámetros. Pueden ser tanto de entrada como de salida.
+
+\begin{lstlisting}
+?- maplist(write, [1,2,3]).
+123
+true.
+
+?- maplist(sum, [[1,2,3],[4,5,6]], OutList).
+OutList = [6, 15].
+\end{lstlisting}
+
+Otros metapredicados de interés pueden ser include, findnsols, bagof o setof.
+
+\subsection{RDF}
+
+Por último, vamos a comentar las facilidades que tiene Prolog para trabajar con RDF.
+
+El término esencial es rdf, que representa el estado de las tripletas. rdf\_assert y rdf\_retractall permiten añadir y eliminar tripletas. También admite un sistema de prefijos similares a otros formatos de RDF. También existen términos para trabajar con RDF Schema como rdfs\_class\_property (para comprobar, generar las propiedades asociadas a una clase) o rdfs\_individual\_of (para comprobar si un recurso es individuo de una clase).
+
+Además, la librería de RDF soporta diferentes tipos de literales mediante la sintaxis ^^. Estos tipos suelen estar definidos bajo la ontología de XML Schema, que ya hemos mencionado antes.
+
+\begin{lstlisting}
+Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
+SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
+Please run ?- license. for legal details.
+
+For online help and background, visit https://www.swi-prolog.org
+For built-in help, use ?- help(Topic). or ?- apropos(Word).
+
+?- use_module(library(semweb/rdf11)).
+true.
+
+?- rdf_register_prefix(foaf, 'http://xmlns.com/foaf/0.1/').
+true.
+
+?- rdf_assert('http://example.com/Cervantes', foaf:name, "Miguel de Cervantes Saavedra").
+true.
+
+?- rdf(S,P,O).
+S = 'http://example.com/Cervantes',
+P = 'http://xmlns.com/foaf/0.1/name',
+O = "Miguel de Cervantes Saavedra"^^'http://www.w3.org/2001/XMLSchema#string'.
+
+?- rdf(S,P,O^^xsd:string).
+S = 'http://example.com/Cervantes',
+P = 'http://xmlns.com/foaf/0.1/name',
+O = "Miguel de Cervantes Saavedra".
+
+?- 
+\end{lstlisting}
+
 
 \chapter{Estado del Arte}
 
@@ -236,17 +540,63 @@ Posteriormente un paso de reduce permite realizar agregaciones. El código JavaS
 Para interactuar con la base de datos se dispone de una API HTTP, tanto para crear como para borrar y o modificar los documentos.
 Además dispone de un sistema de replicación entre nodos eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
 
-\subsection{TerminusDB}
-TerminusDB es una base de datos programada en Prolog que comparte junto a CouchDB la característica de ser de tipo NoSQL de tipo documental.\cite{terminusdb}
-Sin embargo, TerminusDB almacena tripletas RDF. RDF, como veremos más adelante, es un modelo de representación del conocimiento basado en tripletas.
-TerminusDB cuenta con un lenguaje de consulta propio, admite ciertas validaciones sobre los datos y también dispone de una API HTTP.
-TerminusDB no dispone de ninguna característica similar a las vistas de CouchDB.
-
 \section{Triplestores}
 
+En esta sección analizaremos las bases de dato del tipo Triplestore. Estas bases de datos son muy similares, por no decir conceptualmente iguales, a las bases de datos de grafos, sin embargo, solo vamos a analizar triplestores que soporten explícitamente el modelo de RDF.
+
+\subsection{TerminusDB}
+TerminusDB es una base de datos programada en Prolog/Rust que comparte junto a CouchDB la característica de ser de tipo NoSQL.\cite{terminusdb}
+Sin embargo, TerminusDB almacena tripletas RDF.
+TerminusDB dispone de un esquema basado en OWL, muy potente y extendido por ellos mismos, que permite modelar ontologías muy completas, con relaciones avanzadas y restricciones potentes. Además incluye unas vistas basada en el concepto de documento, que generan formularios para el administrador y una API que permite interactuar en bloque con ciertas tripletas, tal y como si fuese un documento de CouchDB.
+
+Las consultas se realizan mediante un lenguaje llamado WOQL, basado en JSON-LD. Además existen librerías para JavaScript y Python.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{terminusdb.png}
+    \caption{Pantalla de administración de TerminusDB}
+    \label{fig:terminusdb}
+\end{figure}
+
+Un ejemplo de WOQL.js y de WOQL en JSON-LD que muestra todas las tripletas cuyo sujeto es de tipo scm:Book.
+
+\begin{lstlisting}[language=Java]
+
+// WOQL.js
+WOQL.and(
+    WOQL.triple("v:Subject","type","scm:Book"),
+    WOQL.opt().triple("v:Subject","v:Property","v:Value")
+)
+
+// WOQL
+{
+  "and": [
+    {
+      "triple": [
+        "v:Subject",
+        "rdf:type",
+        "scm:Book"
+      ]
+    },
+    {
+      "opt": [
+        {
+          "triple": [
+            "v:Subject",
+            "v:Property",
+            "v:Value"
+          ]
+        }
+      ]
+    }
+  ]
+}
+\end{lstlisting}
+
 \subsection{Apache Jena}
-Apache Jena es una base de datos de tripletas RDF, una de las más maduras si nos atenemos a su longevidad (Jena 1.0 es del año 2000).\cite{couchdb}
-Implementa gran cantidad de estándares de la web semántica como RDF, RDF Schema, SPARQL, OWL, etc sin embargo no dispone tampoco de la capacidad de generar vistas web.
+Apache Jena es una base de datos de tripletas RDF, una de las más maduras si nos atenemos a su longevidad (Jena 1.0 es del año 2000).\cite{jena}
+Se trata de un proyecto con diversos componentes. Por un lado una API en Java para tratar con RDF, un motor de alto rendimiento SPARQL (ARQ) con soporte al estándar SPARQL Update, un almacenamiento persistente llamado TDB y un servidor que combina todo a través de una API, Fuseki. Además dispone de una API para tratar con ontologías OWL y una API de inferencias para usar diferentes razonadores RDF Schema y OWL. Las búsquedas sobre texto pueden realizarse usando por debajo el motor Apache Lucene, usado en otras bases de datos de búsqueda como Elasticsearch.
+
 
 \subsection{Virtuoso y Marklogic}
 OpenLink Virtuoso y MarkLogic son bases de datos multimodelo, entre ellos soportan el almacenamiento de tripletas.\cite{virtuoso}\cite{marklogic}.
@@ -254,12 +604,11 @@ Virtuoso tiene una versión opensource usada detrás de grandes silos de conocim
 
 \subsection{ClioPatria}
 ClioPatria es una aplicación que combina las librerías de RDF y HTTP de SWI-Prolog para ofrecer una base de datos semántica completa.\cite{cliopatria}
-Soporta queries en SPARQL, SeRQL y en código Prolog. Al estar basada la aplicación en componentes independientes, podemos usarlos como base
-de nuestra aplicación.
+Soporta queries en SPARQL, SeRQL y en código Prolog. Al estar basada la aplicación en componentes independientes, podemos usarlos como base de nuestra aplicación.
 
 \section{Análisis}
 
-Esta tabla representa como cumplen los objetivos propuestos en la sección Objetivos en cada uno de los programas analizados.
+Esta tabla representa como cumplen las historias de usuario cada uno de los programas analizados.
 
 
 \begin{table}[ht]
@@ -286,38 +635,65 @@ Notas:
 
 \chapter{Planificación}
 
-\section{SCRUM}
+En este capítulo hablaremos sobre la metodología Scrum, primero de forma genérica y luego adaptada a nuestro proyecto en particular. Además, veremos el plan de riesgos.
+\section{Scrum}
+
 \subsection{Introducción}
+Scrum es una metodología ágil creada por Ken Schwaber y Jeff Sutherland a principios de los años 90.\cite{scrum}
+
+Scrum fue diseñado para que equipos pequeños pudiesen desarrollar productos complejos de forma efectiva, adaptándose a los cambios de requisitos del producto.
+El pilar fundamental de Scrum es el empirismo. Esta metodología sostiene que la única forma de obtener información correcta y precisa es mediante la experiencia, sin embargo, muchas metodologías de gestión de proyectos apenas tienen en cuenta la retroalimentación constante que genera el trabajo que se realiza semana a semana. Los pilares sobre los que se fundamenta Scrum se pueden resumir en: transparencia, inspección y adaptación.
+
 \subsection{Actores}
+En Scrum se definen varios actores dentro del proyecto: Product Owner, Scrum Master y equipo de desarrollo. Todos ellos forman parte del equipo Scrum, el cual es independiente y flexible en su forma de trabajar.
+
+El \textbf{Product Owner} es el encargado de organizar el Product Backlog. Tiene que expresar claramente las tareas que hay que realizar, de forma transparente y asegurándose que el equipo de desarrollo entiende las tareas. Además debe priorizar las tareas de forma que maximice el valor del producto final y teniendo en cuenta el desempeño de los miembros del equipo de desarrollo. Define las condiciones para que una tarea pueda ser clasificada como completada.
+
+El \textbf{equipo de desarrollo} es el equipo de profesionales que debe completar las tareas. Ante un Sprint backlog, deben organizarse entre sí para poder completar la mayoría de tareas allí descritas. Los equipos deben ser multidisciplinares, y aunque haya personas especializadas en algún punto, es el equipo como conjunto el que responde ante las tareas. El tamaño de los equipos ideal estaría entre 3 y 9 personas.
+
+El \textbf{Scrum Master} es la persona encargada de promover el uso de Scrum y de aconsejar a los integrantes del equipo de formas de actuar válidas en Scrum.
+
 \subsection{Eventos}
+
+El evento principal en Scrum es el sprint. Los sprints son periodos de tiempo, de duración inferior a un mes (habitualmente dos semanas), donde se mejora el valor del producto de forma incremental. Los sprints comienzan justo cuando ha acabado el anterior. Durante el sprint no se debe modificar el objetivo del sprint y debe ser considerado como un proyecto independiente. Dentro de los sprints existen varios eventos.
+
+El \textbf{sprint planning} es la reunión de todo el equipo, moderada por el Scrum Master que tiene lugar al inicio del sprint. En esta reunión se tienen que decidir de forma consensuada que tareas van a formar parte del Sprint Backlog (y serán realizadas en ese sprint). En primer lugar se debe tener claro el objetivo del sprint, las tareas seleccionadas del Product Backlog para formar parte del Sprint Backlog deben ser tareas que acerquen a todo el equipo a mejorar el objetivo. Además deben ser tareas realizables. Posteriormente, el equipo de desarrollo debe discuitir como va a realizar las tareas, pidiendo ayuda si hace falta al Product Owner para que especifique.
+
+Cada día dentro del sprint el equipo de desarrollo tendrá un \textbf{daily scrum}, una reunión de 15 minutos donde decidirá que va a hacer cada miembro del equipo durante las siguientes 24 horas.
+
+Al acabar el sprint, tiene lugar los \textbf{sprint review} y \textbf{sprint retrospective}. La primera es una reunión donde se valora el trabajo realizado, lo restante, se reevalúan prioridades y se comentan posibles dificultades que haya podido haber y en general, cualquier cosa que pueda servir para la mejora del producto.
+
+La segunda reunión es mucho más introspectiva, y el objetivo es la mejora del equipo, como hacer que trabaje mejor, problemas interpersonales, etc
+
 \subsection{Artefactos}
+
+Durante un proyecto Scrum existen diversos artefactos. Siguiendo los valores fundacionales, estos deben ser transparentes, sujetos a la inspección y adaptables a las circunstancias.
+
+El \textbf{Product Backlog} es una lista ordenada de tareas que se deben realizar en el proyecto. Es responsabilidad del Product Owner gestionar esta lista. La lista está ordenada según la prioridad de las tareas. La lista es dinámica y nunca está completa. Continuamente se van añadiendo tareas (funcionalidad nueva, errores, pruebas, ...) y es un reflejo de como el producto evoluciona. Es muy recomendable que las tareas, además de ser claras, incluyan una definición de "completo" para saber de forma objetiva cuando una tarea ha sido finalizada.
+
+El \textbf{Sprint Backlog} es un conjunto de tareas seleccionadas del Product Backlog más tareas que surgen durante el propio sprint. Todas ellas deben ser mencionadas en los daily scrum. Solo el equipo de desarrollo puede modificar el sprint backlog una vez ha comenzado el sprint y siempre y cuando no modifique el objetivo del sprint. Idealmente, todas las tareas del sprint backlog deberían estar completas al acabar el sprint.
+
 \section{Metodología de trabajo}
+Para el proyecto se ha tratado de seguir una metodología similar a Scrum, obviando ciertas diferencias inherentes al trabajo invididual.
+
 \section{Plan de gestión de riesgos}
 \section{Suposiciones y restricciones}
-Para el proyecto se ha tratado de seguir una metodología similar a SCRUM, obviando ciertas diferencias inherentes al trabajo invididual.
-Primero se realizó una estimación, basada en puntos de historia, de cada una de las historias de usuario, pasando a formar parte del product backlog.
-Estas historias de usuario representan los 5 objetivos mencionados anteriormente y existen ciertas dependencias entre ellas tal y como se puede ver en el gráfico.
 
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{plantuml/dependency.png}
-    \caption{Dependencias entre las historias de usuario}
-    \label{fig:dependencia}
-\end{figure}
 
-Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
-se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
 
-Cada una de estas historias de usuario tenía asociadas diferentes condiciones de aceptación. Se trata de frases que siguen el estilo: Dado/Cuando/Entonces. 
-Una implementación completa de la historia de usuario hará que todas las frases sean ciertas. Gracias a Behave, estas condiciones de aceptación no solo existen en el papel, sino en el código también que comprueba de forma activa además que no haya regresiones en etapas posteriores.
+% Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
+% se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
 
-Estas historias de usuario a su vez se descompusieron en tareas lo más atómicas posibles, normalmente con una condición de aceptación asociada para saber que la tarea había acabado.
+% Cada una de estas historias de usuario tenía asociadas diferentes condiciones de aceptación. Se trata de frases que siguen el estilo: Dado/Cuando/Entonces. 
+% Una implementación completa de la historia de usuario hará que todas las frases sean ciertas. Gracias a Behave, estas condiciones de aceptación no solo existen en el papel, sino en el código también que comprueba de forma activa además que no haya regresiones en etapas posteriores.
 
-En metodología SCRUM, el trabajo se divide en sprints de varias semanas. En este caso en particular se eligieron sprints de tres semanas, aunque el tiempo real se decidía al inicio del sprint.
-En esta reunión se elegían las tareas que debían a formar parte del sprint, formando parte de una lista conocida como sprint backlog.
+% Estas historias de usuario a su vez se descompusieron en tareas lo más atómicas posibles, normalmente con una condición de aceptación asociada para saber que la tarea había acabado.
 
-En nuestra implementación particular de SCRUM, no había equipo, por tanto ciertos roles y ceremonias dejaban de tener interés. 
-En este sentido, no se realizaron dailies y tanto el Product Owner como el equipo de desarrollo recayeron en mi persona, pudiendo asimilar el rol de Scrum Master al tutor del proyecto, Miguel Ángel Martínez Prieto.
+% En metodología Scrum, el trabajo se divide en sprints de varias semanas. En este caso en particular se eligieron sprints de tres semanas, aunque el tiempo real se decidía al inicio del sprint.
+% En esta reunión se elegían las tareas que debían a formar parte del sprint, formando parte de una lista conocida como sprint backlog.
+
+% En nuestra implementación particular de Scrum, no había equipo, por tanto ciertos roles y ceremonias dejaban de tener interés. 
+% En este sentido, no se realizaron dailies y tanto el Product Owner como el equipo de desarrollo recayeron en mi persona, pudiendo asimilar el rol de Scrum Master al tutor del proyecto, Miguel Ángel Martínez Prieto.
 
 \chapter{Análisis y diseño}
 
