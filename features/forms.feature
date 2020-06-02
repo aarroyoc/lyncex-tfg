@@ -57,7 +57,7 @@ Scenario: Visualize saved triples
     When I visit '/form3?_id=https://app.lyncex.com/book/SuperLibro'
     Then I get the following response
         """
-        <form method="POST"><input disabled type="url" name="_id" value="https://app.lyncex.com/book/SuperLibro"><textarea placeholder="https://app.lyncex.com/author" name="https://app.lyncex.com/author">Cervantes
+        <form action="/form3" method="POST"><input readonly type="url" name="_id" value="https://app.lyncex.com/book/SuperLibro"><textarea placeholder="https://app.lyncex.com/author" name="https://app.lyncex.com/author">Cervantes
         Lope de Vega
         </textarea><input type="submit"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/book/SuperLibro"><input type="submit" value="DELETE"></form>
         """

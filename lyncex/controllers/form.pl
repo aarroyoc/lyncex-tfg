@@ -32,8 +32,8 @@ form_controller(Path, get, Request, FormData) :-
     rdf(Controller, lyncex:class, Class),
     member('_id'=Resource, FormData),
     with_output_to(atom(Form),(
-        format('<form method="POST">'),
-        format('<input disabled type="url" name="_id" value="~w">', [Resource]),
+        format('<form action="/~w" method="POST">', [Path]),
+        format('<input readonly type="url" name="_id" value="~w">', [Resource]),
         forall(rdfs_class_property(Class, Property),(
             (
                 rdf(Property, lyncex:multiple, true)
