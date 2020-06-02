@@ -112,6 +112,7 @@ form_controller(Path, post, Request, FormData) :-
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
     member('_id'=Resource, FormData),
+    rdf_retractall(Resource, _, _),
     rdf_assert(Resource, rdf:type, Class),
     forall((
         member(DataKey=DataValue, FormData), DataKey \= '_id'

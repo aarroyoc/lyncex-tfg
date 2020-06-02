@@ -44,7 +44,7 @@ Scenario: Multiple triples (generated form)
 Scenario: Multiple triples (save)
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test4.ttl' data
-    When I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=Cervantes\nLope de Vega'
+    When I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=small'
     Then I visit '/book3?id=SuperLibro'
     And I get a '<b>Authors: </b>Cervantes,Lope de Vega,' response
     And I get a 200 status code
@@ -53,7 +53,7 @@ Scenario: Multiple triples (save)
 Scenario: Visualize saved triples
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test4.ttl' data
-    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=Cervantes\nLope de Vega'
+    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=small'
     When I visit '/form3?_id=https://app.lyncex.com/book/SuperLibro'
     Then I get the following response
         """
@@ -67,10 +67,30 @@ Scenario: Visualize saved triples
 Scenario: Delete triples
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test4.ttl' data
-    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=Cervantes\nLope de Vega'
+    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=small'
     When I visit '/form3?_delete=yes&_id=https://app.lyncex.com/book/SuperLibro'
     Then I get a 'OK' response
     And I get a 200 status code
     And I get a 'text/html' response type
 
-# UPDATE works
+Scenario: Update triples (add more)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=small'
+    When I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=large'
+    Then I visit '/book3?id=SuperLibro'
+    And I get a '<b>Authors: </b>Cervantes,Lope de Vega,Pepito,' response
+    And I get a 200 status code
+    And I get a 'text/html' response type
+
+Scenario: Update triples (delete)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=large'
+    When I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=small'
+    Then I visit '/book3?id=SuperLibro'
+    And I get a '<b>Authors: </b>Cervantes,Lope de Vega,' response
+    And I get a 200 status code
+    And I get a 'text/html' response type
+
+
