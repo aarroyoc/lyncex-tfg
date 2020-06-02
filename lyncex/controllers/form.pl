@@ -1,8 +1,7 @@
-:- module(form, [form_controller/3]).
+:- module(form, [form_controller/4]).
 
 :- use_module(library(semweb/rdfs)).
 :- use_module(library(semweb/rdf11)).
-:- use_module(library(http/http_parameters)).
 
 :- use_module(library(pcre)).
 
@@ -11,8 +10,68 @@
 :- use_module('../query.pl').
 :- use_module('../handler.pl').
 
+string_concat_newline(S1, S2, S3) :-
+    string_concat(S1, "\r\n", S4),
+    string_concat(S4, S2, S3).
 
-form_controller(Path, get, Request) :-
+% Delete data
+form_controller(Path, get, Request, FormData) :-
+    rdfs_individual_of(Controller, lyncex:'FormController'),
+    rdf(Controller, lyncex:url, Path^^xsd:string),
+    rdf(Controller, lyncex:class, Class),
+    member('_id'=Resource, FormData),
+    member('_delete'=yes, FormData),
+    rdf_retractall(Resource, _, _),
+    format('Content-Type: text/html~n~n'),
+    format('OK').
+
+% Show form (edit)
+form_controller(Path, get, Request, FormData) :-
+    rdfs_individual_of(Controller, lyncex:'FormController'),
+    rdf(Controller, lyncex:url, Path^^xsd:string),
+    rdf(Controller, lyncex:class, Class),
+    member('_id'=Resource, FormData),
+    with_output_to(atom(Form),(
+        format('<form method="POST">'),
+        format('<input disabled type="url" name="_id" value="~w">', [Resource]),
+        forall(rdfs_class_property(Class, Property),(
+            (
+                rdf(Property, lyncex:multiple, true)
+            ->
+                findall(ValueProperty, rdf(Resource, Property, ValueProperty^^_), ValueProperties),
+                reverse(ValueProperties, ReverseValueProperties),
+                foldl(string_concat_newline, ReverseValueProperties, "", OutValueProperties),
+                format('<textarea placeholder="~w" name="~w">~w</textarea>', [Property, Property, OutValueProperties])
+            ;
+                rdf(Resource, Property, ValueProperty^^_),
+                format('<input type="text" placeholder="~w" name="~w" value="~w">', [Property, Property, ValueProperty])
+            )
+        )),
+        format('<input type="submit">'),
+        format('</form>'),
+        format('<form method="GET">'),
+        format('<input type="hidden" name="_delete" value="yes">'),
+        format('<input type="hidden" name="_id" value="~w">', [Resource]),
+        format('<input type="submit" value="DELETE">'),
+        format('</form>')
+    )),
+    % Read template
+    rdf(Controller, lyncex:template, Template),
+    rdfs_individual_of(Template, cnt:'ContentAsText'),
+    rdf(Template, cnt:chars, TemplateString^^xsd:string),
+    Parameters = _{},
+    % Queries and Handlers
+    resolve_query(Controller, Parameters, XQuery),
+    resolve_handler(Controller, Parameters, XHandler),
+    flatten([XQuery, XHandler, 'form'-Form], XOutput),
+    dict_pairs(TemplateData, _, XOutput),
+    format('Content-Type: text/html~n~n'),
+    current_output(Output),
+    st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
+
+
+% Show form (empty)
+form_controller(Path, get, Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
@@ -21,7 +80,7 @@ form_controller(Path, get, Request) :-
     with_output_to(atom(Form),(
         format('<form method="POST">'),
         format('<input type="url" name="_id" value="~w">', [BaseSubject]),
-        forall((rdfs_class_property(Class, Property)),(
+        forall(rdfs_class_property(Class, Property),(
             (
                 rdf(Property, lyncex:multiple, true)
             ->
@@ -37,9 +96,6 @@ form_controller(Path, get, Request) :-
     rdf(Controller, lyncex:template, Template),
     rdfs_individual_of(Template, cnt:'ContentAsText'),
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
-    % Parameters
-    %http_parameters(Request, [], [form_data(FormData)]),
-    %process_parameters(FormData, Controller, Parameters),
     Parameters = _{},
     % Queries and Handlers
     resolve_query(Controller, Parameters, XQuery),
@@ -50,12 +106,11 @@ form_controller(Path, get, Request) :-
     current_output(Output),
     st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
-
-form_controller(Path, post, Request) :-
+% Save data
+form_controller(Path, post, Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
-    http_parameters(Request, [], [form_data(FormData)]),
     member('_id'=Resource, FormData),
     rdf_assert(Resource, rdf:type, Class),
     forall((
@@ -65,7 +120,7 @@ form_controller(Path, post, Request) :-
         (
             rdf(DataKey, lyncex:multiple, true)
             ->
-            atom_string(DataValue, DataValueString), split_string(DataValueString, "\n\r", "", Values)
+            atom_string(DataValue, DataValueString), split_string(DataValueString, "\r\n", "", Values)
             ;
             [DataValue] = Values
         ),
@@ -91,4 +146,5 @@ form_controller(Path, post, Request) :-
             rdf_assert(Resource, DataKey, Value^^xsd:string)
         ))
     )),
-    form_controller(Path, get, Request).
+    format('Content-Type: text/html~n~n'),
+    format('OK').

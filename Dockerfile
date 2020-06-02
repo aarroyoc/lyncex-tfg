@@ -1,4 +1,4 @@
-FROM swipl:8.1.30
+FROM swipl:8.2.0
 
 RUN useradd -m prolog
 USER prolog

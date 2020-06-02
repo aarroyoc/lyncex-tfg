@@ -1,4 +1,4 @@
-:- module(template, [template_controller/3]).
+:- module(template, [template_controller/4]).
 
 :- use_module(library(semweb/rdfs)).
 :- use_module(library(semweb/rdf11)).
@@ -10,7 +10,7 @@
 :- use_module('../query.pl').
 :- use_module('../handler.pl').
 
-template_controller(Path, Method, Request) :-
+template_controller(Path, Method, Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'TemplateController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:method, MethodString^^xsd:string),
@@ -19,7 +19,6 @@ template_controller(Path, Method, Request) :-
     rdfs_individual_of(Template, cnt:'ContentAsText'),
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
     % Process parameters
-    http_parameters(Request, [], [form_data(FormData)]),
     process_parameters(FormData, Controller, Parameters),
     % Queries and Handlers
     resolve_query(Controller, Parameters, XQuery),
@@ -30,7 +29,7 @@ template_controller(Path, Method, Request) :-
     current_output(Output),
     st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
-template_controller(Path, _Method, _Request) :-
+template_controller(Path, _Method, _Request, _FormData) :-
     rdfs_individual_of(Controller, lyncex:'TemplateController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:template, Template),

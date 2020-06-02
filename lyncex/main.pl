@@ -4,6 +4,7 @@
 :- use_module(library(http/http_dispatch)).
 :- use_module(library(http/http_header)).
 :- use_module(library(http/http_unix_daemon)).
+:- use_module(library(http/http_parameters)).
 :- use_module(library(http/html_write)).
 :- use_module(library(semweb/rdf11)).
 
@@ -19,9 +20,13 @@
 
 :- http_handler(root(Path), controller(Path, Method), [method(Method)]).
 
-controller(P, M, R) :- form_controller(P, M, R).
-controller(P, M, R) :- template_controller(P, M, R).
-controller(P, M, R) :- content_controller(P, M, R).
+controller(P, M, R) :- 
+    http_parameters(R, [], [form_data(FormData)]),
+    (
+        form_controller(P, M, R, FormData);
+        template_controller(P, M, R, FormData);
+        content_controller(P, M, R)
+    ).
 
 controller(_Path, _Method, Request) :-
     http_404([], Request).

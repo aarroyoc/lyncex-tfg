@@ -31,6 +31,14 @@ def step_check_response(context, text):
     print(response_text)
     assert response_text == text
 
+@step("I get the following response")
+def step_check_response_large(context):
+    response_text = context.request.text
+    real_text = context.text.replace("\n", "\r\n")
+    print(context.text)
+    print(response_text)
+    assert response_text == real_text
+
 @step("I do a POST request with '{file}' data")
 def step_post_request(context, file):
     with open(file) as f:

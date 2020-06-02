@@ -49,3 +49,28 @@ Scenario: Multiple triples (save)
     And I get a '<b>Authors: </b>Cervantes,Lope de Vega,' response
     And I get a 200 status code
     And I get a 'text/html' response type
+
+Scenario: Visualize saved triples
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=Cervantes\nLope de Vega'
+    When I visit '/form3?_id=https://app.lyncex.com/book/SuperLibro'
+    Then I get the following response
+        """
+        <form method="POST"><input disabled type="url" name="_id" value="https://app.lyncex.com/book/SuperLibro"><textarea placeholder="https://app.lyncex.com/author" name="https://app.lyncex.com/author">Cervantes
+        Lope de Vega
+        </textarea><input type="submit"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/book/SuperLibro"><input type="submit" value="DELETE"></form>
+        """
+    And I get a 200 status code
+    And I get a 'text/html' response type
+
+Scenario: Delete triples
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    And I submit the form '/form3' with data '_id=https://app.lyncex.com/book/SuperLibro' and 'author=Cervantes\nLope de Vega'
+    When I visit '/form3?_delete=yes&_id=https://app.lyncex.com/book/SuperLibro'
+    Then I get a 'OK' response
+    And I get a 200 status code
+    And I get a 'text/html' response type
+
+# UPDATE works
