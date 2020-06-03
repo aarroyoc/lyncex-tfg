@@ -1,0 +1,31 @@
+@base <https://app.lyncex.com/text#> .
+@prefix lcx: <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<LoginApp>
+    a lcx:Application ;
+    lcx:controller <LoginController> .
+
+<LoginController>
+    a lcx:LoginController ;
+    lcx:url "login" ;
+    lcx:username "aarroyoc" ;
+    lcx:password "123456" ;
+    lcx:template  [
+        a cnt:ContentAsText ;
+        cnt:chars "{% unescape login %}"
+    ] .
+
+<PrivateController>
+    a lcx:ContentController ;
+    lcx:url "private" ;
+    lcx:method "get" ;
+    lcx:access "private" ;
+    lcx:content [
+        a cnt:ContentAsText ;
+        cnt:chars "Monty Python"
+    ] ;
+    lcx:mime "text/plain" .

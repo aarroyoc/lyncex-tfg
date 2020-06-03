@@ -7,6 +7,7 @@
 
 :- use_module(library(st/st_render)).
 
+:- use_module('../parameters.pl').
 :- use_module('../query.pl').
 :- use_module('../handler.pl').
 
@@ -59,7 +60,7 @@ form_controller(Path, get, Request, FormData) :-
     rdf(Controller, lyncex:template, Template),
     rdfs_individual_of(Template, cnt:'ContentAsText'),
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
-    Parameters = _{},
+    process_parameters(FormData, Controller, Parameters),
     % Queries and Handlers
     resolve_query(Controller, Parameters, XQuery),
     resolve_handler(Controller, Parameters, XHandler),
@@ -96,7 +97,7 @@ form_controller(Path, get, Request, FormData) :-
     rdf(Controller, lyncex:template, Template),
     rdfs_individual_of(Template, cnt:'ContentAsText'),
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
-    Parameters = _{},
+    process_parameters(FormData, Controller, Parameters),
     % Queries and Handlers
     resolve_query(Controller, Parameters, XQuery),
     resolve_handler(Controller, Parameters, XHandler),
