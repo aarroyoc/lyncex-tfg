@@ -39,7 +39,7 @@ form_controller(Path, get, Request, FormData) :-
             (
                 rdf(Property, lyncex:multiple, true)
             ->
-                findall(ValueProperty, rdf(Resource, Property, ValueProperty^^_), ValueProperties),
+                findall(ValueProperty, rdf_literal_or_iri(Resource, Property, ValueProperty), ValueProperties),
                 reverse(ValueProperties, ReverseValueProperties),
                 foldl(string_concat_newline, ReverseValueProperties, "", OutValueProperties),
                 format('<textarea placeholder="~w" name="~w">~w</textarea>', [Property, Property, OutValueProperties])
@@ -124,7 +124,8 @@ form_controller(Path, post, Request, FormData) :-
             ->
             atom_string(DataValue, DataValueString), split_string(DataValueString, "\r\n", "", Values)
             ;
-            [DataValue] = Values
+            atom_string(DataValue, AtomDataValue),
+            [AtomDataValue] = Values
         ),
         forall(member(Value, Values),(
             (
@@ -145,8 +146,20 @@ form_controller(Path, post, Request, FormData) :-
                 ;
                 true
             ),
-            rdf_assert(Resource, DataKey, Value^^xsd:string)
+            save_rdf(Resource, DataKey, Value)
         ))
     )),
     format('Content-Type: text/html~n~n'),
     format('OK').
+
+save_rdf(Resource, DataKey, Value) :-
+    number_string(NumberValue, Value),
+    rdf_assert(Resource, DataKey, NumberValue).
+
+save_rdf(Resource, DataKey, Value) :-
+    string_concat("http", _, Value),
+    atom_string(AtomValue, Value),
+    rdf_assert(Resource, DataKey, AtomValue).
+
+save_rdf(Resource, DataKey, Value) :-
+    rdf_assert(Resource, DataKey, Value^^xsd:string).

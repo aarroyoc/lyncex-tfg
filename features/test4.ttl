@@ -30,6 +30,19 @@
     rdfs:domain <BookMultiply> ;
     lcx:multiple true.
 
+<Person>
+    a rdfs:Class .
+
+<friend>
+    a rdf:Property ;
+    rdfs:domain <Person> ;
+    rdfs:range <Person> ;
+    lcx:multiple true.
+
+<https://app.lyncex.com/person/Jaime>
+    a <Person> ;
+    <https://app.lyncex.com/person/name> "Jaime Astúriz" .
+
 <TemplateApp>
     a lcx:Application ;
     lcx:prefix [
@@ -42,7 +55,8 @@
     lcx:controller <ProcessFormControllerValidation> ;
     lcx:controller <BookValidController> ;
     lcx:controller <ProcessFormMultiple> ;
-    lcx:controller <BookMultiple> .
+    lcx:controller <BookMultiple> ;
+    lcx:controller <PersonForm> .
 
 <ProcessFormController>
     a lcx:FormController ;
@@ -126,4 +140,28 @@
     lcx:parameter [
         a lcx:Parameter ;
         lcx:param_name "id"
+    ] .
+
+<PersonForm>
+    a lcx:FormController ;
+    lcx:url "form4" ;
+    lcx:base_subject "https://app.lyncex.com/person/" ;
+    lcx:class <Person> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "{% unescape form %}"
+    ] .
+
+<PersonController>
+    a lcx:TemplateController ;
+    lcx:url "person4" ;
+    lcx:method "get" ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "<b>Friend: </b>{{ person.friend }}"
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "person" ;
+        lcx:subject <https://app.lyncex.com/person/Mario>
     ] .

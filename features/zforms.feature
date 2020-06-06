@@ -93,4 +93,22 @@ Scenario: Update triples (delete)
     And I get a 200 status code
     And I get a 'text/html' response type
 
+Scenario: Form also work for relationships
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test4.ttl' data
+    And I submit the form '/form4' with data '_id=https://app.lyncex.com/person/Mario' and 'friend=https://app.lyncex.com/person/Jaime'
+    Then I visit '/form4?_id=https://app.lyncex.com/person/Mario'
+    And I get the following response
+    """
+    <form action="/form4" method="POST"><input readonly type="url" name="_id" value="https://app.lyncex.com/person/Mario"><textarea placeholder="https://app.lyncex.com/friend" name="https://app.lyncex.com/friend">https://app.lyncex.com/person/Jaime
+    </textarea><input type="submit"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/person/Mario"><input type="submit" value="DELETE"></form>
+    """
+    And I get a 200 status code
+    And I get a 'text/html' response type
+    And I visit '/person4'
+    And I get a '<b>Friend: </b>https://app.lyncex.com/person/Jaime' response
+    And I get a 200 status code
+    And I get a 'text/html' response type
+
+
 

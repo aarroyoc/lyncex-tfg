@@ -29,3 +29,10 @@ def step_submit_form_pepito(context, url, id):
         "_id" : id,
         "https://app.lyncex.com/author": "Cervantes\nLope de Vega\nPepito"
     })
+
+@step("I submit the form '{url}' with data '_id={id}' and 'friend={name}'")
+def step_submit_form_friend(context, url, id, name):
+    context.request = requests.post(f"http://lyncex:11011{url}", data={
+        "_id" : id,
+        "https://app.lyncex.com/friend": name
+    })

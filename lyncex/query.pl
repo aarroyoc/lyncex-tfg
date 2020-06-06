@@ -1,4 +1,4 @@
-:- module(query, [resolve_query/3]).
+:- module(query, [resolve_query/3, rdf_literal_or_iri/3]).
 
 :- use_module(library(semweb/rdfs)).
 :- use_module(library(semweb/rdf11)).
@@ -22,7 +22,7 @@ resolve_query(Controller, Parameters, OutQuery) :-
             ))
         ),
         findall(Value, (
-            rdf(QuerySubject, QueryProperty, QueryValue^^_),
+            rdf_literal_or_iri(QuerySubject, QueryProperty, QueryValue),
             atom_string(QueryProperty, QueryPropertyString),
             split_string(QueryPropertyString, "/#", "/#", QueryPropertyList),
             length(QueryPropertyList, N),
@@ -35,3 +35,10 @@ resolve_query(Controller, Parameters, OutQuery) :-
         atom_string(AtomQueryName, QueryName),
         FinalQuery = AtomQueryName-QueryData
     ), OutQuery).
+
+rdf_literal_or_iri(QuerySubject, QueryProperty, QueryValue) :-
+    rdf(QuerySubject, QueryProperty, QueryValue^^_).
+
+rdf_literal_or_iri(QuerySubject, QueryProperty, QueryValue) :-
+    rdf(QuerySubject, QueryProperty, QueryValue),
+    atom(QueryValue).
