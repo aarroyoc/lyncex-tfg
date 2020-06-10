@@ -1,0 +1,39 @@
+@startuml
+skinparam linetype ortho
+left to right direction
+
+title Arquitectura Lyncex
+
+package "Capa de presentacion" {
+    [Navegador]
+}
+
+package "Capa de negocio" {
+    [BaseController] <|-- [ContentController]
+    [BaseController] <|-- [TemplateController]
+    [BaseController] <|-- [FormController]
+    [BaseController] <|-- [LoginController]
+    [Handler] ..> [ContentController]
+    [Handler] ..> [TemplateController]
+    [Handler] ..> [FormController]
+    [Handler] ..> [LoginController]
+    [Handler] ..> [API]
+
+    [BaseController] --> [ValidationHelper]
+    [BaseController] --> [ParameterHelper]
+    [BaseController] --> [QueryHelper]
+}
+
+database "Capa de datos" {
+    [Triplestore]
+}
+
+[ContentController] ..> [Triplestore]
+[TemplateController] ..> [Triplestore]
+[FormController] ..> [Triplestore]
+[LoginController] ..> [Triplestore]
+[API] ..> [Triplestore]
+[Navegador] ..> [Handler]
+[BaseController] ..> [Navegador]
+
+@enduml

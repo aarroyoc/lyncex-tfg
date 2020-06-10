@@ -5,13 +5,32 @@
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix cnt: <http://www.w3.org/2011/content#> .
 
+# CNT
+cnt:Content 
+    a rdfs:Class .
+
+cnt:ContentAsText
+    a rdfs:Class ;
+    rdfs:subClassOf cnt:Content .
+
+cnt:ContentAsBase64
+    a rdfs:Class ;
+    rdfs:subClassOf cnt:Content .
+
+cnt:bytes
+    a rdf:Property ;
+    rdfs:domain cnt:ContentAsBase64 ;
+    rdfs:range xsd:string .
+
+cnt:chars
+    a rdf:Property ;
+    rdfs:domain cnt:ContentAsText ;
+    rdfs:range xsd:string .
+
+# GENERAL 
+
 <Application>
     rdf:type rdfs:Class .
-
-<port>
-    rdf:type rdf:Property ;
-    rdfs:domain <Application> ;
-    rdfs:range xsd:int .
 
 <controller>
     rdf:type rdf:Property ;
@@ -36,6 +55,13 @@
     rdfs:domain <Controller> ;
     rdfs:range xsd:string .
 
+<access>
+    rdf:type rdf:Property ;
+    rdfs:domain <Controller> ;
+    rdfs:range xsd:string .
+
+# ContentController
+
 <ContentController>
     rdf:type rdfs:Class ;
     rdfs:subClassOf <Controller> .
@@ -49,6 +75,8 @@
     rdf:type rdf:Property ;
     rdfs:domain <ContentController> ;
     rdfs:range xsd:string .
+
+# TemplateController
 
 <TemplateController>
     rdf:type rdfs:Class ;
@@ -69,6 +97,13 @@
     rdfs:domain <TemplateController> ;
     rdfs:range <Handler> .
 
+<parameter>
+    rdf:type rdf:Property ;
+    rdfs:domain <TemplateController> ;
+    rdfs:range <Parameter> .
+
+## Query
+
 <Query>
     rdf:type rdfs:Class .
 
@@ -79,7 +114,15 @@
 
 <subject>
     rdf:type rdf:Property ;
-    rdfs:domain <Query> .
+    rdfs:domain <Query> ;
+    rdfs:range xsd:string .
+
+<template_subject>
+    rdf:type rdf:Property ;
+    rdfs:domain <Query> ;
+    rdfs:range xsd:string .
+
+## Handler
 
 <Handler>
     rdf:type rdfs:Class .
@@ -94,6 +137,59 @@
     rdfs:domain <Handler> ;
     rdfs:range xsd:string .
 
+## Parameter
+
+<Parameter>
+    a rdfs:Class .
+
+<param_name>
+    a rdf:Property ;
+    rdfs:domain <Parameter> ;
+    rdfs:range xsd:string .
+
+<code>
+    a rdf:Property ;
+    rdfs:domain <Parameter> ;
+    rdfs:range xsd:string .
+
+<validation>
+    a rdf:Property ;
+    rdfs:domain <Parameter> ;
+    rdfs:range xsd:string .
+
+# FormController
+
+<FormController>
+    a rdfs:Class ;
+    rdfs:subClassOf <TemplateController> .
+
+<base_subject>
+    a rdf:Property ;
+    rdfs:domain <FormController> ;
+    rdfs:range xsd:string .
+
+<class>
+    a rdf:Property ;
+    rdfs:domain <FormController> ;
+    rdfs:range rdfs:Class .
+
+# LoginController
+<LoginController>
+    a rdfs:Class ;
+    rdfs:subClassOf <TemplateController> .
+
+<username>
+    a rdf:Property ;
+    rdfs:domain <LoginController> ;
+    rdfs:range xsd:string .
+
+<password>
+    a rdf:Property ;
+    rdfs:domain <LoginController> ;
+    rdfs:range xsd:string .
+
+## Prefix
+
 <Prefix>
     rdf:type rdfs:Class .
 
@@ -106,16 +202,3 @@
     rdf:type rdf:Property ;
     rdfs:domain <Prefix> ;
     rdfs:range xsd:string .
-
-
-#QueryString
-#POST
-#GET
-#Templates
-#TemplateController
-#View
-#Auth
-#Middleware
-#DataModel
-#Forms
-#API

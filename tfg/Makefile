@@ -8,7 +8,7 @@ tfg.pdf: lyncex.png plantuml/*.png
 
 lyncex.png:
 	python3 /opt/ontology-visualization/ontology_viz.py -o lyncex.dot lyncex.ttl
-	dot -Tpng -o lyncex.png lyncex.dot
+	dot -Tpng -o lyncex-2.png lyncex.dot
 
 clean:
 	rm tfg.pdf
@@ -17,7 +17,7 @@ clean:
 	rm tfg.out
 	rm tfg.bbl
 	rm tfg.blg
-	rm lyncex.png
+	rm lyncex-2.png
 	rm plantuml/*.png
 
 plantuml/*.png:

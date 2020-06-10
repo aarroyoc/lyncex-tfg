@@ -18,6 +18,8 @@ hmargin=3cm
 \usepackage{float}
 \usepackage{listings}
 \usepackage[titletoc,toc,page]{appendix}
+\usepackage{adjustbox}
+\usepackage{rotating}
 \renewcommand{\appendixtocname}{Ap\'endices}
 \renewcommand{\appendixpagename}{Ap\'endices}
 
@@ -68,7 +70,7 @@ En este proyecto se reforzarán los conocimientos del lenguaje Prolog, en concre
 
 \section{Alcance}
 
-Para cumplir los objetivos identificamos cinco historias de usuario diferentes. En este proyecto intentaremos completar las cinco historias de usuario al completo. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario.
+Para cumplir los objetivos identificamos cinco historias de usuario diferentes. En este proyecto intentaremos completar las cinco historias de usuario al completo. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario. Más adelante entraremos en detalle de los requisitos que llevan aparejados cada una de estas historias de usuario.
 
 \begin{figure}[h]
     \centering
@@ -77,7 +79,11 @@ Para cumplir los objetivos identificamos cinco historias de usuario diferentes. 
     \label{fig:dependencia}
 \end{figure}
 
+De estas historias, cuatro de ellas son un incremento funcional del mismo sistema, Lyncex, y se debe completar una antes de pasar a la siguiente. La quinta, el desarrollo de la ontología, se desarrolla de forma paralela al resto del sistema.
 
+El proyecto deberá estar finalizado antes de la fecha límite, del 10 de julio de 2020, tanto la implementación como esta memoria.
+
+El proyecto no trata de crear ninguna base de datos desde cero, ni enfrentarse a muchos de los retos comunes que existen en este tipo de sistemas como restricciones de rendimiento o problemas de escalabilidad y sincronización. Tampoco intenta crear un framework web listo para ir a producción, ya que siguen faltando componentes esenciales de cualquier framework web.
 
 \section{Aplicación de ejemplo (visión general)}
 
@@ -171,17 +177,20 @@ En Lyncex se ha decidido usar sintaxis Turtle. Un ejemplo de esta sintaxis a con
 \end{lstlisting}
 
 Que es equivalente a:
-\begin{verbatim}
-https://lyncex.com/lyncex#Richard_Feynman -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type -> http://xmlns.com/foaf/0.1/Person
-https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/name -> Richard Feynman
-https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/birthday -> "02-15"
-https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/knows -> _:1
-https://lyncex.com/lyncex#Richard_Feynman -> http://xmlns.com/foaf/0.1/knows -> https://lyncex.com/lyncex#Von_Neumman
-_:1 -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type -> http://xmlns.com/foaf/0.1/Person
-_:1 -> http://xmlns.com/foaf/0.1/name -> Albert Einstein
-https://lyncex.com/lyncex#Von_Neumman -> http://www.w3.org/1999/02/22-rdf-syntax-ns#type -> http://xmlns.com/foaf/0.1/Person
-https://lyncex.com/lyncex#Von_Neumman -> http://xmlns.com/foaf/0.1/name -> John Von Neumman
-\end{verbatim}
+
+\begin{adjustbox}{width=\textwidth,keepaspectratio}
+\begin{lstlisting}
+https://lyncex.com/lyncex#Richard_Feynman,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://xmlns.com/foaf/0.1/Person
+https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/name,Richard Feynman
+https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/birthday,"02-15"
+https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/knows,_:1
+https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/knows,https://lyncex.com/lyncex#Von_Neumman
+_:1,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://xmlns.com/foaf/0.1/Person
+_:1,http://xmlns.com/foaf/0.1/name,Albert Einstein
+https://lyncex.com/lyncex#Von_Neumman,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://xmlns.com/foaf/0.1/Person
+https://lyncex.com/lyncex#Von_Neumman,http://xmlns.com/foaf/0.1/name,John Von Neumman
+\end{lstlisting}
+\end{adjustbox}
 
 En Turtle primero se inicia definiendo una base para las IRIs y prefijos para no tener que escribir IRIs largas y poco legibles en el resto del documento.
 Las IRIs se definen usando los símbolos < y >. Las IRIs con prefijo llevan el prefijo y el símbolo :. 
@@ -218,7 +227,7 @@ Veamos un ejemplo de ontología sencilla definida con RDF Schema.
 <Book>
     a rdfs:Class ;
     rdfs:label "Book" ;
-    rdfs:comment "A work printed on sheets of paper bound together within covers" .
+    rdfs:comment "A work printed on sheets of paper" .
 
 <name>
     a rdf:Property ;
@@ -473,6 +482,7 @@ El término esencial es rdf, que representa el estado de las tripletas. rdf\_ass
 
 Además, la librería de RDF soporta diferentes tipos de literales mediante la sintaxis ^^. Estos tipos suelen estar definidos bajo la ontología de XML Schema, que ya hemos mencionado antes.
 
+\begin{adjustbox}{width=\textwidth,keepaspectratio}
 \begin{lstlisting}
 Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
 SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
@@ -502,6 +512,7 @@ O = "Miguel de Cervantes Saavedra".
 
 ?- 
 \end{lstlisting}
+\end{adjustbox}
 
 
 \chapter{Estado del Arte}
@@ -625,6 +636,8 @@ Esta tabla representa como cumplen las historias de usuario cada uno de los prog
     \textbf{SPARQL} & No               & No                  & No              & Sí            & Sí                & Sí                  & No             
     \end{tabular}
     }
+    \caption{Comparativa de características entre diferente software}
+    \label{table:comparativa}
 \end{table}
 
 Notas:
@@ -632,6 +645,8 @@ Notas:
     \item Aunque Django cuenta con un ORM muy potente para trabajar sobre el modelo relacional, nada impide usar otros modelos de almacenamiento.
     \item A través de Django REST Framework, un componente independiente pero altamente acoplado
 \end{enumerate}
+
+Podemos concluir que no existe ningún software que cumpla el objetivo que nos hemos marcado al inicio del proyecto. Sin embargo, existe software que implementa en cierta medida muchas características que serían deseables en este sistema.
 
 \chapter{Planificación}
 
@@ -673,13 +688,117 @@ El \textbf{Product Backlog} es una lista ordenada de tareas que se deben realiza
 
 El \textbf{Sprint Backlog} es un conjunto de tareas seleccionadas del Product Backlog más tareas que surgen durante el propio sprint. Todas ellas deben ser mencionadas en los daily scrum. Solo el equipo de desarrollo puede modificar el sprint backlog una vez ha comenzado el sprint y siempre y cuando no modifique el objetivo del sprint. Idealmente, todas las tareas del sprint backlog deberían estar completas al acabar el sprint.
 
+El \textbf{incremento} son las tareas finalizadas al acabar el sprint y que incrementan el valor del producto. El incremento debe ser algo inspeccionable y un paso adelante hacia el objetivo. El incremento debe estar en condiciones de uso aunque el Product Owner puede decidir no publicar una nueva versión.
+
 \section{Metodología de trabajo}
 Para el proyecto se ha tratado de seguir una metodología similar a Scrum, obviando ciertas diferencias inherentes al trabajo invididual.
 
+En primer lugar se fija el tiempo de los sprints a 3 semanas. Tiempo suficiente para avanzar de forma significativa y poder acabar bastantes tareas, sin con ello perder el foco para poder iterar en caso de que haya que hacer cambios o cierta parte se quede atascada. No habrá dailies, aunque existirá una comunicación constante mediante la herramienta Slack con los tutores por si hubiese dudas puntuales.
+
+El product backlog se define en un tablero de Trello, donde se anotan todas las tareas pendientes, más grandes o más pequeñas. Estas tareas son definidas por mí mismo, haciendo el rol de Product Owner.
+
+Al principio del sprint tiene lugar una reunión que combina el sprint review y el sprint planning. Esta reunión se realizaba principalmente usando la herramienta Google Hangouts. Primero se repasaba el sprint backlog del sprint anterior, para ver qué se movido al incremento. Además, se mencionaban ciertos problemas que habían sido encontrados: problemas en la definición de completado, dificultades a la hora de modelar ciertos aspectos, bugs pertenecientes a librerías que usamos, etc.
+
+Además se repasa la parte del sprint backlog que no ha sido completada. Esta se repasa para ver los motivos de que no hubiese podido ser complatada y si tiene sentido seguir con ella en el siguiente sprint o si es mejor eliminarla.
+
+Una vez acabada esta parte, comienza la parte de sprint planning, donde se seleccionan las tareas del product backlog que pasan al sprint backlog para el sprint siguiente. Además se analizan por encima como se piensan implementar, aunque esto no es concluyente en ningún caso.
+
+Durante la reunión estan presentes uno o dos tutores, desempeñando ellos un rol de Scrum Master (Miguel Ángel Martínez Prieto y María Aránzazu Simón Hurtado).
+
+El resto del sprint, el equipo de desarrollo (yo mismo) va modificando las tareas sobre Trello según se cumplen las condiciones de completado o si se encuentra algún obstáculo.
+
 \section{Plan de gestión de riesgos}
-\section{Suposiciones y restricciones}
 
+Para estar prevenidos antes posibles riesgos que pudieran darse en la ejecución de este proyecto, se planifica con antelación ciertos problemas que podrían surgir. Este plan se elabora en cuatro fases:
+\begin{enumerate}
+    \item Identificación de los riesgos
+    \item Análisis y priorización de los riesgos
+    \item Planificación sobre los riesgos
+    \item Monitorización de los riesgos
+\end{enumerate}
 
+Para priorizar los riesgos tendremos en cuenta la siguiente expresión:
+\begin{math}
+RE = d*p
+\end{math}
+donde RE es el Risk Exposure, d es el daño potencial que puede causar y p es la probabilidad de que suceda. El daño puede medirse como una cuantía económica, o en nuestro caso, en una escala de 0 a 10. Las probabilidades usan la misma escala.
+
+\begin{table}[]
+\resizebox{\textwidth}{!}{\begin{tabular}{lllll}
+\textbf{ID} & \textbf{Descripción}                             & \textbf{Daño} & \textbf{Probabilidad} & \textbf{RE} \\
+R1          & Pandemia global                                  & 5             & 0.5                   & 2.5         \\
+R2          & Enfermedad desarrollador                         & 7             & 2                     & 14          \\
+R3          & Bug inesperado en las librerías                  & 4             & 4                     & 16          \\
+R4          & Equipos se estropean                             & 9             & 1                     & 9           \\
+R5          & Se encuentra fallo grave de diseño tarde         & 6             & 3                     & 18          \\
+R6          & La implementación tarda más de lo previsto       & 6             & 5                     & 30          \\
+R7          & Cambian los requisitos durante la implementación & 7             & 5                     & 35          \\
+R8          & Historias de usuario poco definidas              & 3             & 5                     & 15          \\
+R9          & Tests poco realistas                             & 4             & 4                     & 16          \\
+R10         & Conocimiento de tecnologías insuficiente         & 2             & 6                     & 12         
+\end{tabular}}
+\caption{Análisis de riesgos}
+\label{table:risks-analysis}
+\end{table}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{risk-matrix.png}
+    \caption{Matriz de riesgos}
+    \label{fig:risk-matrix}
+\end{figure}
+
+Una vez realizado este análisis, planificamos qué hacer con cada uno de ellos. Las opciones disponibles son:
+
+\begin{itemize}
+    \item Aceptar que los riesgos puedan ocurrir
+    \item Evitar el riesgo
+    \item Reducir el riesgo
+    \item Transferir el riesgo
+    \item Mitigar el riesgo
+\end{itemize}
+
+La diferencia principal entre evitar/reducir y mitigar un riesgo es que en el primer caso, hemos de realizar una inversión aunque el riesgo finalmente no se materialice, mientras que en el segundo caso, solo deberíamos dedicarle atención una vez sucede.
+
+\begin{table}[]
+\resizebox{\textwidth}{!}{\begin{tabular}{lll}
+\textbf{ID} &
+    \textbf{Descripción} &
+    \textbf{Plan} \\
+R1 &
+    Pandemia global &
+    Aceptar el riesgo \\
+R2 &
+    Enfermedad desarrollador &
+    Aceptar el riesgo \\
+R3 &
+    Bug inesperado en las librerías &
+    \begin{tabular}[c]{@{}l@{}}Reducir el riesgo tratando de usar \\ la menor cantidad de librerías posibles\end{tabular} \\
+R4 &
+    Equipos se estropean &
+    \begin{tabular}[c]{@{}l@{}}Mitigar el riesgo usando otros PCs de casa y\\ reducir el riesgo manteniendo copias de seguridad\end{tabular} \\
+R5 &
+    Se encuentra fallo grave de diseño tarde &
+    \begin{tabular}[c]{@{}l@{}}Reducir y transferir el riesgo haciendo sprints\\ reviews y plannings junto al tutor\end{tabular} \\
+R6 &
+    La implementación tarda más de lo previsto &
+    \begin{tabular}[c]{@{}l@{}}Mitigar el riesgo teniendo siempre entregables\\ listos para presentar al final de cada sprint\end{tabular} \\
+R7 &
+    Cambian los requisitos durante la implementación &
+    \begin{tabular}[c]{@{}l@{}}Reducir el riesgo introduciendo un sistema de\\ testing flexible y polivalente\end{tabular} \\
+R8 &
+    Historias de usuario poco definidas &
+    \begin{tabular}[c]{@{}l@{}}Reducir y transferir el riesgo haciendo sprints\\ reviews y plannings junto al tutor\end{tabular} \\
+R9 &
+    Tests poco realistas &
+    \begin{tabular}[c]{@{}l@{}}Reducir el riesgo introduciendo un sistema de\\ testing flexible y polivalente\end{tabular} \\
+R10 &
+    Conocimiento de tecnologías insuficiente &
+    \begin{tabular}[c]{@{}l@{}}Evitar el riesgo estudiando más sobre Prolog \\ \\ y RDF.\end{tabular}
+\end{tabular}}
+\caption{Plan de riesgos}
+\label{table:risks-plan}
+\end{table}
 
 % Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
 % se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
@@ -687,43 +806,87 @@ Para el proyecto se ha tratado de seguir una metodología similar a Scrum, obvia
 % Cada una de estas historias de usuario tenía asociadas diferentes condiciones de aceptación. Se trata de frases que siguen el estilo: Dado/Cuando/Entonces. 
 % Una implementación completa de la historia de usuario hará que todas las frases sean ciertas. Gracias a Behave, estas condiciones de aceptación no solo existen en el papel, sino en el código también que comprueba de forma activa además que no haya regresiones en etapas posteriores.
 
-% Estas historias de usuario a su vez se descompusieron en tareas lo más atómicas posibles, normalmente con una condición de aceptación asociada para saber que la tarea había acabado.
-
-% En metodología Scrum, el trabajo se divide en sprints de varias semanas. En este caso en particular se eligieron sprints de tres semanas, aunque el tiempo real se decidía al inicio del sprint.
-% En esta reunión se elegían las tareas que debían a formar parte del sprint, formando parte de una lista conocida como sprint backlog.
-
-% En nuestra implementación particular de Scrum, no había equipo, por tanto ciertos roles y ceremonias dejaban de tener interés. 
-% En este sentido, no se realizaron dailies y tanto el Product Owner como el equipo de desarrollo recayeron en mi persona, pudiendo asimilar el rol de Scrum Master al tutor del proyecto, Miguel Ángel Martínez Prieto.
-
 \chapter{Análisis y diseño}
 
+En este capítulo realizaremos el análisis del proyecto a realizar. Primero explicaremos en detalle las historias de usuario ya mencionadas en el primer capítulo. Después analizaremos los requisitos que surgen de esto, tanto funcionales como no funcionales.
+
+\section{Historias de usuario}
+
+Las historias de usuario que se han seleccionado para este proyecto son las siguientes:
+\begin{enumerate}
+    \item Almacenar datos junto a sus ontologías en el mismo espacio, validándose. El objetivo es tener un sistema de almacenamiento de tripletas, que sirva de base para el resto de historias. Este almacenamiento deberá ser compatible con tripletas, preferiblemente en formato Turtle y deberá ser manipulable desde el exterior también con operaciones de búsqueda, inserción y eliminación de datos.
+    \item Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento. Esta ontología deberá aprovechar otras ontologías existentes, en la medida de la posible. La ontología deberá definirse usando tecnologías interoperables. Se deja la puerta abierta a que se defina una ontología más amplia de la que pueda manejar Lyncex al finalizar el proyecto.
+    \item Servir páginas web estáticas definidas mediante esa ontología. Se entiende por páginas estáticas aquellas cuyo contenido no depende más que de si mismo.
+    \item Servir páginas web que necesiten leer datos del almacenamiento (plantillas). Estas páginas son aquellas que implementan un procesamiento extra (plantillas) y además pueden leer y escribir datos en en el almacenamiento. Además pueden acceder a valores de parámetros GET y POST y pueden realizar validaciones.
+    \item Servir páginas web CRUD con formularios. Los formularios son una abstracción para la manipulación de datos que facilita el trabajo en datos agrupados sobre un sujeto. Esta abstracción deberá permitir realizar formularios automáticamente en HTML, validarlos. Editar y borrar su contenido. Además habrá páginas públicas y páginas privadas protegidas por un usuario/contraseña.
+\end{enumerate}
+
 \section{Requisitos}
+
+A continuación analizamos los requisitos que surgen de estas historias de usuario.
+
+\subsection{Requisitos funcionales}
+\begin{enumerate}
+    \item El sistema deberá ser capaz de almacenar tripletas RDF.
+    \item El sistema deberá permitir consultar todas las tripletas almacenadas de forma externa mediante una API.
+    \item El sistema deberá permitir consultar las tripletas almacenadas aplicando filtros de forma externa mediante una API.
+    \item El sistema deberá ser capaz de admitir tripletas nuevas de forma externa mediante una API.
+    \item El sistema deberá ser capaz de eliminar tripletas de forma externa mediante una API.
+    \item El sistema deberá ser capaz de eliminar tripletas aplicando filtros de forma externa mediante una API.
+    \item El sistema deberá validar que la propiedad rdfs:range definida en las ontologías residentes en el almacenamiento se cumple.
+    \item El sistema deberá mostrar un error cuando la ruta especificada no concuerde con ninguna página.
+    \item El sistema deberá mostrar contenido estático de tipo textual.
+    \item El sistema deberá mostrar contenido estático de tipo binario codificados en Base64.
+    \item El sistema deberá diferenciar entre peticiones GET y POST.
+    \item El sistema deberá disponer de un motor de plantillas con condicionales.
+    \item El sistema deberá disponer de un motor de plantillas con bucles.
+    \item El sistema deberá disponer de un motor de plantillas que permita imprimir valores del almacenamiento.
+    \item El sistema deberá poder leer parámetros GET y exponerlos en las plantillas.
+    \item El sistema deberá poder leer parámetros POST y exponerlos en las plantillas.
+    \item El sistema deberá poder ejecutar validaciones de expresiones regulares sobre el contenido de los parámetros.
+    \item El sistema deberá poder ejecutar validaciones Prolog sobre el contenido de los parámetros. 
+    \item El sistema deberá poder ejecutar código Prolog para resolver las variables de salida de la plantilla
+    \item El sistema deberá generar un formulario HTML automáticamente basado en una ontología
+    \item El sistema deberá poder validar los formularios con expresiones regulares
+    \item El sistema deberá poder validar los formularios con código Prolog
+    \item El sistema deberá poder guardar directamente los formularios
+    \item El sistema deberá permitir visualizar el contenido de los formularios ya guardados
+    \item El sistema deberá poder editar formularios ya almacenados
+    \item El sistema deberá poder borrar el contenido de formularios ya almacenados
+    \item El sistema deberá poder restringir el acceso a una página mediante usuario y controseña
+\end{enumerate}
+
+\subsection{Requisitos no funcionales}
+\begin{enumerate}
+    \item El sistema deberá estar programado en Prolog
+    \item El sistema deberá funcionar sobre Linux
+    \item El sistema deberá soportar la codificación UTF-8 en todas partes
+    \item La API de comunicación externa será con verbos HTTP
+    \item La API de comunicación externa usará el formato Turtle
+    \item El sistema deberá poder ser instalable por el usuario en menos de 30 minutos
+    \item El sistema debe ser fiable en todo momento
+\end{enumerate}
 
 \section{Diseño de Lyncex}
 
 \subsection{Arquitectura}
+En primer lugar debemos tener en cuenta que Lyncex es un sistema preparada para trabajar en un modelo cliente-servidor, donde el cliente es un navegador web. Esto nos permite partir en varias capas. Sin embargo, la capa de presentación es muy ligera y depende mucho del templatizado que realice el usuario. La capa de negocio es donde se implementa prácticamente toda la aplicación y la capa de datos es donde tiene lugar la persistencia.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/front-controller.png}
+    \caption{Arquitectura de Lyncex}
+    \label{fig:arquitectura}
+\end{figure}
+
+Entrando dentro de la capa de negocio tenemos la aplicación del patrón Front Controller.
+Este patrón, diseñado para aplicaciones web donde existe un único punto de entrada. Este realiza tareas comunes y finalmente delega la acción concreta a un controlador. Alrededor de los controladores existen helpers que implementan funcionalidad común.
 
 \subsection{API}
 
-\subsection{Controladores}
-
-\section{Diseño de la ontología}
-
-\begin{figure}[h]
-    \centering
-    \includegraphics[width=\textwidth]{lyncex.png}
-    \caption{Ontología de Lyncex}
-    \label{fig:ontologia}
-\end{figure}
-
-\chapter{Componentes del sistema}
-Lyncex es una aplicación Prolog que se ejecuta a modo de servidor. Se recomienda utilizar la aplicación desde un contenedor Docker, si bien no es estrictamente necesario. 
-Una vez lanzado, la única forma de interactuar con el sistema es mediante la API.
-
-\section{API}
 La API de Lyncex se encarga de que el sistema interactúe con el exterior.
 Un programador que desee crear una aplicación de Lyncex es lo único que debería tocar.
-Externamente se trata de una API HTTP, que define varias rutas bajo la ruta \_api.
+Externamente se trata de una API HTTP, que define varias rutas bajo la ruta \_api. La barra baja se ha elegido para no interferir con un posible sistema de APIs de la aplicación que use Lyncex.
 Las operaciones que soporta la API son:
 \begin{itemize}
     \item Creación de tripletas en la base de datos (POST, \_api)
@@ -734,19 +897,29 @@ Las operaciones que soporta la API son:
 La creación de tripletas toma como entrada un fichero de tipo Turtle, mismo formato que se encuentra a la salida de la lectura de tripletas.
 De esta forma, se pueden realizar backups rápidos de la aplicación.
 
+Los filtros se implementan mediante parámetros GET.
+
 El componente API además dispone de una validación elemental de RDF Schema.
 Esto se consigue si tanto los datos como las ontologías que los definen coexisten en la aplicación.
-Se verifica básicamente el uso correcto de instancias y propiedades mediante rdfs:domain.
+Se verifica básicamente el uso correcto de instancias y propiedades mediante rdfs:range.
 Técnicamente, RDF Schema no es un lenguaje de validación al uso, sino más bien de descripción de datos, pero demasiado abierto como para hacer comprobaciones estrictas.
 Es por ello que solo se valida este único comportamiento.
 
+\section{Diseño de la ontología}
 
-\section{Controladores}
+\begin{sidewaysfigure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{lyncex.png}
+    \caption{Ontología de Lyncex}
+    \label{fig:ontologia}
+\end{sidewaysfigure}
+
+\subsection{Controladores}
 Los controladores son los componentes que implementan la funcionalidad principal definida por la ontología.
 Al llegar una petición, se van probando los diferentes tipos de controladores hasta encontrar uno que sea del tipo al definido en la tripleta: (Controlador, rdf:type, lyncex:TipoControlador).
 Inicialmente se han diseñado tres controladores.
 
-\subsection{ContentController}
+\subsubsection{ContentController}
 El más básico de todos, simplemente devuelve lo que tenga definido en la tripleta (Controlador, lyncex:content, Content) con el tipo MIME 
 de la tripleta (Controlador, lyncex:mime, MimeType). El nodo Content es del tipo ContentAsText o ContentAsBase64, permitiendo ambos modos de representación del contenido.
 Ambos tipos forman parte de la ontología de W3C llamada \textit{Representing Content in RDF 1.0}\cite{cnt}.
@@ -760,7 +933,7 @@ Hay que mencionar, que en ningún caso almacenar ficheros binarios codificados e
     \label{fig:contentcontroller}
 \end{figure}
 
-\subsection{TemplateController}
+\subsubsection{TemplateController}
 El TemplateController se encarga de gestionar las plantillas. Estas plantillas se definen siguiendo la sintaxis Semblance de la librería simple-template.
 El TemplateController realiza las siguientes operaciones en orden:
 \begin{enumerate}
@@ -778,7 +951,7 @@ El TemplateController realiza las siguientes operaciones en orden:
     \label{fig:templatecontroller}
 \end{figure}
 
-\subsection{FormController}
+\subsubsection{FormController}
 El FormController es una abstracción por encima del TemplateController a nivel interno, pero de cara a la ontología no es una subclase.
 Su funcionamiento depende de si se realiza una petición POST o GET. Ante una petición POST, el controlador procesará los parámetros.
 Buscará la existencia de un parámetro llamado \_id en primer lugar, ya que definirá el sujeto sobre el que se van a almacenar tripletas.
@@ -802,7 +975,9 @@ Una vez tenga el listado de propiedades, generará un formulario HTML ajustando 
     \label{fig:formcontrollerpost}
 \end{figure}
 
-\section{Procesado de parámetros}
+\subsubsection{LoginController}
+
+\subsection{Procesado de parámetros}
 El procesado de parámetros es llamado por diferentes controladores para adaptar el formato de entrada HTTP GET y POST a un formato común (un diccionario Prolog).
 Solo saldrán del procesado aquellos parámetros indicados de forma explícita, ignorando aquellos que no lo estén.
 Durante el procesado se ejecutan las validaciones si las hubiera. Existen dos tipos de validaciones: Regex y Prolog.
@@ -864,11 +1039,116 @@ los cuáles son implementados en Python. Como las historias de usuario nos habla
 
 \chapter{Validación y pruebas}
 
+Para comprobar la validez de la implementación se realizan pruebas de diversos tipos.
+
 \section{Pruebas manuales}
+
+El primer tipo de pruebas que se ha realizado son aquellas con intervención manual, realizadas por el programador. En estas principalmente se evalúa que el concepto sigue funcionando. Estas pruebas tienen poco valor, ya que son difíciles de replicar en idénticas condiciones.
+
+No obstante, hay una prueba manual completa en forma de la aplicación de ejemplo, que detallaremos más en profundidad en el capítulo correspondiente.
 
 \section{Tests unitarios}
 
+Entendemos por tests unitarios aquellos que prueban de forma aislada una parte del código. En el proyecto se han implementado tests unitarios usando el framework PlUnit. Los tests unitarios de PlUnit tienen la siguiente estructura:
+
+\begin{lstlisting}[language=Prolog]
+
+:- begin_tests(api).
+
+test(bnode) :-
+    X = rdf(node(1), lyncex:content, node(2)),
+    X = rdf(SOrg, _, OOrg),
+    map_bnode(SOrg, OOrg, S, O),
+    \+ S = node(_),
+    \+ O = node(_).
+
+:- end_tests(api).
+
+\end{listing}
+
+Se definen zonas de test delimitadas por begin_tests y end_tests. En su interior definimos reglas test, que deben ser cumplirse. En este ejemplo, queríamos probar la regla map_bnode y si todo va bien, todas los términos deben ser verdaderos. La ejecución de los tests se detalla en el manual de instalación.
+
 \section{Test E2E}
+
+Los tests E2E prueban la validez del sistema en su conjunto (end-to-end, punto a punto). Esto se consigue levantando un servidor de Lyncex e insertando datos de aplicaciones de prueba. Posteriormente, vamos probando que todas las características funcionan tal y como se especificó en los tests. Estos tests se encuentran definidos en la carpeta features.
+
+Estos tests son muy importantes ya que durante el desarrollo se definía cada tarea nueva como un test E2E. Si el código pasa el test creado con anterioridad, significa que la tarea está completada y pasa a formar parte del incremento.
+
+Los test E2E se implementan con Behave, que es una herramienta específica para realizar Behaviour Driven Development (BDD). La idea es definir, en lenguaje natural, las condiciones de aceptación de una característica. Para ello usa las palabras Given/When/Then (y los conectores And/But), más conocido como lenguaje Gherkin. Las principales ventajas de este modelo es que podemos trasladar todas las condiciones de aceptación a código y que los tests los pueden escribir personas con escaso conocimiento técnico. El corolario de la primera consecuencia es que siempre vamos a estar atentos ante regresiones en el código.
+
+Las frases con Given son precondiciones. Acciones que se realizan para dejar el sistema en un estado listo para ejecutar la prueba. Las frases con When (idealmente solo una frase), representan el sujeto a prueba, el estímulo que tenemos que hacer para desencadenar aquello que queremos probar. Finalmente, con Then deberíamos comprobar que el test arroja los resultados esperados. Deben ser principalmente aserciones.
+
+Behave permite implementar los pasos en Python, en un fichero paralelo (carpeta steps).
+
+Veamos un ejemplo de un test E2E.
+
+\begin{lstlisting}
+Scenario: Parameters (GET, valid)
+    Given I have an empty Lyncex instance
+    And I do a POST request with 'features/test3.ttl' data
+    When I visit '/person3?id=42'
+    Then I get a 200 status code
+    And I get a '<b>ID: </b>42' response
+    And I get a 'text/html' response type
+\end{lstlisting}
+
+Los steps son parecidos a esto:
+\begin[language=Python]{lstlisting}
+from behave import step
+import requests
+import hashlib
+
+@step("I visit '{url}'")
+def step_visit_url(context, url):
+    context.request = requests.get(f"http://lyncex:11011{url}")
+
+@step("I get the photo '{photo}'")
+def step_get_photo(context, photo):
+    m = hashlib.sha1()
+    m.update(context.request.content)
+    n = hashlib.sha1()
+    with open(photo, "rb") as f:
+        n.update(f.read())
+    assert m.digest() == n.digest()
+\end{lstlisting}
+
+los steps admiten un templatizado inverso (sirven como patrón para sacar datos) y además siempre comparten una variable llamada context, que podemos usar para conservar estado entre steps.
+
+Para ejecutar los tests E2E, el método recomendado es usar Docker Compose y ejecutar:
+
+\begin{verbatim}
+docker-compose run test-e2e
+\end{verbatim}
+
+\section{GitHub Actions}
+
+GitHub Actions es un servicio de integración continua/despliegue continuo (CI/CD por sus siglas). Se encuentra integrado dentro del servicio web GitHub y nos permite definir tareas que se ejecutan ante ciertas acciones de entrada. Uno de los usos más habituales es la de comprobar, cuando llegan commits nuevos al repositorio Git, que los tests siguen pasando.
+
+El proyecto cuenta con un fichero que activa GitHub Actions. Este fichero simplemente ejecuta los dos tipos de tests automatizados y si alguno de ellos finaliza incorrectamente, marca el commit en rojo y envía un correo para avisar de que hay código que no pasa los tests en el repositorio.
+
+\begin{lstlisting}
+name: Test
+on: [push]
+jobs:
+    test-e2e:
+        runs-on: ubuntu-18.04
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v1
+        - name: Build Docker images
+          run: docker-compose build
+        - name: Execute E2E test
+          run: docker-compose run test-e2e
+    test-unit:
+        runs-on: ubuntu-18.04
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v1
+        - name: Build Docker images
+          run: docker-compose build
+        - name: Execute unit tests
+          run: docker-compose run test-unit
+\end{lstlisting}
 
 \chapter{Aplicación de ejemplo}
 
@@ -876,9 +1156,18 @@ los cuáles son implementados en Python. Como las historias de usuario nos habla
 
 \section{Manual de instalación}
 
+\subsection{Docker}
+
+\subsection{Tests}
+
 \section{Manual de usuario}
 
 \chapter{Conclusiones y trabajo futuro}
+
+MUTABILIDAD RDF
+HERRAMIENTAS PROLOG
+BDD
+ANEXO TESTS
 
 \begin{appendices}
 \chapter{Ontología}
