@@ -1003,11 +1003,6 @@ La comunidad de SWI Prolog es pequeña pero activa y a parte de la gran cantidad
 Entre los módulos que tiene SWI Prolog y que es difícil encontrar en otras implementaciones, debemos destacar los módulos de web semántica y RDF y los de HTTP.
 Sin estos módulos, la realización de Lyncex hubiese sido mucho más compleja y alargada en el tiempo.
 
-\subsection{RDF, Turtle}
-RDF, siglas de Resource Description Framework, es un modelo de datos para describir datos usando tripletas sujeto-predicado-objeto. 
-Se trata de un estándar del W3C y dispone de una variedad de sintaxis. Se ha elegido Turtle como sintaxis predeterminada ya que es la que en nuestra opinión es la más simple y menos verbosa.
-Otros formatos alternativos como RDF/XML o JSON-LD parten de formatos diseñados para ser usados de forma diferente, añadiendo complejidad y verbosidad en el camino.
-
 \subsection{IDE}
 Como IDE se ha utilizado Visual Studio Code\cite{vscode}, un editor propiedad de Microsoft, pero multiplataforma.
 Es un IDE con el que ya había familaridad previa y no supone ningún esfuerzo usarlo para este proyecto.
@@ -1017,13 +1012,18 @@ El motivo es que el plugin ejecuta Prolog por debajo para detectar errores de si
 en pruebas lanzadas a través de la terminal.
 
 \subsection{Sistema operativo}
-La totalidad del proyecto se ha realizado sobre Debian, en su versión Sid. Se trata de un sistema operativo con kernel Linux, 
-de amplio uso en servidores, y también usado, en menor medida, en portátiles y workstations.
+La totalidad del proyecto se ha realizado sobre Debian, en su versión Sid. Se trata de un sistema operativo con kernel Linux, de amplio uso en servidores, y también usado, en menor medida, en portátiles y workstations.
 
 \subsection{Docker}
 Para que los entornos de prueba y de ejecución sean reproducibles, se ha optado por usar Docker y su utilidad, Docker Compose.
-Docker es un sistema de contenedores para Linux que proporciona capacidades de aislamiento y reproducibilidad de entornos similares a las máquinas virtuales, sin el overhead que usar estas conlleva.
+Docker es un sistema de contenedores para Linux que proporciona capacidades de aislamiento y reproducibilidad de entornos similares a las máquinas virtuales, sin el overhead que usar estas conlleva. Con Docker podemos generar versiones del software inmutables y ejecutables en cualquier kernel Linux sin necesidad de ninguna dependencia más.
+Además mejora mucho la seguridad por defecto de los procesos que se ejecutan en su interior.
+Docker además permite ejecutar contenedores en MacOS y Windows mediante una virtualización transparente de Linux.
 Existen otros sistemas parecidos, como LXD, pero Docker tiene varias ventajas: poder describir entornos como código versionable (Dockerfile) y poder orquestar de forma sencilla entornos pequeños y medianos (docker-compose).
+
+El fichero Dockerfile (y Dockerfile.test para los tests E2E) es una definición de construcción de imágenes. Parte de una imagen base (FROM) y ejecuta comandos para construir una imagen derivada de esta (RUN, COPY) y realiza configuraciones (WORKDIR, CMD, USER). Para ejecutar el programa debemos construir un contenedor que parta de esa imagen inmutable. El contenedor puede realizar cambios en su sistema de archivos aislado, pero salvo que lo configuremos de forma explícita, estos cambios se perderán al borrar el contenedor. Los contenedores también se pueden parar y reanudar. Estas imágenes generadas quedan almacenadas por defecto en el repositorio local, pero se pueden subir a cualquier repositorio de Docker. Los más populares son Docker Hub, Quay.io y Azure Container Registry.
+
+El fichero docker-compose.yml es una definición de los contenedores que tienen que lanzarse, con sus puertos, volúmenes, etc. Podemos basarnos en imágenes locales y también podemos sobreescribir ciertas configuraciones (como el comando). Además se pueden definir dependencias entre contenedores a la hora de arrancar.
 
 \subsection{Git y GitHub}
 Para versionar el código fuente se ha usado el sistema Git, usando como almacenamiento GitHub. Principalmente se ha usado a través de la línea de comandos.
@@ -1035,6 +1035,8 @@ Esta acción construía las imágenes de Docker necesarias y pasaba los tests de
 Para asegurarnos que las historias de usuario se implementaban correctamente se ha decidido usar Behave.
 Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy similar al lenguaje natural. Estos tests se componen de pasos,
 los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
+
+Más detalles sobre Behave en el capítulo de Validación y pruebas.
 
 
 \chapter{Validación y pruebas}
@@ -1093,17 +1095,17 @@ Scenario: Parameters (GET, valid)
 \end{lstlisting}
 
 Los steps son parecidos a esto:
-\begin[language=Python]{lstlisting}
+\begin{lstlisting}
 from behave import step
 import requests
 import hashlib
 
 @step("I visit '{url}'")
-def step_visit_url(context, url):
+def step\_visit\_url(context, url):
     context.request = requests.get(f"http://lyncex:11011{url}")
 
 @step("I get the photo '{photo}'")
-def step_get_photo(context, photo):
+def step\_get\_photo(context, photo):
     m = hashlib.sha1()
     m.update(context.request.content)
     n = hashlib.sha1()
@@ -1152,15 +1154,118 @@ jobs:
 
 \chapter{Aplicación de ejemplo}
 
+Con el fin de demostrar que Lyncex es un framework útil, se ha decidido escribir una aplicación de ejemplo. Esta aplicación será una prueba manual de que el sistema funciona y servirá para validar conceptos.
+
+\subsection{Objetivo y alcance}
+
+La aplicación tendrá como objetivo poder editar el dataset de bibliotecas de Castilla y León. Este dataset, ya está expresado en formato RDF en el portal Datos Abiertos de la Junta de Castilla y León, usando dos ontologías comunes: vCard y FOAF.
+
+La duración del proyecto no será mayor de una semana. No se necesita una interfaz de usuario refinada. El proyecto debe tratar de usar, de forma idiomática, el framework Lyncex.
+
+Definimos las siguientes historias de usuario:
+\begin{enumerate}
+    \item Visualizar datos de las bibliotecas. Mostrar tanto en listado como en individual los datos de las bibliotecas.
+    \item Editar datos de las bibliotecas. Crear, eliminar y editar datos de las bibliotecas.
+    \item Mostrar bibliotecas en un mapa. Poner cada biblioteca en un mapa interactivo.
+\end{enumerate}
+
+\subsection{Análisis y Diseño}
+
+Los requisitos que podemos sacar de las historias de usuario son los siguientes:
+
+\subsubsection{Requisitos funcionales}
+% TODO
+\begin{enumerate}
+    \item 
+\end{enumerate}
+\subsubsection{Requisitos no funcionales}
+\begin{enumerate}
+    \item El sistema deberá ejecutarse como una aplicación dentro de Lyncex
+\end{enumerate}
+
+
+\subsection{Implementación}
+
+\subsubsection{Transformación de datos}
+
+En primer lugar descargamos los datos de la página oficial de Datos Abiertos. La descarga RDF está en formato RDF/XML, pero 
+
+\subsection{Validación y pruebas}
+
 \chapter{Manuales}
+
+En este capítulo se incluyen dos manuales para el uso de Lyncex.
 
 \section{Manual de instalación}
 
+El objetivo de este manual es disponer de un servidor de Lyncex funcionando correctamente en un equipo informático.
+
+Lyncex es una aplicación implementada completamente en Prolog, sin embargo, no usa Prolog estándar sino que necesita específicamente el intérprete SWI Prolog. Este intérprete es open source y se encuentra disponible en gran cantidad de sistemas operativos y arquitecturas diferentes. Sin embargo, solo se ha probado su funcionamiento correcto en sistemas Linux con arquitectura x86 de 64 bits. Es necesario tener conexión a Internet durante la instalación.
+
 \subsection{Docker}
+
+Para disponer de un entorno lo más controlado y aislado posible del resto del sistema se usan tecnologías de contenedores, concretamente Docker. Una de las ventajas de Docker es que también se puede usar en MacOS y Windows, mediante una virtualización de Linux automática que realiza Docker.
+
+El primer paso será tener instalado Docker y su utilidad Docker Compose. Este software suele estar en los repositorios de las principales distribuciones Linux. En Debian o Ubuntu sería así:
+\begin{verbatim}
+sudo apt update
+sudo apt install docker.io docker-compose
+\end{verbatim}
+
+Una vez instalado podemos obtener el código de la aplicación. Para esto hará falta tener Git, aunque desde GitHub también se pueden generar comprimidos tar.gz o zip que no necesitan tener instalado Git:
+\begin{verbatim}
+git clone https://github.com/aarroyoc/lyncex/ lyncex
+cd lyncex
+\end{verbatim}
+
+Una vez hemos descargado el código y tenemos Docker, podemos ejecutar el comando de Docker Compose para construir todas las imágenes de la aplicación:
+\begin{verbatim}
+docker-compose build
+\end{verbatim}
+
+Esto comenzará la descarga de Prolog, así como de Python y numerosas dependencias. Guardará las imágenes en el almacén local de Docker. 
+
+Ahora podemos realizar la configuración de los contenedores. Edita el fichero docker-compose.yml con un editor de textos cualquiera. El campo más importante es el de ports. Aquí podemos configurar el puerto sobre el que va a estar escuchando Lyncex. Para realizar el cambio hay que modificar "11011:11011" a "PUERTO\_DESEADO:11011". El resto de configuraciones no son de uso común.
+
+Una vez configurado, ya podemos ejecutar Lyncex:
+\begin{verbatim}
+docker-compose run --service-ports lyncex
+\end{verbatim}
+Y Lyncex estará ya disponible.
 
 \subsection{Tests}
 
+Una vez instalado puede ser interesante ejecutar los tests automatizados para comprobar que efectivamente la versión instalada tiene un cierto nivel de confiabilidad.
+
+Para ello lo primero es suspender la ejecución del contenedor web, con Control-C o mediante el comando siguiente:
+\begin{verbatim}
+docker-compose down
+\end{verbatim}
+
+Para ejecutar los tests unitarios:
+\begin{verbatim}
+docker-compose run test-unit
+\end{verbatim}
+
+Para ejecutar los tests E2E:
+\begin{verbatim}
+docker-compose run test-e2e
+\end{verbatim}
+
+Una vez finalizada la ejecución de los tests, hay que destruir todos los contenedores. Para ello volvemos a ejecutar:
+\begin{verbatim}
+docker-compose down
+\end{verbatim}
+
 \section{Manual de usuario}
+
+En este manual veremos como usar Lyncex una vez instalado. 
+
+\subsection{Prerrequisitos}
+Para el manual usaremos la herramienta cURL, para realizar peticiones HTTP mediante comandos sencillos. También se pueden usar otras herramientas similares como Postman o incluso, realizar las llamadas HTTP desde un programa personalizado.
+
+\subsection{API}
+EXPLICAR API con CURL
 
 \chapter{Conclusiones y trabajo futuro}
 
