@@ -27,7 +27,7 @@ template_controller(Path, Method, Request, FormData) :-
     dict_pairs(TemplateData, _, XOutput),
     format('Content-Type: text/html~n~n'),
     current_output(Output),
-    st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance, undefined: false}).
+    st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
 template_controller(Path, _Method, _Request, _FormData) :-
     rdfs_individual_of(Controller, lyncex:'TemplateController'),
@@ -37,4 +37,4 @@ template_controller(Path, _Method, _Request, _FormData) :-
     rdf(Template, cnt:chars, TemplateString^^xsd:string),
     format('Content-Type: text/html~n~n'),
     current_output(Output),
-    st_render_string(TemplateString, _{ lyncex: 'Lyncex' }, Output, '/dev/null', _{ frontend: semblance, undefined: false}).
+    st_render_string(TemplateString, _{ lyncex: 'Lyncex' }, Output, '/dev/null', _{ frontend: semblance}).
