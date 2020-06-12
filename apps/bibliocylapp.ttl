@@ -12,7 +12,12 @@
         lcx:namespace "http://www.w3.org/2006/vcard/ns#" ;
         lcx:prefix_name "v" 
     ] ;
-    lcx:controller <HomePage> .
+    lcx:controller <HomePage> ;
+    lcx:controller <BookPage> ;
+    lcx:controller <BookListPage> ;
+    lcx:controller <LoginPage> ;
+    lcx:controller <BookForm> ;
+    lcx:controller <GeoForm> .
 
 <HomePage>
     a lcx:ContentController ;
@@ -94,4 +99,36 @@
                 Card = _{id:Id, name:Name}
             ), Output).
         """
+    ] .
+
+<LoginPage>
+    a lcx:LoginController ;
+    lcx:url "login" ;
+    lcx:username "aarroyoc" ;
+    lcx:password "123456" ;
+    lcx:template  [
+        a cnt:ContentAsText ;
+        cnt:chars "{% unescape login %}"
+    ] .
+
+<BookForm>
+    a lcx:FormController ;
+    lcx:url "admin/book" ;
+    lcx:access "private" ;
+    lcx:base_subject "http://book.lyncex.com/aarroyoc/dev/lyncex/apps/" ;
+    lcx:class <http://www.w3.org/2006/vcard/ns#VCard> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "<h1>Bibliotecas de Castilla y León</h1>{% unescape form %}"
+    ] .
+
+<GeoForm>
+    a lcx:FormController ;
+    lcx:url "admin/geo" ;
+    lcx:access "private" ;
+    lcx:base_subject "http://geo.lyncex.com/" ;
+    lcx:class <http://www.w3.org/2006/vcard/ns#Geo> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars "<h1>Geopuntos</h1>{% unescape form %}"
     ] .

@@ -1,0 +1,30 @@
+@prefix : <http://www.w3.org/2006/vcard/ns#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+:VCard a rdfs:Class .
+
+:fn a rdf:Property ;
+    rdfs:domain :VCard ;
+    rdfs:range xsd:string .
+
+:url a rdf:Property ;
+    rdfs:domain :VCard ;
+    rdfs:range xsd:string .
+
+:email a rdf:Property ;
+    rdfs:domain :VCard ;
+    rdfs:range xsd:string .
+
+:geo a rdf:Property ;
+    rdfs:domain :VCard ;
+    rdfs:range :Geo .
+
+:latitude a rdf:Property ;
+    rdfs:domain :Geo ;
+    rdfs:range xsd:string .
+
+:longitude a rdf:Property ;
+    rdfs:domain :Geo ;
+    rdfs:range xsd:string .

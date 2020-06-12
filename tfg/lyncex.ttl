@@ -1,4 +1,4 @@
-@base <https://lyncex.com/lyncex#> .
+@prefix : <https://lyncex.com/lyncex#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xml: <http://www.w3.org/XML/1998/namespace> .
@@ -29,176 +29,176 @@ cnt:chars
 
 # GENERAL 
 
-<Application>
+:Application
     rdf:type rdfs:Class .
 
-<controller>
+:controller
     rdf:type rdf:Property ;
-    rdfs:domain <Application> ;
-    rdfs:range <Controller> .
+    rdfs:domain :Application ;
+    rdfs:range :Controller .
 
-<prefix>
+:prefix
     rdf:type rdf:Property ;
-    rdfs:domain <Application> ;
-    rdfs:range <Prefix> .
+    rdfs:domain :Application ;
+    rdfs:range :Prefix .
 
-<Controller>
+:Controller
     rdf:type rdfs:Class .
 
-<url>
+:url
     rdf:type rdf:Property ;
-    rdfs:domain <Controller> ;
+    rdfs:domain :Controller ;
     rdfs:range xsd:string .
 
-<method>
+:method
     rdf:type rdf:Property ;
-    rdfs:domain <Controller> ;
+    rdfs:domain :Controller ;
     rdfs:range xsd:string .
 
-<access>
+:access
     rdf:type rdf:Property ;
-    rdfs:domain <Controller> ;
+    rdfs:domain :Controller ;
     rdfs:range xsd:string .
 
 # ContentController
 
-<ContentController>
+:ContentController
     rdf:type rdfs:Class ;
-    rdfs:subClassOf <Controller> .
+    rdfs:subClassOf :Controller .
 
-<content>
+:content
     rdf:type rdf:Property ;
-    rdfs:domain <ContentController> ;
+    rdfs:domain :ContentController ;
     rdfs:range cnt:Content .
 
-<mime>
+:mime
     rdf:type rdf:Property ;
-    rdfs:domain <ContentController> ;
+    rdfs:domain :ContentController ;
     rdfs:range xsd:string .
 
 # TemplateController
 
-<TemplateController>
+:TemplateController
     rdf:type rdfs:Class ;
-    rdf:subClassOf <Controller> .
+    rdf:subClassOf :Controller .
 
-<template>
+:template
     rdf:type rdf:Property ;
-    rdfs:domain <TemplateController> ;
+    rdfs:domain :TemplateController ;
     rdfs:range cnt:ContentAsText .
 
-<query>
+:query
     rdf:type rdf:Property ;
-    rdfs:domain <TemplateController> ;
-    rdfs:range <Query> .
+    rdfs:domain :TemplateController ;
+    rdfs:range :Query .
 
-<handler>
+:handler
     rdf:type rdf:Property ;
-    rdfs:domain <TemplateController> ;
-    rdfs:range <Handler> .
+    rdfs:domain :TemplateController ;
+    rdfs:range :Handler .
 
-<parameter>
+:parameter
     rdf:type rdf:Property ;
-    rdfs:domain <TemplateController> ;
-    rdfs:range <Parameter> .
+    rdfs:domain :TemplateController ;
+    rdfs:range :Parameter .
 
 ## Query
 
-<Query>
+:Query
     rdf:type rdfs:Class .
 
-<query_name>
+:query_name
     rdf:type rdf:Property ;
-    rdfs:domain <Query> ;
+    rdfs:domain :Query ;
     rdfs:range xsd:string .
 
-<subject>
+:subject
     rdf:type rdf:Property ;
-    rdfs:domain <Query> ;
+    rdfs:domain :Query ;
     rdfs:range xsd:string .
 
-<template_subject>
+:template_subject
     rdf:type rdf:Property ;
-    rdfs:domain <Query> ;
+    rdfs:domain :Query ;
     rdfs:range xsd:string .
 
 ## Handler
 
-<Handler>
+:Handler
     rdf:type rdfs:Class .
 
-<handler_name>
+:handler_name
     rdf:type rdf:Property ;
-    rdfs:domain <Handler> ;
+    rdfs:domain :Handler ;
     rdfs:range xsd:string .
 
-<code>
+:code
     rdf:type rdf:Property ;
-    rdfs:domain <Handler> ;
+    rdfs:domain :Handler ;
     rdfs:range xsd:string .
 
 ## Parameter
 
-<Parameter>
+:Parameter
     a rdfs:Class .
 
-<param_name>
+:param_name
     a rdf:Property ;
-    rdfs:domain <Parameter> ;
+    rdfs:domain :Parameter ;
     rdfs:range xsd:string .
 
-<code>
+:code
     a rdf:Property ;
-    rdfs:domain <Parameter> ;
+    rdfs:domain :Parameter ;
     rdfs:range xsd:string .
 
-<validation>
+:validation
     a rdf:Property ;
-    rdfs:domain <Parameter> ;
+    rdfs:domain :Parameter ;
     rdfs:range xsd:string .
 
 # FormController
 
-<FormController>
+:FormController
     a rdfs:Class ;
-    rdfs:subClassOf <TemplateController> .
+    rdfs:subClassOf :TemplateController .
 
-<base_subject>
+:base_subject
     a rdf:Property ;
-    rdfs:domain <FormController> ;
+    rdfs:domain :FormController ;
     rdfs:range xsd:string .
 
-<class>
+:class
     a rdf:Property ;
-    rdfs:domain <FormController> ;
+    rdfs:domain :FormController ;
     rdfs:range rdfs:Class .
 
 # LoginController
-<LoginController>
+:LoginController
     a rdfs:Class ;
-    rdfs:subClassOf <TemplateController> .
+    rdfs:subClassOf :TemplateController .
 
-<username>
+:username
     a rdf:Property ;
-    rdfs:domain <LoginController> ;
+    rdfs:domain :LoginController ;
     rdfs:range xsd:string .
 
-<password>
+:password
     a rdf:Property ;
-    rdfs:domain <LoginController> ;
+    rdfs:domain :LoginController ;
     rdfs:range xsd:string .
 
 ## Prefix
 
-<Prefix>
+:Prefix
     rdf:type rdfs:Class .
 
-<namespace>
+:namespace
     rdf:type rdf:Property ;
-    rdfs:domain <Prefix> ;
+    rdfs:domain :Prefix ;
     rdfs:range xsd:string .
 
-<prefix_name>
+:prefix_name
     rdf:type rdf:Property ;
-    rdfs:domain <Prefix> ;
+    rdfs:domain :Prefix ;
     rdfs:range xsd:string .

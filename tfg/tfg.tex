@@ -1212,14 +1212,50 @@ Los datos ya tienen definida dos ontologías que especifican como son los datos.
 
 La aplicación se compone de dos componentes: un script de transformación de la entrada y por otro lado, la propia aplicación, que consideramos suficientemente pequeña como para ser un componente por sí mismo.
 
+Aun así, podemos dividir la aplicación en diferentes páginas:
+\begin{itemize}
+    \item HomePage. La página de inicio
+    \item BookPage. Vista individual de una biblioteca.
+    \item BookListPage. Listado de todas las bibliotecas.
+    \item LoginPage. Permite acceder al sistema como usuario administrador.
+    \item BookForm. Formulario protegido para añadir/editar/borrar bibliotecas.
+    \item GeoForm. Formulario protegido para añadir/editar/borrar puntos geográficos.
+\end{verbatim}
+
 El script surge como consecuencia del primer requisito no funcional. Es necesario realizar una transformación de los datos a Turtle si no lo estuviesen. Los datos en la paǵina oficial de datos abiertos se encuentran en RDF, pero en su sintaxis XML. Es por ello necesario realizar un pequeño script que realice la transformación inicial.
 
 
 \subsection{Implementación}
 
-\subsubsection{Transformación de datos}
+Para la implementación se han usado las mismas herramientas que para el desarrollo de Lyncex, es decir, Visual Studio Code, Git, y, evidentemente, RDF. El script se realizó con Python usando la librería rdflib.
 
-\subsection{Validación y pruebas}
+La aplicación intenta usar todas las características presentes en Lyncex. 
+
+Inicialmente define un prefijo para vCard. Posteriormente va definiendo las páginas como controladores de Lyncex. HomePage es un ContentController. BookPage y BookListPage son TemplateControllers, ambos usando handler, queries y parámetros. LoginPage es un LoginController y BookForm y GeoForm son FormController con control de acceso.
+
+\subsection{Validación y pruebas} 
+
+La aplicación de ejemplo no dispone de pruebas automatizadas, pero sí se han ejecutado pruebas manuales. Cabe destacar que la implementación de esta aplicación sacó a la luz bugs originales de Lyncex. Gracias a ello se implementó la función exists dentro del sistema de plantillas.
+
+\subsection{Tour}
+
+Para comprobar el funcionamiento de esta aplicación de ejemplo, vamos a hacer un tour de alto nivel. Suponemos que tenemos una instancia de Lyncex arrancada en localhost, en el puerto 11011 y está vacío el triplestore.
+
+Lo primero será añadir las tripletas necesarias. Hay tres archivos:
+\begin{itemize}
+    \item vcard.ttl - Una miniontología RDF Schema que simula a la de vCard (la cual es OWL)
+    \item bibliocyl.ttl - Datos de fuentes abiertas, previamente transformados a Turtle desde RDF/XML
+    \item bibliocylapp.ttl - La app en Lyncex
+\end{itemize}
+
+La manera de cargarlas, mediante cURL, es la siguiente:
+\begin{verbatim}
+curl -X POST -H "Content-Type: text/turtle" --data-binary "@vcard.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle" --data-binary "@bibliocyl.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle" --data-binary "@bibliocylapp.ttl" http://localhost:11011/_api
+\end{verbatim}
+
+Una vez hecho esto, podemos acceder a diferentes páginas desde el navegador.
 
 \chapter{Manuales}
 
@@ -1374,6 +1410,10 @@ MUTABILIDAD RDF
 HERRAMIENTAS PROLOG
 BDD
 ANEXO TESTS
+
+TRIPLESTORE DESACOPLADO
+SEGURIDAD (CONTROL DE ACCESO FINO, gestion de secretos)
+
 
 \begin{appendices}
 \chapter{Ontología}
