@@ -28,10 +28,10 @@ resolve_query(Controller, Parameters, OutQuery) :-
             length(QueryPropertyList, N),
             nth1(N, QueryPropertyList, SimpleQueryPropertyString),
             atom_string(SimpleQueryProperty, SimpleQueryPropertyString),
-            put_dict(SimpleQueryProperty, _{lyncex: 'Lyncex'}, QueryValue, Value)
+            Value=SimpleQueryProperty-QueryValue
         ), XS),
-        dicts_join(lyncex, XS, QueryDataL),
-        nth1(1, QueryDataL, QueryData),
+        remove_repeated(XS, DictionaryData),
+        dict_pairs(QueryData, _, DictionaryData),
         atom_string(AtomQueryName, QueryName),
         FinalQuery = AtomQueryName-QueryData
     ), OutQuery).
@@ -42,3 +42,25 @@ rdf_literal_or_iri(QuerySubject, QueryProperty, QueryValue) :-
 rdf_literal_or_iri(QuerySubject, QueryProperty, QueryValue) :-
     rdf(QuerySubject, QueryProperty, QueryValue),
     atom(QueryValue).
+
+remove_repeated([],[]).
+remove_repeated([H|T], Out) :-
+    H = Key-_,
+    member(Key-_, T),
+    remove_repeated(T,Out).
+
+remove_repeated([H|T], Out) :-
+    H = Key-_,
+    \+ member(Key-_, T),
+    remove_repeated(T,X),
+    Out = [H|X].
+
+:- begin_tests(query).
+
+test(remove_repeated_do_nothing) :-
+    remove_repeated([a-c, b-c], [a-c, b-c]).
+
+test(remove_repeated_remove) :-
+    once(remove_repeated([a-b, a-c, b-c], [a-c, b-c])).
+
+:- end_tests(query).

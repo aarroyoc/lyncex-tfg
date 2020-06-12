@@ -20,6 +20,7 @@ hmargin=3cm
 \usepackage[titletoc,toc,page]{appendix}
 \usepackage{adjustbox}
 \usepackage{rotating}
+\usepackage{caption}
 \renewcommand{\appendixtocname}{Ap\'endices}
 \renewcommand{\appendixpagename}{Ap\'endices}
 
@@ -1165,7 +1166,7 @@ La duración del proyecto no será mayor de una semana. No se necesita una inter
 Definimos las siguientes historias de usuario:
 \begin{enumerate}
     \item Visualizar datos de las bibliotecas. Mostrar tanto en listado como en individual los datos de las bibliotecas.
-    \item Editar datos de las bibliotecas. Crear, eliminar y editar datos de las bibliotecas.
+    \item Editar datos de las bibliotecas. Crear, eliminar y editar datos de las bibliotecas. Restringir el acceso de edición a la cuenta del administrador.
     \item Mostrar bibliotecas en un mapa. Poner cada biblioteca en un mapa interactivo.
 \end{enumerate}
 
@@ -1174,21 +1175,49 @@ Definimos las siguientes historias de usuario:
 Los requisitos que podemos sacar de las historias de usuario son los siguientes:
 
 \subsubsection{Requisitos funcionales}
-% TODO
 \begin{enumerate}
-    \item 
+    \item El sistema deberá permitir visualizar los datos de una biblioteca individualmente
+    \item El sistema deberá permitir visualizar un listado de las bibliotecas
+    \item El sistema deberá permitir crear nuevas bibliotecas 
+    \item El sistema deberá permitir eliminar bibliotecas
+    \item El sistema deberá permitir editar datos de las bibliotecas
+    \item El sistema deberá bloquear el acceso a las secciones de edición, dejando acceder al administrador
 \end{enumerate}
 \subsubsection{Requisitos no funcionales}
 \begin{enumerate}
     \item El sistema deberá ejecutarse como una aplicación dentro de Lyncex
 \end{enumerate}
 
+\subsection{Arquitectura}
+
+La arquitectura es básicamente un recubrimiento por encima de la de Lyncex. Se trata de una aplicación web con tres capas: presentación, negocio y datos. En las tres capas se delega parte del trabajo a Lyncex.
+
+Los datos ya tienen definida dos ontologías que especifican como son los datos. En este caso son FOAF y vCard. La primera sirve para modelar interacciones sociales (personas y agentes) y la segunda modela una agenda de contactos. 
+
+\begin{sidewaysfigure}
+    \centering
+    \includegraphics[width=\textwidth]{foaf.png}
+    \caption{Diagrama de la ontología FOAF \\ \url{http://owlgred.lumii.lv/online_visualization/uo3g}}
+    \label{fig:foaf}
+\end{sidewaysfigure}
+
+\begin{sidewaysfigure}
+    \centering
+    \includegraphics[width=\textwidth]{vcard.png}
+    \caption{Diagrama de la ontología vCard \\ \url{http://owlgred.lumii.lv/online_visualization/2pt2}}
+    \label{fig:vcard}
+\end{sidewaysfigure}
+
+\subsection{Componentes}
+
+La aplicación se compone de dos componentes: un script de transformación de la entrada y por otro lado, la propia aplicación, que consideramos suficientemente pequeña como para ser un componente por sí mismo.
+
+El script surge como consecuencia del primer requisito no funcional. Es necesario realizar una transformación de los datos a Turtle si no lo estuviesen. Los datos en la paǵina oficial de datos abiertos se encuentran en RDF, pero en su sintaxis XML. Es por ello necesario realizar un pequeño script que realice la transformación inicial.
+
 
 \subsection{Implementación}
 
 \subsubsection{Transformación de datos}
-
-En primer lugar descargamos los datos de la página oficial de Datos Abiertos. La descarga RDF está en formato RDF/XML, pero 
 
 \subsection{Validación y pruebas}
 
@@ -1261,11 +1290,83 @@ docker-compose down
 
 En este manual veremos como usar Lyncex una vez instalado. 
 
-\subsection{Prerrequisitos}
+\subsection{API HTTP}
 Para el manual usaremos la herramienta cURL, para realizar peticiones HTTP mediante comandos sencillos. También se pueden usar otras herramientas similares como Postman o incluso, realizar las llamadas HTTP desde un programa personalizado.
 
-\subsection{API}
-EXPLICAR API con CURL
+Vamos a supone que Lyncex se encuentra ejecutándose en localhost en el puerto 11011.
+
+La primera tarea que debe realizarse es subir tripletas. Estas deben estar guardadas en un fichero Turtle. Para subir tripletas usaremos el verbo POST de HTTP y el endpoint de la API es /\_api.
+
+Veamos un ejemplo, si tenemos este fichero Turtle, con el nombre author.ttl:
+
+\begin{lstlisting}
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix ex: <http://example.org/stuff/1.0/> .
+
+<http://www.w3.org/TR/rdf-syntax-grammar>
+    dc:title "RDF/XML Syntax Specification (Revised)" ;
+    ex:editor [
+        ex:fullname "Dave Beckett";
+        ex:homePage <http://purl.org/net/dajobe/>
+    ] .
+\end{lstlisting}
+
+Podemos guardar las tripletas de la siguiente forma:
+\begin{verbatim}
+curl -X POST -H "Content-Type: text/turtle" --data-binary "@author.ttl" http://localhost:11011/_api
+\end{verbatim}
+
+Si el fichero es correcto y la validación de ontologías también lo es, responderá OK.
+
+La siguiente operación que podemos hacer es obtener de vuelta los datos insertados en el triplestore. Para ello usamos el verbo GET y el endpoint /\_api/query.
+
+\begin{verbatim}
+curl -X GET http://localhost:11011/_api/query
+\end{verbatim}
+
+El resultado seguramente sea diferente al fichero original, pero equivalente en cuanto a información:
+\begin{verbatim}                                                 
+@prefix    dc: <http://purl.org/dc/elements/1.1/> .
+@prefix stuff: <http://example.org/stuff/1.0/> .
+
+# Named toplevel resources (1)
+
+<http://www.w3.org/TR/rdf-syntax-grammar>
+    stuff:editor [ stuff:fullname "Dave Beckett" ;
+                stuff:homePage <http://purl.org/net/dajobe/>
+                ] ;
+    dc:title "RDF/XML Syntax Specification (Revised)" .
+\end{verbatim}
+
+La API GET soporta filtros, para obtener grafos parciales. Para ello se fija el valor del sujeto, objeto o predicado a un valor fijo y se sacan todas las tripletas que cumplen con ese valor fijo en la posición correspondiente. Esto se hace mediante los parámetros GET llamados subject, predicate y object respectivamente. Por ejemplo, si queremos filtrar por las tripletas que tienen dc:title como predicado:
+
+\begin{verbatim}
+curl -X GET "http://localhost:11011/_api/query?predicate=http://purl.org/dc/elements/1.1/title"
+\end{verbatim}
+
+Obtendremos como resultado:
+\begin{verbatim}
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+
+# Named toplevel resources (1)
+
+<http://www.w3.org/TR/rdf-syntax-grammar>
+    dc:title "RDF/XML Syntax Specification (Revised)" .
+\end{verbatim}
+
+También podemos borrar las tripletas almacenadas mediante el verbo DELETE y el endpoint /\_api/delete. Este endpoint también soporta parámetros similar al GET con filtros. El uso es sencillo:
+
+\begin{verbatim}
+curl -X DELETE "http://localhost:11011/_api/delete"
+\end{verbatim}
+
+\subsection{Uso de la ontología}
+
+USO BASICO
+MULTIPLICIDAD
+VARIABLES MAGICAS
+PREDICADOS EXTRA (db, exists)
 
 \chapter{Conclusiones y trabajo futuro}
 

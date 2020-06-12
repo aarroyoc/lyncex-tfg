@@ -1,0 +1,97 @@
+@base <https://app.lyncex.com/bibliocyl/> .
+@prefix lcx: <https://lyncex.com/lyncex#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix cnt: <http://www.w3.org/2011/content#> .
+
+<BiblioCyL>
+    a lcx:Application ;
+    lcx:prefix [
+        a lcx:Prefix ;
+        lcx:namespace "http://www.w3.org/2006/vcard/ns#" ;
+        lcx:prefix_name "v" 
+    ] ;
+    lcx:controller <HomePage> .
+
+<HomePage>
+    a lcx:ContentController ;
+    lcx:url "" ;
+    lcx:method "get" ;
+    lcx:content [
+        a cnt:ContentAsText ;
+        cnt:chars """
+<h1>Bienvenido a BiblioCyL</h1>
+<p>Aplicacion creada por Adrian Arroyo</p>
+"""
+    ] ;
+    lcx:mime "text/html" .
+
+<BookPage>
+    a lcx:TemplateController ;
+    lcx:url "book" ;
+    lcx:method "get" ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id"
+    ] ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars """
+        <h1>{{ card.fn }}</h1>
+        {% if exists(atom(url), card) %}
+        <p>URL: <a href={{ card.url }}>{{ card.url }}</a></p>
+        {% end %}
+        {% if exists(atom(email), card) %}
+        <p><a href={{ card.email }}>Email</a></p>
+        {% end %}
+        <iframe width=425 height=350 frameborder=0 scrolling=no marginheight=0 marginwidth=0 src=https://www.openstreetmap.org/export/embed.html?bbox=-10.206298828125002%2C39.232253141714914%2C1.3842773437500002%2C44.33956524809713&marker={{ geo.lat }}%2C{{ geo.lon }} style=border: 1px solid black></iframe>
+        """
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "card" ;
+        lcx:template_subject "http://book.lyncex.com/aarroyoc/dev/lyncex/apps/{{ id }}"
+    ] ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "geo" ;
+        lcx:code """
+        handler(Param, Output) :-
+            get_dict(id, Param, Id),
+            atom_concat('http://book.lyncex.com/aarroyoc/dev/lyncex/apps/', Id, Biblio),
+            rdf(Biblio, v:geo, Geo),
+            db(Geo, v:latitude, Lat),
+            db(Geo, v:longitude, Lon),
+            Output = _{lat:Lat, lon:Lon}.
+        """
+    ] .
+
+<BookListPage>
+    a lcx:TemplateController ;
+    lcx:url "books" ;
+    lcx:method "get" ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars """
+        <h1>Listado de bibliotecas de Castilla y León</h1>
+        <ul>
+        {% each cards, card %}
+            <li><a href=/book?id={{ card.id }}>{{ card.name }}</a></li>
+        {% end %}
+        </ul>
+        """
+    ] ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "cards" ;
+        lcx:code """
+        handler(_Param, Output) :-
+            findall(Card, (
+                rdf(Biblio, rdf:type, 'http://www.w3.org/2006/vcard/ns#VCard'),
+                db(Biblio, v:fn, Name),
+                atom_concat('http://book.lyncex.com/aarroyoc/dev/lyncex/apps/', Id, Biblio),
+                Card = _{id:Id, name:Name}
+            ), Output).
+        """
+    ] .
