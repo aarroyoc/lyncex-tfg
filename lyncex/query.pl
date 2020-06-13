@@ -57,7 +57,31 @@ remove_repeated([H|T], Out) :-
 
 :- begin_tests(query).
 
-% TODO resolve_query
+test(resolve_query_subject) :-
+    ExampleSubject = 'http://example.com/Subject',
+    ExamplePredicate = 'http://example.com/predicate',
+    ExampleObject = "RDF Rocks!",
+    rdf_assert(ExampleSubject, ExamplePredicate, ExampleObject),
+    Controller = 'http://example.com/Example',
+    Query = 'http://example.com/ExampleQuery',
+    rdf_assert(Controller, lyncex:query, Query),
+    rdf_assert(Query, lyncex:query_name, "example"),
+    rdf_assert(Query, lyncex:subject, ExampleSubject),
+    resolve_query(Controller, _{}, [example-_{predicate:ExampleObject}]),
+    rdf_retractall(Query, _, _).
+
+test(resolve_query_template) :-
+    ExampleSubject = 'http://example.com/Subject',
+    ExamplePredicate = 'http://example.com/predicate',
+    ExampleObject = "RDF Rocks!",
+    rdf_assert(ExampleSubject, ExamplePredicate, ExampleObject),
+    Controller = 'http://example.com/Example',
+    Query = 'http://example.com/ExampleQuery',
+    rdf_assert(Controller, lyncex:query, Query),
+    rdf_assert(Query, lyncex:query_name, "example"),
+    rdf_assert(Query, lyncex:template_subject, "http://example.com/{{ name }}"),
+    resolve_query(Controller, _{name: "Subject"}, [example-_{predicate:ExampleObject}]),
+    rdf_retractall(Query, _, _).
 
 test(rdf_literal_or_iri_literal) :-
     X = 'http://example.com/Example', Y = 'name',

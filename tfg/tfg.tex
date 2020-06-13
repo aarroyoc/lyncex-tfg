@@ -1067,9 +1067,15 @@ test(bnode) :-
 
 :- end_tests(api).
 
-\end{listing}
+\end{lstlisting}
 
 Se definen zonas de test delimitadas por begin_tests y end_tests. En su interior definimos reglas test, que deben ser cumplirse. En este ejemplo, queríamos probar la regla map_bnode y si todo va bien, todas los términos deben ser verdaderos. La ejecución de los tests se detalla en el manual de instalación.
+
+Para ejecutar los tests unitarios, el método recomendado es usar Docker Compose y ejecutar:
+
+\begin{verbatim}
+docker-compose run test-unit
+\end{verbatim}
 
 \section{Test E2E}
 
@@ -1220,7 +1226,7 @@ Aun así, podemos dividir la aplicación en diferentes páginas:
     \item LoginPage. Permite acceder al sistema como usuario administrador.
     \item BookForm. Formulario protegido para añadir/editar/borrar bibliotecas.
     \item GeoForm. Formulario protegido para añadir/editar/borrar puntos geográficos.
-\end{verbatim}
+\end{itemize}
 
 El script surge como consecuencia del primer requisito no funcional. Es necesario realizar una transformación de los datos a Turtle si no lo estuviesen. Los datos en la paǵina oficial de datos abiertos se encuentran en RDF, pero en su sintaxis XML. Es por ello necesario realizar un pequeño script que realice la transformación inicial.
 
@@ -1255,7 +1261,187 @@ curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@bibli
 curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@bibliocylapp.ttl" http://localhost:11011/_api
 \end{verbatim}
 
-Una vez hecho esto, podemos acceder a diferentes páginas desde el navegador.
+Una vez hecho esto, podemos acceder a diferentes páginas desde el navegador. La página de inicio estará disponible escribiendo localhost:11011 en el navegador:
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl1.png}
+    \caption{HomePage de BiblioCyL}
+    \label{fig:bibliocyl1}
+\end{figure}
+
+Esto corresponde a las siguientes tripletas:
+\begin{lstlisting}
+<HomePage>
+    a lcx:ContentController ;
+    lcx:url "" ;
+    lcx:method "get" ;
+    lcx:content [
+        a cnt:ContentAsText ;
+        cnt:chars """
+<h1>Bienvenido a BiblioCyL</h1>
+<p>Aplicación creada por Adrián Arroyo</p>
+<p><a href=/books>Ver listado bibliotecas</a></p>
+"""
+    ] ;
+    lcx:mime "text/html" .
+\end{lstlisting}
+
+Hacemos click en el enlace. Esto nos lleva al BookListPage, el listado de todas las bibliotecas del dataset:
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl2.png}
+    \caption{BookListPage}
+    \label{fig:bibliocyl2}
+\end{figure}
+
+Esto se corresponde a estas tripletas:
+\begin{lstlisting}
+<BookListPage>
+    a lcx:TemplateController ;
+    lcx:url "books" ;
+    lcx:method "get" ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars """
+        <h1>Listado de bibliotecas de Castilla y León</h1>
+        <ul>
+        {% each cards, card %}
+            <li><a href=/book?id={{ card.id }}>{{ card.name }}</a></li>
+        {% end %}
+        </ul>
+        """
+    ] ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "cards" ;
+        lcx:code """
+        handler(_Param, Output) :-
+        findall(Card, (
+            rdf(Biblio, rdf:type, 'http://www.w3.org/2006/vcard/ns#VCard'),
+            db(Biblio, v:fn, Name),
+            atom_concat('http://book.lyncex.com/aarroyoc/dev/lyncex/apps/', Id, Biblio),
+            Card = _{id:Id, name:Name}
+        ), Output).
+        """
+    ] .
+\end{lstlisting}
+
+Hacemos click en una biblioteca cualquiera, en este caso, la de Berlanga de Duero. Esto nos mostrará la vista con detalles de la biblioteca que son la URL y el correo, si existieran, mostrando además un mapa de su localización. Esto es el BookPage.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl3.png}
+    \caption{BookPage}
+    \label{fig:bibliocyl3}
+\end{figure}
+
+El BookPage se implementa con estas tripletas:
+\begin{lstlisting}
+<BookPage>
+    a lcx:TemplateController ;
+    lcx:url "book" ;
+    lcx:method "get" ;
+    lcx:parameter [
+        a lcx:Parameter ;
+        lcx:param_name "id"
+    ] ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars """
+        <h1>{{ card.fn }}</h1>
+        {% if exists(atom(url), card) %}
+        <p>URL: <a href={{ card.url }}>{{ card.url }}</a></p>
+        {% end %}
+        {% if exists(atom(email), card) %}
+        <p><a href={{ card.email }}>Email</a></p>
+        {% end %}
+        <iframe width=425 height=350 frameborder=0 scrolling=no marginheight=0 marginwidth=0 src=https://www.openstreetmap.org/export/embed.html?bbox=-10.206298828125002%2C39.232253141714914%2C1.3842773437500002%2C44.33956524809713&marker={{ geo.lat }}%2C{{ geo.lon }} style=border: 1px solid black></iframe>
+        """
+    ] ;
+    lcx:query [
+        a lcx:Query ;
+        lcx:query_name "card" ;
+        lcx:template_subject "http://book.lyncex.com/aarroyoc/dev/lyncex/apps/{{ id }}"
+    ] ;
+    lcx:handler [
+        a lcx:Handler ;
+        lcx:handler_name "geo" ;
+        lcx:code """
+        handler(Param, Output) :-
+            get_dict(id, Param, Id),
+            atom_concat('http://book.lyncex.com/aarroyoc/dev/lyncex/apps/', Id, Biblio),
+            rdf(Biblio, v:geo, Geo),
+            db(Geo, v:latitude, Lat),
+            db(Geo, v:longitude, Lon),
+            Output = _{lat:Lat, lon:Lon}.
+        """
+    ] .
+\end{lstlisting}
+
+Vamos a añadir una biblioteca nueva. Si tratamos de acceder a /admin/book tendremos un mensaje de \textit{Forbidden} y no podremos ver el formulario. Accedemos primero a /login, donde se nos mostrará el LoginPage:
+
+\begin{figure}
+    \centering
+    \includegraphics{tour/bibliocyl4.png}
+    \caption{LoginPage}
+    \label{fig:bibliocyl4}
+\end{figure}
+
+\begin{lstlisting}
+<LoginPage>
+    a lcx:LoginController ;
+    lcx:url "login" ;
+    lcx:username "aarroyoc" ;
+    lcx:password "123456" ;
+    lcx:template  [
+        a cnt:ContentAsText ;
+        cnt:chars "{% unescape login %}"
+    ] .
+\end{lstlisting}
+
+Una vez hayamos ingresado los credenciales correctos, ya podremos entrar a /admin/book (el BookForm). Se nos mostrará un formulario con diversos campos a rellenar. El primero es la IRI del sujeto sobre el que vamos a crear tripletas nuevas. Es necesario modificarlo, el valor que hay es solo una plantilla. Además para el campo geo deberemos indicar una IRI del sujeto geo. Este sujeto lo podemos crear entrando a /admin/geo (es el GeoForm).
+
+\begin{figure}
+    \centering
+    \includegraphics{tour/bibliocyl5.png}
+    \caption{BookForm}
+    \label{fig:bibliocyl5}
+\end{figure}
+
+Si queremos editar el contenido podemos acceder a la URL /admin/book?_id=IRI, una vez allí veremos los campos rellenados, podremos editar el contenido y podremos borrar el sujeto del triplestore.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl7.png}
+    \caption{BookForm edición y borrado}
+    \label{fig:bibliocyl7}
+\end{figure}
+
+\begin{lstlisting}
+<BookForm>
+    a lcx:FormController ;
+    lcx:url "admin/book" ;
+    lcx:access "private" ;
+    lcx:base_subject "http://book.lyncex.com/aarroyoc/dev/lyncex/apps/" ;
+    lcx:class <http://www.w3.org/2006/vcard/ns#VCard> ;
+    lcx:template [
+        a cnt:ContentAsText ;
+        cnt:chars """
+        <h1>Bibliotecas de Castilla y León</h1>
+        <style>
+        input{
+            display:block;
+            width:500px;
+        }
+        </style>
+        {% unescape form %}
+        """
+    ] .
+\end{lstlisting}
+
+Con esto, hemos visto las características principales de Lyncex aplicadas sobre un conjunto de datos reales.
+
 
 \chapter{Manuales}
 

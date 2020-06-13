@@ -39,8 +39,11 @@ form_controller(Path, get, _Request, FormData) :-
                 foldl(string_concat_newline, ReverseValueProperties, "", OutValueProperties),
                 format('<textarea placeholder="~w" name="~w">~w</textarea>', [Property, Property, OutValueProperties])
             ;
-                rdf(Resource, Property, ValueProperty^^_),
+                rdf_literal_or_iri(Resource, Property, ValueProperty)
+                ->
                 format('<input type="text" placeholder="~w" name="~w" value="~w">', [Property, Property, ValueProperty])
+                ;
+                format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
             )
         )),
         format('<input type="submit">'),

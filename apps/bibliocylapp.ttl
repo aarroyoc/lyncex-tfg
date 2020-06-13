@@ -27,7 +27,8 @@
         a cnt:ContentAsText ;
         cnt:chars """
 <h1>Bienvenido a BiblioCyL</h1>
-<p>Aplicacion creada por Adrian Arroyo</p>
+<p>Aplicación creada por Adrián Arroyo</p>
+<p><a href=/books>Ver listado bibliotecas</a></p>
 """
     ] ;
     lcx:mime "text/html" .
@@ -119,7 +120,16 @@
     lcx:class <http://www.w3.org/2006/vcard/ns#VCard> ;
     lcx:template [
         a cnt:ContentAsText ;
-        cnt:chars "<h1>Bibliotecas de Castilla y León</h1>{% unescape form %}"
+        cnt:chars """
+        <h1>Bibliotecas de Castilla y León</h1>
+        <style>
+        input{
+            display:block;
+            width:500px;
+        }
+        </style>
+        {% unescape form %}
+        """
     ] .
 
 <GeoForm>
