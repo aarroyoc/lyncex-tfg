@@ -34,3 +34,37 @@ process_parameters(FormData, Controller, ParamDict) :-
         Pair = AtomParameterName-ParameterValue
     ), ListPair),
     dict_pairs(ParamDict, _, ListPair).
+
+:- begin_tests(parameters).
+
+test(process_parameters_empty) :-
+    Controller = 'http://example.com/Controller',
+    Parameter = 'http://example.com/ControllerParameter',
+    ParamName = "id",
+    rdf_assert(Controller, lyncex:parameter, Parameter),
+    rdf_assert(Parameter, lyncex:param_name, ParamName),
+    FormData = [id="42"],
+    process_parameters(FormData, Controller, OutDict),
+    OutDict = _{id:"42"}.
+
+test(process_parameters_regex_fail) :-
+    Controller = 'http://example.com/Controller',
+    Parameter = 'http://example.com/ControllerParameter',
+    ParamName = "id",
+    rdf_assert(Controller, lyncex:parameter, Parameter),
+    rdf_assert(Parameter, lyncex:param_name, ParamName),
+    rdf_assert(Parameter, lyncex:validation, "[A-Za-z]"),
+    FormData = [id="42"],
+    process_parameters(FormData, Controller, _{}).
+
+test(process_parameters_code_fail) :-
+    Controller = 'http://example.com/Controller',
+    Parameter = 'http://example.com/ControllerParameter',
+    ParamName = "id",
+    rdf_assert(Controller, lyncex:parameter, Parameter),
+    rdf_assert(Parameter, lyncex:param_name, ParamName),
+    rdf_assert(Parameter, lyncex:code, "validation(Id) :- fail."),
+    FormData = [id="42"],
+    process_parameters(FormData, Controller, _{}).
+
+:- end_tests(parameters).

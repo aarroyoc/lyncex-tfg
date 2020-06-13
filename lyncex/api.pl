@@ -35,7 +35,8 @@ map_bnode(SOrg, OOrg, S, O) :-
     ).
 
 ingest(Request) :-
-    memberchk(content_type('text/turtle'), Request),
+    memberchk(content_type(ContentType), Request),
+    atom_concat('text/turtle', _, ContentType),
     http_read_data(Request, Input, [
         to(atom),
         input_encoding('utf-8')
@@ -61,8 +62,6 @@ ingest(Request) :-
     retractall(bnode(_,_)),
     setup.
 
-
-% NEEDS SWI PROLOG 8.1.25 to FULLY WORK
 query_filter(S, P, S, P, O, _G) :-
     rdf(S, P, O).
 

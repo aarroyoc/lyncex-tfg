@@ -10,7 +10,7 @@
 :- use_module('../query.pl').
 :- use_module('../handler.pl').
 
-template_controller(Path, Method, Request, FormData) :-
+template_controller(Path, Method, _Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'TemplateController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:method, MethodString^^xsd:string),

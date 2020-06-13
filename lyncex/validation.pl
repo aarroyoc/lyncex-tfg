@@ -5,12 +5,6 @@
 
 :- use_module('prefix.pl').
 
-% Maybe a bug
-rdfs_class_property_custom(Class, Property) :-
-    rdf(Property, rdf:type, rdfs:'Property'),
-    rdf(Property, rdfs:domain, Domain),
-    rdfs_subclass_of(Class, Domain).
-
 % Validation before accepting a file
 
 valid :- valid_range.
@@ -20,7 +14,7 @@ valid :- valid_range.
 valid_range :-
     forall(rdf(Class, rdf:type, rdfs:'Class'),(
         forall(rdfs_individual_of(Resource, Class),(
-            forall(rdfs_class_property_custom(Class, Property),(
+            forall(rdfs_class_property(Class, Property),(
                 forall(rdf(Property, rdfs:range, RangeClass),(
                     forall(rdf(Resource, Property, RangeResource),(
                         rdfs_individual_of(RangeResource, RangeClass2),

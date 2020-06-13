@@ -57,6 +57,20 @@ remove_repeated([H|T], Out) :-
 
 :- begin_tests(query).
 
+% TODO resolve_query
+
+test(rdf_literal_or_iri_literal) :-
+    X = 'http://example.com/Example', Y = 'name',
+    Z = "Máximo Toño",
+    rdf_assert(X, Y, Z),
+    once(rdf_literal_or_iri(X, Y, Z)).
+
+test(rdf_literal_or_iri_iri) :-
+    X = 'http://example.com/Example', Y = 'name',
+    Z = 'http://example.com/Toño',
+    rdf_assert(X, Y, Z),
+    once(rdf_literal_or_iri(X, Y, Z)).
+
 test(remove_repeated_do_nothing) :-
     remove_repeated([a-c, b-c], [a-c, b-c]).
 

@@ -28,7 +28,7 @@ controller(P, M, R) :-
     http_session_data(user(_)),
     call_controller(P, M, R).
 
-controller(P, M, R) :-
+controller(P, _M, _R) :-
     rdf(Controller, lyncex:url, P^^xsd:string),
     rdf(Controller, lyncex:access, "private"^^xsd:string),
     \+ http_session_data(user(_)),

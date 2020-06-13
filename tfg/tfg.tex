@@ -1250,9 +1250,9 @@ Lo primero será añadir las tripletas necesarias. Hay tres archivos:
 
 La manera de cargarlas, mediante cURL, es la siguiente:
 \begin{verbatim}
-curl -X POST -H "Content-Type: text/turtle" --data-binary "@vcard.ttl" http://localhost:11011/_api
-curl -X POST -H "Content-Type: text/turtle" --data-binary "@bibliocyl.ttl" http://localhost:11011/_api
-curl -X POST -H "Content-Type: text/turtle" --data-binary "@bibliocylapp.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@vcard.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@bibliocyl.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@bibliocylapp.ttl" http://localhost:11011/_api
 \end{verbatim}
 
 Una vez hecho esto, podemos acceder a diferentes páginas desde el navegador.
@@ -1350,7 +1350,7 @@ Veamos un ejemplo, si tenemos este fichero Turtle, con el nombre author.ttl:
 
 Podemos guardar las tripletas de la siguiente forma:
 \begin{verbatim}
-curl -X POST -H "Content-Type: text/turtle" --data-binary "@author.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@author.ttl" http://localhost:11011/_api
 \end{verbatim}
 
 Si el fichero es correcto y la validación de ontologías también lo es, responderá OK.

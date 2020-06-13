@@ -12,12 +12,12 @@
 :- use_module('../query.pl').
 :- use_module('../handler.pl').
 
-login_controller(Path, get, Request, FormData) :-
+login_controller(Path, get, _Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'LoginController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     % Build form
     (
-        http_session_data(user(User))
+        http_session_data(user(_User))
         ->
         with_output_to(atom(Form),(
             format('<p>Logged in!</p>')

@@ -11,15 +11,10 @@
 :- use_module('../query.pl').
 :- use_module('../handler.pl').
 
-string_concat_newline(S1, S2, S3) :-
-    string_concat(S1, "\r\n", S4),
-    string_concat(S4, S2, S3).
-
 % Delete data
-form_controller(Path, get, Request, FormData) :-
+form_controller(Path, get, _Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
-    rdf(Controller, lyncex:class, Class),
     member('_id'=Resource, FormData),
     member('_delete'=yes, FormData),
     rdf_retractall(Resource, _, _),
@@ -27,7 +22,7 @@ form_controller(Path, get, Request, FormData) :-
     format('OK').
 
 % Show form (edit)
-form_controller(Path, get, Request, FormData) :-
+form_controller(Path, get, _Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
@@ -72,7 +67,7 @@ form_controller(Path, get, Request, FormData) :-
 
 
 % Show form (empty)
-form_controller(Path, get, Request, FormData) :-
+form_controller(Path, get, _Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
@@ -108,7 +103,7 @@ form_controller(Path, get, Request, FormData) :-
     st_render_string(TemplateString, TemplateData, Output, '/dev/null', _{frontend: semblance}).
 
 % Save data
-form_controller(Path, post, Request, FormData) :-
+form_controller(Path, post, _Request, FormData) :-
     rdfs_individual_of(Controller, lyncex:'FormController'),
     rdf(Controller, lyncex:url, Path^^xsd:string),
     rdf(Controller, lyncex:class, Class),
@@ -152,6 +147,10 @@ form_controller(Path, post, Request, FormData) :-
     format('Content-Type: text/html~n~n'),
     format('OK').
 
+string_concat_newline(S1, S2, S3) :-
+    string_concat(S1, "\r\n", S4),
+    string_concat(S4, S2, S3).
+
 save_rdf(Resource, DataKey, Value) :-
     number_string(NumberValue, Value),
     rdf_assert(Resource, DataKey, NumberValue).
@@ -163,3 +162,27 @@ save_rdf(Resource, DataKey, Value) :-
 
 save_rdf(Resource, DataKey, Value) :-
     rdf_assert(Resource, DataKey, Value^^xsd:string).
+
+:- begin_tests(form_controller).
+
+test(string_concat_newline) :-
+    X = "Zutanito", Y = "Menganito",
+    string_concat_newline(X, Y, Z),
+    Z = "Zutanito\r\nMenganito".
+
+test(save_rdf_number) :-
+    X = 'http://example.com/Example', Y = 'age',
+    once(save_rdf(X, Y, "256")),
+    rdf(X, Y, 256^^xsd:integer).
+
+test(save_rdf_iri) :-
+    X = 'http://example.com/Example', Y = 'friend',
+    once(save_rdf(X, Y, "http://example.com/Margaret")),
+    rdf(X, Y, 'http://example.com/Margaret').
+
+test(save_rdf_string) :-
+    X = 'http://example.com/Example', Y = 'name',
+    once(save_rdf(X, Y, "Máximo Toño")),
+    rdf(X, Y, "Máximo Toño"^^xsd:string).
+
+:- end_tests(form_controller).

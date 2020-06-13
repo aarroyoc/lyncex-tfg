@@ -8,7 +8,7 @@
     rdf:type rdfs:Class .
 
 <#author>
-    rdf:type rdfs:Property ;
+    rdf:type rdf:Property ;
     rdfs:domain <#Book> ;
     rdfs:range <#Author> . 
 

@@ -17,3 +17,13 @@ setup :-
 
 get_dict_function(Key, Dict, Value) :-
     get_dict(Key, Dict, Value);Value = false.
+
+:- begin_tests(setup).
+
+test(get_dict_function) :-
+    once(get_dict_function(id, _{id:42}, 42)).
+
+test(get_dict_function_false) :-
+    get_dict_function(id, _{x:32}, false).
+
+:- end_tests(setup).
