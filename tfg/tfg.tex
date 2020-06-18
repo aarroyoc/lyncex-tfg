@@ -915,10 +915,27 @@ Es por ello que solo se valida este único comportamiento.
     \label{fig:ontologia}
 \end{sidewaysfigure}
 
+La ontología es el concepto clave de interacción de las aplicaciones con el sistema. A nivel técnico no dejan de ser tripletas, pero se les otorga un valor semántico especial, con consecuencia en Lyncex.
+
+La ontología completa se puede ver en formato Turtle en el Anexo I.
+
+El diseño de la ontología se basa en dos clases base, encapsuladas dentro de un Application. Prefix y Controller. Prefix simplemente añade prefijos RDF para poder usarlos luego en el código del Handler. Controller es la clase de la cual derivan controladores más especializados. La clase base por si misma no tiene ninguna funcionalidad asociada más allá de la URL, el método de acceso y el control de acceso. Esto la hace imposible de usar de forma práctica de forma directa.
+
 \subsection{Controladores}
 Los controladores son los componentes que implementan la funcionalidad principal definida por la ontología.
 Al llegar una petición, se van probando los diferentes tipos de controladores hasta encontrar uno que sea del tipo al definido en la tripleta: (Controlador, rdf:type, lyncex:TipoControlador).
-Inicialmente se han diseñado tres controladores.
+Inicialmente se han diseñado cuatro controladores.
+
+Antes de todos ellos se comprueba si el usuario puede llamarlos o no. Existen dos usuarios, anónimos y el administrador.
+
+Esto se comprueba siempre al principio, antes incluso de entrar en el código específico del controlador es por ello que no se ha incluido en los diagramas de secuencia de los controladores.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{plantuml/loginflow.png}
+    \caption{Diagrama de secuencia de la comprobación de acceso}
+    \label{fig:loginflow}
+\end{figure}
 
 \subsubsection{ContentController}
 El más básico de todos, simplemente devuelve lo que tenga definido en la tripleta (Controlador, lyncex:content, Content) con el tipo MIME 
@@ -953,7 +970,7 @@ El TemplateController realiza las siguientes operaciones en orden:
 \end{figure}
 
 \subsubsection{FormController}
-El FormController es una abstracción por encima del TemplateController a nivel interno, pero de cara a la ontología no es una subclase.
+El FormController es una abstracción por encima del TemplateController.
 Su funcionamiento depende de si se realiza una petición POST o GET. Ante una petición POST, el controlador procesará los parámetros.
 Buscará la existencia de un parámetro llamado \_id en primer lugar, ya que definirá el sujeto sobre el que se van a almacenar tripletas.
 A continuación recorrerá el resto de parámetros. El nombre de cada parámetro es la URL de la propiedad y el valor será el valor de la propiedad.
@@ -961,6 +978,10 @@ Actualmente no se soporta crear dos tripletas de la misma propiedad en el mismo 
 
 Si tenemos una operación GET, el controlador leerá la clase base y todas las propiedades que pueda extraer de la clase. Para ello es importante que la ontología de los datos esté cargada, si no, no será capaz de adivinar qué propiedades admite la clase.
 Una vez tenga el listado de propiedades, generará un formulario HTML ajustando todos los valores de forma adecuada al formato de aceptación del POST.
+
+Existe un caso particular de la operación GET que sucede cuando existe el parámetro \_id. Este parámetro debe indicar una IRI de una instancia de la clase. En ese caso el formulario que se genera lleva precargados los datos ya existentes, permitiendo editar el contenido y borrar todas las tripletas con ese sujeto. La operación de edición es simplemente un borrado seguido de los mismos pasos para añadir tripletas desde un formulario vacío.
+
+En el caso de las propiedades que tengan multiplicidad mayor que 1, se debe indicar con la propiedad lyncex:multiple igual a true en la ontología. Esto provocará que la representación gráfica del formulario cambie y además, modificará ligeramente la lógica de guardado.
 
 \begin{figure}[h]
     \centering
@@ -978,7 +999,23 @@ Una vez tenga el listado de propiedades, generará un formulario HTML ajustando 
 
 \subsubsection{LoginController}
 
-\subsection{Procesado de parámetros}
+El LoginController es un tipo de controlador muy específico, especialmente diseñado para manejar el flujo de autenticación del usuario administrador en la aplicación. Es en esencia un FormController modificado para tratar únicamente el formulario de inicio de sesión. Además, no guarda datos en el almacenamiento RDF, sino que guarda datos en el SessionStorage.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/logincontroller-get.png}
+    \caption{Diagrama de secuencia del LoginController ante un GET}
+    \label{fig:logincontrollerget}
+\end{figure}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics{plantuml/logincontroller-post.png}
+    \caption{Diagrama de secuencia del LoginController ante un POST}
+    \label{fig:logincontrollerpost}
+\end{figure}
+
+\subsection{Parámetros}
 El procesado de parámetros es llamado por diferentes controladores para adaptar el formato de entrada HTTP GET y POST a un formato común (un diccionario Prolog).
 Solo saldrán del procesado aquellos parámetros indicados de forma explícita, ignorando aquellos que no lo estén.
 Durante el procesado se ejecutan las validaciones si las hubiera. Existen dos tipos de validaciones: Regex y Prolog.
@@ -992,6 +1029,10 @@ La validación será exitosa si el término se puede evaluar a true, en caso con
 En el caso del FormController, las validaciones tienen que ubicarse en otro lugar. Ya que el FormController importa implícitamente todos los parámetros de una ontología, no se puede adjutar una validación de la misma forma.
 La solución si usamos un FormController es extender la propia ontología.
 Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyncex:code\_validation, que funcionan como validación regex y validación Prolog, respectivamente.
+
+\subsection{Queries}
+
+\subsection{Handlers}
 
 \chapter{Implementación}
 
@@ -1069,7 +1110,7 @@ test(bnode) :-
 
 \end{lstlisting}
 
-Se definen zonas de test delimitadas por begin_tests y end_tests. En su interior definimos reglas test, que deben ser cumplirse. En este ejemplo, queríamos probar la regla map_bnode y si todo va bien, todas los términos deben ser verdaderos. La ejecución de los tests se detalla en el manual de instalación.
+Se definen zonas de test delimitadas por begin\_tests y end\_tests. En su interior definimos reglas test, que deben ser cumplirse. En este ejemplo, queríamos probar la regla map\_bnode y si todo va bien, todas los términos deben ser verdaderos. La ejecución de los tests se detalla en el manual de instalación.
 
 Para ejecutar los tests unitarios, el método recomendado es usar Docker Compose y ejecutar:
 
@@ -1409,7 +1450,7 @@ Una vez hayamos ingresado los credenciales correctos, ya podremos entrar a /admi
     \label{fig:bibliocyl5}
 \end{figure}
 
-Si queremos editar el contenido podemos acceder a la URL /admin/book?_id=IRI, una vez allí veremos los campos rellenados, podremos editar el contenido y podremos borrar el sujeto del triplestore.
+Si queremos editar el contenido podemos acceder a la URL /admin/book?\_id=IRI, una vez allí veremos los campos rellenados, podremos editar el contenido y podremos borrar el sujeto del triplestore.
 
 \begin{figure}
     \centering

@@ -9,6 +9,7 @@ participant Base64
 database RDF
 
 User -> HTTP: GET image.jpg
+ref over HTTP: Check Access
 HTTP -> ContentController: content_controller(RequestPath)
 loop Path != RequestPath
     ContentController -> RDF: rdf(Controller, 'lyncex:ContentController')

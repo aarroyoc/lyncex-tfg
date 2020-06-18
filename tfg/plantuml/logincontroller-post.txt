@@ -1,0 +1,26 @@
+@startuml
+
+title Login Controller (POST)
+
+actor User
+participant HTTP
+participant LoginController
+database SessionStorage
+database RDF
+
+User -> HTTP: POST /login
+HTTP -> LoginController: login_controller(RequestPath, Request)
+loop Path != RequestPath
+    LoginController -> RDF: rdf(Controller, 'lyncex:LoginController')
+    RDF -> LoginController: Controller, Path, Template, Class
+end
+
+LoginController -> RDF: rdf(Controller, UserPassword)
+RDF -> LoginController: UserPassword
+
+LoginController -> LoginController: check_user_and_password()
+LoginController -> SessionStorage: http_session_assert(User)
+
+LoginController -> LoginController: Call LoginController as GET
+
+@enduml

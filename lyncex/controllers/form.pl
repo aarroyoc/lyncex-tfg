@@ -31,19 +31,20 @@ form_controller(Path, get, _Request, FormData) :-
         format('<form action="/~w" method="POST">', [Path]),
         format('<input readonly type="url" name="_id" value="~w">', [Resource]),
         forall(rdfs_class_property(Class, Property),(
+            (rdf(Property, rdfs:label, Placeholder^^xsd:string);Placeholder=Property),
             (
                 rdf(Property, lyncex:multiple, true)
             ->
                 findall(ValueProperty, rdf_literal_or_iri(Resource, Property, ValueProperty), ValueProperties),
                 reverse(ValueProperties, ReverseValueProperties),
                 foldl(string_concat_newline, ReverseValueProperties, "", OutValueProperties),
-                format('<textarea placeholder="~w" name="~w">~w</textarea>', [Property, Property, OutValueProperties])
+                format('<textarea placeholder="~w" name="~w">~w</textarea>', [Placeholder, Property, OutValueProperties])
             ;
                 rdf_literal_or_iri(Resource, Property, ValueProperty)
                 ->
-                format('<input type="text" placeholder="~w" name="~w" value="~w">', [Property, Property, ValueProperty])
+                format('<input type="text" placeholder="~w" name="~w" value="~w">', [Placeholder, Property, ValueProperty])
                 ;
-                format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
+                format('<input type="text" placeholder="~w" name="~w">', [Placeholder, Property])
             )
         )),
         format('<input type="submit">'),
@@ -80,12 +81,13 @@ form_controller(Path, get, _Request, FormData) :-
         format('<form method="POST">'),
         format('<input type="url" name="_id" value="~w">', [BaseSubject]),
         forall(rdfs_class_property(Class, Property),(
+            (rdf(Property, rdfs:label, Placeholder^^xsd:string);Placeholder=Property),
             (
                 rdf(Property, lyncex:multiple, true)
             ->
-                format('<textarea placeholder="~w" name="~w"></textarea>', [Property, Property])
+                format('<textarea placeholder="~w" name="~w"></textarea>', [Placeholder, Property])
             ;
-                format('<input type="text" placeholder="~w" name="~w">', [Property, Property])
+                format('<input type="text" placeholder="~w" name="~w">', [Placeholder, Property])
             )
         )),
         format('<input type="submit">'),

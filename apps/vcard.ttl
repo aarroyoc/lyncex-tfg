@@ -6,10 +6,12 @@
 :VCard a rdfs:Class .
 
 :fn a rdf:Property ;
+    rdfs:label "Name of place" ;
     rdfs:domain :VCard ;
     rdfs:range xsd:string .
 
 :url a rdf:Property ;
+    rdfs:label "URL of place" ;
     rdfs:domain :VCard ;
     rdfs:range xsd:string .
 
@@ -18,13 +20,16 @@
     rdfs:range xsd:string .
 
 :geo a rdf:Property ;
+    rdfs:label "Geolocation" ;
     rdfs:domain :VCard ;
     rdfs:range :Geo .
 
 :latitude a rdf:Property ;
+    rdfs:label "Latitude" ;
     rdfs:domain :Geo ;
     rdfs:range xsd:string .
 
 :longitude a rdf:Property ;
+    rdfs:label "Longitude" ;
     rdfs:domain :Geo ;
     rdfs:range xsd:string .

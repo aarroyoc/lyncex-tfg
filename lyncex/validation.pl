@@ -53,7 +53,7 @@ test(valid_range) :-
     rdf_assert('http://example.com/Subject', rdf:type, Class),
     rdf_assert('http://example.com/Subject', Property, 'http://example.com/Subject2'),
     rdf_assert('http://example.com/Subject2', rdf:type, Class2),
-    valid_range,
+    valid,
     rdf_retractall(_,_,_).
 
 test(valid_range_fail) :-
@@ -70,7 +70,7 @@ test(valid_range_fail) :-
     rdf_assert('http://example.com/Subject', rdf:type, Class),
     rdf_assert('http://example.com/Subject', Property, 'http://example.com/Subject2'),
     rdf_assert('http://example.com/Subject2', rdf:type, Class),
-    \+ valid_range,
+    \+ valid,
     rdf_retractall(_,_,_).
 
 test(valid_range_literal) :-
@@ -85,7 +85,7 @@ test(valid_range_literal) :-
     % DATA
     rdf_assert('http://example.com/Subject', rdf:type, Class),
     rdf_assert('http://example.com/Subject', Property, "Máximo"),
-    valid_range,
+    valid,
     rdf_retractall(_,_,_).
 
 test(valid_range_literal_fail) :-
@@ -101,7 +101,7 @@ test(valid_range_literal_fail) :-
     % DATA
     rdf_assert('http://example.com/Subject', rdf:type, Class),
     rdf_assert('http://example.com/Subject', Property, "Máximo"),
-    \+ valid_range,
+    \+ valid,
     rdf_retractall(_,_,_).
 
 

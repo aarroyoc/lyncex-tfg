@@ -14,6 +14,7 @@ participant PCRE
 participant Prolog
 
 User -> HTTP: GET /user
+ref over HTTP: Check Access
 HTTP -> FormController: form_controller(RequestPath, Request)
 loop Path != RequestPath
     FormController -> RDF: rdf(Controller, 'lyncex:FormController')

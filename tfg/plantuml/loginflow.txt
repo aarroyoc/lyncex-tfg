@@ -1,0 +1,18 @@
+@startuml
+
+title Login Flow
+
+actor User
+participant HTTP
+database SessionStorage
+database RDF
+
+HTTP -> SessionStorage: http_session_data
+SessionStorage -> HTTP: SessionData
+
+HTTP -> RDF: rdf(Controller, AccessData)
+RDF -> HTTP: AccessData
+
+HTTP -> HTTP: check_access
+
+@enduml

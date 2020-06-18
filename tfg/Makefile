@@ -1,16 +1,17 @@
 all: tfg.pdf 
 
-tfg.pdf: lyncex.png plantuml/*.png
+tfg.pdf: lyncex-2.png plantuml/*.png
 	xelatex tfg
 	bibtex tfg
 	xelatex tfg
 	xelatex tfg
 
-lyncex.png:
+lyncex-2.png:
 	python3 /opt/ontology-visualization/ontology_viz.py -o lyncex.dot lyncex.ttl
 	dot -Tpng -o lyncex-2.png lyncex.dot
 
 clean:
+	rm plantuml/*.png
 	rm tfg.pdf
 	rm tfg.aux
 	rm tfg.log
@@ -18,7 +19,6 @@ clean:
 	rm tfg.bbl
 	rm tfg.blg
 	rm lyncex-2.png
-	rm plantuml/*.png
 
 plantuml/*.png:
 	cd plantuml; plantuml *.txt
