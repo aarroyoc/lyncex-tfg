@@ -5,6 +5,7 @@
 :- use_module(library(http/http_session)).
 
 :- use_module(library(pcre)).
+:- use_module(library(sha)).
 
 :- use_module(library(st/st_render)).
 
@@ -50,8 +51,11 @@ login_controller(Path, post, Request, FormData) :-
     rdf(Controller, lyncex:url, Path^^xsd:string),
     member('user'=User, FormData),
     member('password'=Password, FormData),
+    sha_hash(Password, Hash, [algorithm(sha256)]),
+    hash_atom(Hash, PasswordHash),
     rdf(Controller, lyncex:username, User^^xsd:string),
-    rdf(Controller, lyncex:password, Password^^xsd:string),
+    rdf(Controller, lyncex:password, PasswordHashString^^xsd:string),
+    atom_string(PasswordHash, PasswordHashString),
     http_session_assert(user(User)),
     login_controller(Path, get, Request, FormData).
 
