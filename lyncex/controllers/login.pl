@@ -21,7 +21,7 @@ login_controller(Path, get, _Request, FormData) :-
         http_session_data(user(_User))
         ->
         with_output_to(atom(Form),(
-            format('<p>Logged in!</p>')
+            format('<p>¡Sesión iniciada!</p>')
         ))
         ;
         with_output_to(atom(Form),(

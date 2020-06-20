@@ -29,7 +29,7 @@ Scenario: Autogenerate form
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test4.ttl' data
     When I visit '/form1'
-    And I get a '<form method="POST"><input type="url" name="_id" value="https://app.lyncex.com/book/"><input type="text" placeholder="https://app.lyncex.com/name" name="https://app.lyncex.com/name"><input type="submit"></form>' response
+    And I get a '<form method="POST"><input type="url" name="_id" value="https://app.lyncex.com/book/"><input type="text" placeholder="https://app.lyncex.com/name" name="https://app.lyncex.com/name"><input type="submit" value="Añadir"></form>' response
     And I get a 'text/html' response type
     And I get a 200 status code
 
@@ -37,7 +37,7 @@ Scenario: Multiple triples (generated form)
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test4.ttl' data
     When I visit '/form3'
-    And I get a '<form method="POST"><input type="url" name="_id" value="https://app.lyncex.com/book/"><textarea placeholder="https://app.lyncex.com/author" name="https://app.lyncex.com/author"></textarea><input type="submit"></form>' response
+    And I get a '<form method="POST"><input type="url" name="_id" value="https://app.lyncex.com/book/"><textarea placeholder="https://app.lyncex.com/author" name="https://app.lyncex.com/author"></textarea><input type="submit" value="Añadir"></form>' response
     And I get a 'text/html' response type
     And I get a 200 status code
 
@@ -59,7 +59,7 @@ Scenario: Visualize saved triples
         """
         <form action="/form3" method="POST"><input readonly type="url" name="_id" value="https://app.lyncex.com/book/SuperLibro"><textarea placeholder="https://app.lyncex.com/author" name="https://app.lyncex.com/author">Cervantes
         Lope de Vega
-        </textarea><input type="submit"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/book/SuperLibro"><input type="submit" value="DELETE"></form>
+        </textarea><input type="submit" value="Editar"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/book/SuperLibro"><input type="submit" value="Borrar"></form>
         """
     And I get a 200 status code
     And I get a 'text/html' response type
@@ -101,7 +101,7 @@ Scenario: Form also work for relationships
     And I get the following response
     """
     <form action="/form4" method="POST"><input readonly type="url" name="_id" value="https://app.lyncex.com/person/Mario"><textarea placeholder="https://app.lyncex.com/friend" name="https://app.lyncex.com/friend">https://app.lyncex.com/person/Jaime
-    </textarea><input type="submit"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/person/Mario"><input type="submit" value="DELETE"></form>
+    </textarea><input type="submit" value="Editar"></form><form method="GET"><input type="hidden" name="_delete" value="yes"><input type="hidden" name="_id" value="https://app.lyncex.com/person/Mario"><input type="submit" value="Borrar"></form>
     """
     And I get a 200 status code
     And I get a 'text/html' response type

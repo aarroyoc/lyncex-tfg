@@ -47,12 +47,12 @@ form_controller(Path, get, _Request, FormData) :-
                 format('<input type="text" placeholder="~w" name="~w">', [Placeholder, Property])
             )
         )),
-        format('<input type="submit">'),
+        format('<input type="submit" value="Editar">'),
         format('</form>'),
         format('<form method="GET">'),
         format('<input type="hidden" name="_delete" value="yes">'),
         format('<input type="hidden" name="_id" value="~w">', [Resource]),
-        format('<input type="submit" value="DELETE">'),
+        format('<input type="submit" value="Borrar">'),
         format('</form>')
     )),
     % Read template
@@ -90,7 +90,7 @@ form_controller(Path, get, _Request, FormData) :-
                 format('<input type="text" placeholder="~w" name="~w">', [Placeholder, Property])
             )
         )),
-        format('<input type="submit">'),
+        format('<input type="submit" value="Añadir">'),
         format('</form>')
     )),
     % Read template

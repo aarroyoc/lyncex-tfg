@@ -17,7 +17,8 @@
     lcx:controller <BookListPage> ;
     lcx:controller <LoginPage> ;
     lcx:controller <BookForm> ;
-    lcx:controller <GeoForm> .
+    lcx:controller <GeoForm> ;
+    lcx:controller <CSSStylesheet> .
 
 <HomePage>
     a lcx:ContentController ;
@@ -26,6 +27,7 @@
     lcx:content [
         a cnt:ContentAsText ;
         cnt:chars """
+<link rel=stylesheet href=/main.css>
 <h1>Bienvenido a BiblioCyL</h1>
 <p>Aplicación creada por Adrián Arroyo</p>
 <p><a href=/books>Ver listado bibliotecas</a></p>
@@ -44,6 +46,7 @@
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars """
+        <link rel=stylesheet href=/main.css>
         <h1>{{ card.fn }}</h1>
         {% if exists(atom(url), card) %}
         <p>URL: <a href={{ card.url }}>{{ card.url }}</a></p>
@@ -80,6 +83,7 @@
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars """
+        <link rel=stylesheet href=/main.css>
         <h1>Listado de bibliotecas de Castilla y León</h1>
         <ul>
         {% each cards, card %}
@@ -109,7 +113,18 @@
     lcx:password "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92" ;
     lcx:template  [
         a cnt:ContentAsText ;
-        cnt:chars "{% unescape login %}"
+        cnt:chars """
+        <link rel=stylesheet href=/main.css>
+        <h1>Login</h1>
+        <div class=center>
+        {% unescape login %}
+        </div>
+        <div class=center>
+        <a href=/admin/book>Añadir biblioteca</a>
+        <span>|</span>
+        <a href=/admin/geo>Añadir geolocalización</a>
+        </div>
+        """
     ] .
 
 <BookForm>
@@ -121,13 +136,8 @@
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars """
+        <link rel=stylesheet href=/main.css>
         <h1>Bibliotecas de Castilla y León</h1>
-        <style>
-        input{
-            display:block;
-            width:500px;
-        }
-        </style>
         {% unescape form %}
         """
     ] .
@@ -140,5 +150,46 @@
     lcx:class <http://www.w3.org/2006/vcard/ns#Geo> ;
     lcx:template [
         a cnt:ContentAsText ;
-        cnt:chars "<h1>Geopuntos</h1>{% unescape form %}"
+        cnt:chars """
+        <link rel=stylesheet href=/main.css>
+        <h1>Geopuntos</h1>
+        {% unescape form %}
+        """
     ] .
+
+<CSSStylesheet>
+    a lcx:ContentController ;
+    lcx:url "main.css" ;
+    lcx:method "get" ;
+    lcx:content [
+        a cnt:ContentAsText ;
+        cnt:chars """
+input{
+  display:block;
+  width:500px;
+}
+body{
+  font-family: Helvetica;
+  margin: 0;
+  background-color: aliceblue;
+}
+h1{
+  background-color: royalblue;
+  padding-top: 5px;
+  padding-left: 25px;
+  color: white;
+}
+p{
+  margin-left: 25px;
+}
+iframe{
+  width: 100vw;
+  height: 75vh;
+}
+.center{
+  display: flex;
+  justify-content: center;
+}
+"""
+    ] ;
+    lcx:mime "text/css" .

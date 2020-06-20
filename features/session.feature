@@ -12,7 +12,7 @@ Scenario: Do a login
     Given I have an empty Lyncex instance
     And I do a POST request with 'features/test5.ttl' data
     When I login at '/login'
-    Then I get a '<p>Logged in!</p>' response
+    Then I get a '<p>¡Sesión iniciada!</p>' response
     And I get a 'text/html' response type
     And I get a 200 status code
 
