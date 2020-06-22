@@ -1,0 +1,19 @@
+@startuml
+
+title Handler
+
+participant Controller
+participant Handler
+database RDF
+participant Prolog
+
+Controller -> Handler: resolve_handler(Controller, Parameters)
+loop forall handlers
+    Handler -> RDF: rdf(Handler, HandlerCode)
+    RDF -> Handler: HandlerCode
+    Handler -> Prolog: call(HandlerCode, Parameters)
+    Prolog -> Handler: HandlerData
+end
+Handler -> Controller: HandlerOutput
+
+@enduml

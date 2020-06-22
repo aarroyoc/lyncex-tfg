@@ -7,8 +7,6 @@ participant HTTP
 participant TemplateController
 database RDF
 participant SimpleTemplate
-participant Query
-participant Handler
 participant Parameter
 participant PCRE
 participant Prolog
@@ -34,30 +32,9 @@ alt ValidationCode exists
 end
 Parameter -> TemplateController: Parameters
 
-TemplateController -> Query: resolve_query(Controller, Parameters)
-loop forall queries
-    Query -> RDF: rdf(Query, QueryTemplate)
-    RDF -> Query: QueryTemplate
-    alt QueryTemplate exists
-        Query -> SimpleTemplate: render_template(QueryTemplate, Parameters)
-        SimpleTemplate -> Query: QueryString
-    else
-        Query -> RDF: rdf(Query, QueryString)
-        RDF -> Query: QueryString
-    end
-    Query -> RDF: rdf(QueryString)
-    RDF -> Query: QueryData
-end
-Query -> TemplateController: QueryOutput
+ref over TemplateController: Resolve Query
 
-TemplateController -> Handler: resolve_handler(Controller, Parameters)
-loop forall handlers
-    Handler -> RDF: rdf(Handler, HandlerCode)
-    RDF -> Handler: HandlerCode
-    Handler -> Prolog: call(HandlerCode, Parameters)
-    Prolog -> Handler: HandlerData
-end
-Handler -> TemplateController: HandlerOutput
+ref over TemplateController: Resolve Handler
 
 TemplateController -> SimpleTemplate: render_template(Template, Parameters, HandlerOutput, QueryOutput)
 SimpleTemplate -> TemplateController: HTMLOutput

@@ -708,6 +708,26 @@ Durante la reunión estan presentes uno o dos tutores, desempeñando ellos un ro
 
 El resto del sprint, el equipo de desarrollo (yo mismo) va modificando las tareas sobre Trello según se cumplen las condiciones de completado o si se encuentra algún obstáculo.
 
+\section{Estimación del esfuerzo}
+
+En la sección de alcance vimos las cinco historias de usuario propuestas para llevar a cabo los objetivos del proyecto. Posteriormente en la sección de análisis las descompondremos, pero antes de ello, vamos a realizar una estimación del esfuerzo a realizar.
+
+Para ello vamos a asignar a cada historia de usuario unos puntos de historia. Estos puntos de historia de usuario representan el esfuerzo que a priori creemos que hay que realizar para completar esa historia de usuario. Estas estimaciones mejoran con la experiencia del equipo de desarrollo, por lo que en este proyecto podemos esperar que sean unas estimaciones bastante poco precisas. 
+
+Para asignar puntos de historia existen diversos métodos. Uno de ellos es planning poker, donde el equipo de desarrollo tiene cartas enumeradas. De forma simultánea cada desarrollador elige una carta con los puntos que considera debe llevar esa historia de usuario y la muestra. El objetivo es alcanzar el consenso de todo el equipo, de forma que se debate y se vuelve a realizar hasta que una amplia mayoría otorgue los mismos puntos.
+
+Las cartas pueden ir enumeradas de distinta forma, pero en este proyecto se ha optado por la sucesión de Fibonacci. Esta sucesión funciona bien para estimar puntos de historia ya que tiene en consideración la ley de Weber sobre las comparaciones que realizamos los seres humanos.\cite{fibonacci}
+
+Después de la sesión de planning poker realizada entre Miguel Ángel y yo, el resultado fue el siguiente:
+
+\begin{itemize}
+    \item Almacenar datos junto a sus ontologías en el mismo espacio, validándose - 5 puntos
+    \item Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento - 8 puntos
+    \item Servir páginas web estáticas definidas mediante esa ontología - 5 puntos
+    \item Servir páginas web que necesiten leer datos del almacenamiento (plantillas) - 13 puntos
+    \item Servir páginas web CRUD con formularios - 21 puntos
+\end{itemize}
+
 \section{Plan de gestión de riesgos}
 
 Para estar prevenidos antes posibles riesgos que pudieran darse en la ejecución de este proyecto, se planifica con antelación ciertos problemas que podrían surgir. Este plan se elabora en cuatro fases:
@@ -800,6 +820,20 @@ R10 &
 \caption{Plan de riesgos}
 \label{table:risks-plan}
 \end{table}
+
+\section{Presupuesto}
+
+En esta sección vamos a analizar el costo que tendrá realizar el proyecto. Vamos a asumir tres tipos de gastos: gastos de personal, gastos administrativos y gastos de material.
+
+Los gastos de material van a ser de 0€, ya que vamos a usar servicios en su modalidad gratuita (GitHub, GitHub Actions) y se va a usar para programar el equipo personal del desarrollador.
+
+Los gastos administrativos van a ser el precio de matrícula de la universidad para realizar el proyecto, que teniendo en cuenta que son 12 ECTS y usando el precio unitario de 21,01€, supone un coste de 252,12€. Afortunadamente, existe podemos optar a ayudas que nos rebajan el importe un 75\% hasta dejarlo en 63.03€.
+
+Los gastos de personal también van a ser de 0€, ya que el desarrollador no va a cobrar por el proyecto. Solo tenemos en cuenta al desarrollador ya que el tutor y debe tener asignados varios proyectos de forma simultánea y su sueldo no depende sustancialmente de la realización de este proyecto. 
+
+Podemos estimar el gasto de personal del desarrollador en varios escenarios. Vamos a suponer que solo va a cobrar las horas estimadas por la universidad en la realización del proyecto, es decir, 12 ECTS. Cada ECTS representa 25 horas de trabajo, así que serían 300 horas. Si dividiésemos las 300 horas en jornadas de 8 horas, tendríamos 37,5 jornadas. Redondeamos a 38 jornadas. Según el SMI de 2020, al ser un trabajo por un periodo inferior a 120 días, el precio diario se fija en 44,99€. Así pues las 38 jornadas a 44,99€, daría 1709,62€ de salario bruto.\cite{smi} Esto sería un precio por debajo de mercado ya que en el sector es difícil encontrar trabajos que utilicen el SMI.
+
+ 
 
 % Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
 % se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
@@ -962,12 +996,12 @@ El TemplateController realiza las siguientes operaciones en orden:
     \item Templatizado final
 \end{enumerate}
 
-\begin{figure}[h]
+\begin{sidewaysfigure}[h]
     \centering
     \includegraphics[width=\textwidth]{plantuml/templatecontroller.png}
     \caption{Diagrama de secuencia del TemplateController}
     \label{fig:templatecontroller}
-\end{figure}
+\end{sidewaysfigure}
 
 \subsubsection{FormController}
 El FormController es una abstracción por encima del TemplateController.
@@ -983,34 +1017,34 @@ Existe un caso particular de la operación GET que sucede cuando existe el pará
 
 En el caso de las propiedades que tengan multiplicidad mayor que 1, se debe indicar con la propiedad lyncex:multiple igual a true en la ontología. Esto provocará que la representación gráfica del formulario cambie y además, modificará ligeramente la lógica de guardado.
 
-\begin{figure}[h]
+\begin{sidewaysfigure}[h]
     \centering
     \includegraphics[width=\textwidth]{plantuml/formcontroller-get.png}
     \caption{Diagrama de secuencia del FormController ante un GET}
     \label{fig:formcontrollerget}
-\end{figure}
+\end{sidewaysfigure}
 
-\begin{figure}[h]
+\begin{sidewaysfigure}[h]
     \centering
     \includegraphics[width=\textwidth]{plantuml/formcontroller-post.png}
     \caption{Diagrama de secuencia del FormController ante un POST}
     \label{fig:formcontrollerpost}
-\end{figure}
+\end{sidewaysfigure}
 
 \subsubsection{LoginController}
 
 El LoginController es un tipo de controlador muy específico, especialmente diseñado para manejar el flujo de autenticación del usuario administrador en la aplicación. Es en esencia un FormController modificado para tratar únicamente el formulario de inicio de sesión. Además, no guarda datos en el almacenamiento RDF, sino que guarda datos en el SessionStorage.
 
-\begin{figure}[h]
+\begin{sidewaysfigure}[h]
     \centering
     \includegraphics[width=\textwidth]{plantuml/logincontroller-get.png}
     \caption{Diagrama de secuencia del LoginController ante un GET}
     \label{fig:logincontrollerget}
-\end{figure}
+\end{sidewaysfigure}
 
 \begin{figure}[h]
     \centering
-    \includegraphics{plantuml/logincontroller-post.png}
+    \includegraphics[width=\textwidth]{plantuml/logincontroller-post.png}
     \caption{Diagrama de secuencia del LoginController ante un POST}
     \label{fig:logincontrollerpost}
 \end{figure}
@@ -1032,7 +1066,32 @@ Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyn
 
 \subsection{Queries}
 
+Las queries son consultas que generan un diccionario sobre las diferentes propiedades de un sujeto. Estas consultas luego sirven para mostrar información dinámica en las plantillas. Para ello se declara una IRI de un sujeto y se recorren sus propiedades, generando un diccionario siendo las claves las propiedades y el valor, el propio valor u objeto correspondiente. Esta abstracción no es 100\% compatible con el modelo RDF, pero es muy cómoda en determinadas ocasiones. Existen tres limitaciones básicas de las queries:
+\begin{itemize}
+    \item Las propiedades toman el nombre del último componente de la IRI. Es decir, si una propiedad es 'http://www.w3.org/2006/vcard/ns\#email', en el diccionario aparecerá bajo la propiedad email.
+    \item En caso de varias propiedades que resulten tener el mismo nombre final (dos emails por ejemplo), se tomará el último valor encontrado.
+    \item Los diccionarios no recorren las relaciones generando subdiccionarios.
+\end{itemize}
+
+Para dotar de mayor flexibilidad a las queries, se admite que la IRI del sujeto pueda ser una plantilla y que se pueda componer mediante plantillas de simple-template. Así pues, quedan a disposición de la plantilla las variables de los parámetros definidos con anterioridad.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/queryflow.png}
+    \caption{Resolución de las queries}
+    \label{fig:queryflow}
+\end{figure}
+
 \subsection{Handlers}
+
+Los handlers son otro tipo de consultas. En este caso se basan en ejecutar código Prolog que genere un diccionario válido para las plantillas. Al tratarse de código Prolog, disponemos de una gran flexibilidad para realizar casi cualquier cosa. No existen limitaciones a la hora de llamar a términos estándar de Prolog, así como a términos del módulo rdf11. Además se incluye acceso a un diccionario de parámetros. Su inconveniente principal es una mayor dificultad de uso y la mayor verbosidad.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{plantuml/handlerflow.png}
+    \caption{Resolución de los handlers}
+    \label{fig:handlerflow}
+\end{figure}
 
 \chapter{Implementación}
 
@@ -1239,14 +1298,7 @@ Los requisitos que podemos sacar de las historias de usuario son los siguientes:
 
 La arquitectura es básicamente un recubrimiento por encima de la de Lyncex. Se trata de una aplicación web con tres capas: presentación, negocio y datos. En las tres capas se delega parte del trabajo a Lyncex.
 
-Los datos ya tienen definida dos ontologías que especifican como son los datos. En este caso son FOAF y vCard. La primera sirve para modelar interacciones sociales (personas y agentes) y la segunda modela una agenda de contactos. 
-
-\begin{sidewaysfigure}
-    \centering
-    \includegraphics[width=\textwidth]{foaf.png}
-    \caption{Diagrama de la ontología FOAF \\ \url{http://owlgred.lumii.lv/online_visualization/uo3g}}
-    \label{fig:foaf}
-\end{sidewaysfigure}
+Los datos ya tienen definida dos ontologías que especifican como son los datos. En este caso son FOAF y vCard. La primera sirve para modelar interacciones sociales (personas y agentes) y la segunda modela una agenda de contactos. No obstante, vamos a ignorar las relaciones con la ontología FOAF en nuestra aplicación, ya que son secundarias.
 
 \begin{sidewaysfigure}
     \centering
@@ -1483,6 +1535,19 @@ Si queremos editar el contenido podemos acceder a la URL /admin/book?\_id=IRI, u
 
 Con esto, hemos visto las características principales de Lyncex aplicadas sobre un conjunto de datos reales.
 
+\section{Conclusiones}
+
+El desarrollo de esta aplicación ha servido para encontrar fallos y extraer algunas conclusiones.
+
+Por un lado se ha visto la necesidad de permitir desactivar la validación RDF Schema, ya que en ciertos datasets no se cumplen las restricciones de forma exacta, y menos en estos datos, que realmente vienen definidos por una ontología OWL. También queda para el futuro ser compatibles con OWL, al menos al mismo nivel que con RDF Schema.
+
+También hemos visto el problema de las interfaces en los formularios pregenerados. ¿Qué idioma debe mostrar el botón? ¿Las IRI son suficientemente explicativas para mostrar directamente?
+
+Se han detectado errores en la gestión de propiedades opcionales que requirieron de soluciones no planteadas antes.
+
+Sobre aspectos positivos se ha encontrado que, aunque hay todavía muchos detalles sin pulir, en general la aplicación es fácil de programar. El programador que usa Lyncex necesita poco tiempo para realizar la aplicación entera. 
+
+Como aspectos negativos, hemos visto que es difícil actualizar la aplicación una vez está ejecutándose, ya que aunque es posible, es difícil seleccionar todo lo que queremos reemplazar. Además, el contenido estático complementario (como el CSS) no se adapta muy bien al formato de tener que introducirlo como un string más.
 
 \chapter{Manuales}
 
@@ -1517,11 +1582,11 @@ docker-compose build
 
 Esto comenzará la descarga de Prolog, así como de Python y numerosas dependencias. Guardará las imágenes en el almacén local de Docker. 
 
-Ahora podemos realizar la configuración de los contenedores. Edita el fichero docker-compose.yml con un editor de textos cualquiera. El campo más importante es el de ports. Aquí podemos configurar el puerto sobre el que va a estar escuchando Lyncex. Para realizar el cambio hay que modificar "11011:11011" a "PUERTO\_DESEADO:11011". El resto de configuraciones no son de uso común.
+Ahora podemos realizar la configuración de los contenedores. Edita el fichero docker-compose.yml con un editor de textos cualquiera. El campo más importante es el de ports. Aquí podemos configurar el puerto sobre el que va a estar escuchando Lyncex. Para realizar el cambio hay que modificar "11011:11011" a "PUERTO\_DESEADO:11011". Otra configuración de interés es la activación o no del validador de RDF Schema. La variable de entorno LYNCEX\_RDF\_SCHEMA\_VALIDATION controla su activación. Por defecto está a true, necesario además para pasar los tests con éxito, pero en ciertas ocasiones puede tener sentido desactivar la validación ya que se trabaja con datos que no siguen la ontología de forma estricta.
 
 Una vez configurado, ya podemos ejecutar Lyncex:
 \begin{verbatim}
-docker-compose run --service-ports lyncex
+docker-compose up lyncex
 \end{verbatim}
 Y Lyncex estará ya disponible.
 
@@ -1633,13 +1698,33 @@ PREDICADOS EXTRA (db, exists)
 
 \chapter{Conclusiones y trabajo futuro}
 
-MUTABILIDAD RDF
-HERRAMIENTAS PROLOG
-BDD
-ANEXO TESTS
+Para acabar la memoria, en este último capítulo vamos a repasar algunas de las conclusiones obtenidas.
 
-TRIPLESTORE DESACOPLADO
-SEGURIDAD (CONTROL DE ACCESO FINO, gestion de secretos)
+Por un lado, la metodología Scrum ha resultado ser efectiva. Creemos que en este caso, donde podía haber requisitos cambiantes, ha sido una elección correcta. La planificación sin embargo, se ha desviado mucho respecto a la realidad, aunque esto es atribuible a la falta de experiencia.
+
+Las librerías de Prolog han sorprendido por su madurez. Son perfectamente válidas en entornos de producción a pesar de su rareza. No son extremadamente complejas, pero optimizan los casos de uso principales de forma muy ergonómica y adaptada al lenguaje.  Además, la capacidad de debugging y testing nos ha sorprendido gratamente. También merece destacar la ayuda que han proporcionado los desarrolladores de SWI-Prolog ante cualquier problema detectado.
+
+El lenguaje en sí, ha demostrado ser a la vez un desafío y una profunda satisfacción. Porque es un lenguaje idóneo para expresar ciertas relaciones, para trabajar con datos, pero debemos recordar que no podemos usar técnicas de otros lenguajes que ya están interiorizadas. Este problema de rareza también se ha notado al tratar de elaborar diagramas UML.
+
+RDF por su parte ha demostrado ser un sistema potente, pero con lagunas. Si bien es una forma esencial de representación de la información, falla a la hora de ser manipulado para realizar ediciones. No existe forma de modificar tripletas, siendo lo más común borrar y volver a crear, sin embargo, esto requiere saber la tripleta exacta que queremos borrar, qu en el caso de las propiedades con multiplicidad, se complica.
+
+El testing mediante BDD ha sido extremadamente útil y práctico. Ha permitido detectar regresiones y en prácticamente todo el ciclo de desarrollo. Además permitía saber fácilmente cuando una tarea había sido completada con éxito.
+
+En cuanto al diseño, se han quedado muchas cosas interesantes en el tintero. Una propuesta de futuro sería desacoplar el Triplestore del propio proceso web. Esto se eligió por simplicidad, pero de cara a un producto más profesional, sería necesario que la base de datos tuviese más potencia y escalabilidad. Un triplestore externo podría lograrlo de forma sencilla.
+
+También es importante un aspecto aquí parcialmente ignorado, como es la seguridad. En futuras iteraciones se debería implementar un sistema de control de acceso más potente, así como una gestión de secretos más ergonómica. Existen diversas formas de diseñar este sistema. Un control de acceso fino a nivel de tripleta puede ser excesivo pero sería muy flexible.
+
+El contenido estático también debería poder ser más ergonómico, ya que inyectarlo dentro de ficheros Turtle es un proceso incómodo y propenso a errores. En contenido binario este problema se magnifica.
+
+Sin embargo, las conclusiones finales es que este diseño de framework web basado en RDF y el contenido semántico es válido y viable. Se ha intentado en todo momento que la experiencia de desarrollo sea ideal. Creemos que solo mediante una interfaz Turtle hay demasiados problemas. Quizá una herramienta o un IDE para interactuar específicamente con este sistema arreglaría muchos problemas de ergonomía encontrados.
+
+El framework ha demostrado ser flexible, permitiendo realizar prácticamente lo que se quiera hacer, aunque convenientemente optimizado solamente para las tareas más comunes, como son los CRUD y los formularios. Es sencillo de instalar y configurar en cualquier distro Linux, gracias a Docker y Docker Compose.
+
+Por último, el hecho de tener una ontología por separado, definida de forma independiente pero abierta, permite que se pueda extender por otros autores, dotándole de mayor funcionalidad. E implementaciones independientes pueden tratar de implementar la funcionalidad semántica de igual forma que lo hace Lyncex, mejorando en aspectos que se consideren peores de Lyncex.
+
+A nivel personal considero que la aplicación cumple con los objetivos marcados, y que si bien, no cumple los requisitos para ser usado en producción, es suficiente para proponer este concepto de plataforma de desarrollo.
+
+Durante este tiempo he podido aprender y profundizar sobre ciertos aspectos de la informática que durante el resto de asignaturas no pude hacer. Esto me ha servido para desmitificar ciertas tecnologías e ideas y poder tener una opinión más formada sobre este tipo de tecnologías.
 
 
 \begin{appendices}

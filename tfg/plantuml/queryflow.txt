@@ -1,0 +1,26 @@
+@startuml
+
+title Query
+
+participant Controller
+participant Query
+database RDF
+participant SimpleTemplate
+
+Controller -> Query: resolve_query(Controller, Parameters)
+loop forall queries
+    Query -> RDF: rdf(Query, QueryTemplate)
+    RDF -> Query: QueryTemplate
+    alt QueryTemplate exists
+        Query -> SimpleTemplate: render_template(QueryTemplate, Parameters)
+        SimpleTemplate -> Query: QueryString
+    else
+        Query -> RDF: rdf(Query, QueryString)
+        RDF -> Query: QueryString
+    end
+    Query -> RDF: rdf(QueryString)
+    RDF -> Query: QueryData
+end
+Query -> Controller: QueryOutput
+
+@enduml
