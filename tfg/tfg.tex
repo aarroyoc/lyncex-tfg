@@ -49,29 +49,28 @@ hmargin=3cm
 
 En ciencias de la computación, de forma recurrente se divide entre código, lo que va a ejecutar la máquina, y datos.
 Esta diferencia, aunque pueda resultar evidente, es innecesaria, ya que el código no deja de ser dato, solo que con una semántica diferente.
-Von Neuman, en su modelo de computadora, elimina las diferencias a nivel de hardware entre código y datos, de modo muy exitoso, hasta tal punto que esta idea sigue siendo la base de los procesadores modernos actuales.
-Hoy día en la creación de aplicaciones web, separamos por un lado el código y por otro los datos que van a circular a través de él. 
-No obstante, considero interesante imaginar y plantear una aplicación web descrita de la misma forma en que se describen los datos.
-De forma principalmente declarativa y usando tecnologías maduras como RDF como la base del modelo de datos.
-El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas.
+Von Neumann, en su modelo de computadora\cite{wiki:neumann}, elimina las diferencias a nivel de hardware entre código y datos, de modo muy exitoso, hasta tal punto que esta idea sigue siendo la base de los procesadores modernos actuales.
 
-De este modo, podríamos resumir este sistema como una base de datos y a la vez un servidor web configurable a través del contenido semántico de la propia base de datos.
+Hoy día, en la creación de aplicaciones web, se separa por un lado el código y por otro los datos que van a circular a través de él. 
+Pero, ¿sería posible plantear una aplicacón web descrita de forma comparable a como se describen los datos? En este Trabajo Fin de Grado exploraremos esta idea mediante un framework o plataforma de desarrollo que sirva como prueba de concepto. El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas. Para ello usaremos tecnología madura como RDF para la representación de la información.\cite{rdf}
 
-La idea surge principalmente de estudiar la base de datos CouchDB (se detallará más adelante) y su concepto de integrar código JavaScript como un tipo de documento más.
+De este modo, podríamos resumir esta plataforma como una base de datos y a la vez un servidor web configurable a través del contenido semántico de la propia base de datos.
+
+La idea surge principalmente de estudiar la base de datos CouchDB y su concepto de integrar código ejecutable por HTTP en la base de datos. Apache CouchDB es una base de datos NoSQL de tipo documental. Los documentos almacenados son de tipo JSON, generalmente sin esquema. Sin embargo, hay ciertos documentos especiales que representan vistas de la base de datos. Estas se programan en JavaScript y debido a su flexibilidad, se pueden llegar a implementar apliaciones completas bajo ese modelo, en particular aplicaciones CRUD.\cite{couchapp}
 
 \section{Objetivos}
 
 El objetivo principal de este trabajo es construir una entorno de desarrollo que implemente el concepto de base de datos y servidor web en un mismo entorno, usando tripletas para su representación. Sobre esta plataforma deberán poder ejecutarse aplicaciones simples y la llamaremos a partir de ahora, Lyncex.
 
-La implementación resultante no deberá ser de un nivel de producción, pero deberá ser útil para validar los conceptos con los que se va a trabajar, así como el estado de ciertas tecnologías con de relativa poca popularidad en el mundo empresarial.
+La implementación resultante no deberá ser de un nivel de producción, pero deberá ser útil para validar los conceptos con los que se va a trabajar, así como el estado de ciertas tecnologías (Prolog y RDF) con de relativa poca popularidad en el mundo empresarial.\cite{stackoverflowsurvey}
 
-Además de la implementación en código, se definirá una ontología que define el funcionamiento de la aplicación web. Esta ontología es una interfaz sobre la que un trabajo posterior podría diseñar implementaciones alternativas, mejorando el código original o extendiendo la funcionalidad.
+Además de la implementación en código, se definirá una ontología que defina el funcionamiento de la plataforma de desarrollo. Esta ontología es una interfaz sobre la que un trabajo posterior podría diseñar implementaciones alternativas, mejorando el código original o extendiendo la funcionalidad.
 
 En este proyecto se reforzarán los conocimientos del lenguaje Prolog, en concreto en una vertiente altamente práctica, como es su utilidad para desarrollo de aplicaciones web.
 
 \section{Alcance}
 
-Para cumplir los objetivos identificamos cinco historias de usuario diferentes. En este proyecto intentaremos completar las cinco historias de usuario al completo. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario. Más adelante entraremos en detalle de los requisitos que llevan aparejados cada una de estas historias de usuario.
+Para cumplir los objetivos identificamos cinco historias de usuario diferentes. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario. Más adelante entraremos en el detalle de los requisitos que llevan aparejados cada una de estas historias de usuario, pero su enumeración y dependencias se muestran en la figura \ref{fig:dependencia}.
 
 \begin{figure}[h]
     \centering
@@ -82,46 +81,50 @@ Para cumplir los objetivos identificamos cinco historias de usuario diferentes. 
 
 De estas historias, cuatro de ellas son un incremento funcional del mismo sistema, Lyncex, y se debe completar una antes de pasar a la siguiente. La quinta, el desarrollo de la ontología, se desarrolla de forma paralela al resto del sistema.
 
-El proyecto deberá estar finalizado antes de la fecha límite, del 10 de julio de 2020, tanto la implementación como esta memoria.
-
 El proyecto no trata de crear ninguna base de datos desde cero, ni enfrentarse a muchos de los retos comunes que existen en este tipo de sistemas como restricciones de rendimiento o problemas de escalabilidad y sincronización. Tampoco intenta crear un framework web listo para ir a producción, ya que siguen faltando componentes esenciales de cualquier framework web.
+
+El proyecto deberá estar finalizado antes de la fecha límite, del 10 de julio de 2020, tanto la implementación como esta memoria.
 
 \section{Aplicación de ejemplo (visión general)}
 
 De nada serviría una plataforma de desarrollo completa sin aplicaciones que la utilicen. Para demostrar la funcionalidad del sistema, en entornos reales, se diseñará una aplicación basada en datos abiertos ya existentes.
 
-Se usarán los datos de Bibliotecas de Castilla y León, en formato RDF/XML y se tratará de hacer un ejemplo práctico de aplicación modelo que usa Lyncex.
+Se usarán los datos de Bibliotecas de Castilla y León, en formato RDF/XML y se realizará un ejemplo práctico de aplicación modelo que usa Lyncex.
 
 \section{Estructura de la memoria}
-La memoria se estructura en diferentes capítulos. En primer lugar, se repasarán conocimientos previos necesarios para entender, desde una base técnica pero no especializada, el conjunto de este trabajo. Posteriormente se realizará el análisis de diferentes tecnologías similares, que cubren parte de los objetivos de este trabajo de alguna u otra forma, el conocido como estado del arte.
+La memoria se estructura en diferentes capítulos. En primer lugar se ubica el capítulo \textit{Conocimientos Previos}, donde se repasarán conceptos y tecnologías necesarias para entender el trabajo en su totalidad, desde una base técnica pero no especializada. Posteriormente, en el \textit{Estado del Arte}, se realizará el análisis de diferentes tecnologías similares, que cubren parte de los objetivos de este trabajo de alguna u otra forma.
 
-Posteriormente se tratará la planificación del proyecto, haciendo un inciso en la metodología Scrum. Posteriormente se pasará a la etapa de análisis, donde se descompondrán los requisitos del proyecto y las historias de usuario a realizar.
+Posteriormente se tratará la \textit{Planificación} en el capítulo homónimo. Se hará un inciso en la metodología Scrum. 
 
-El siguiente capítulo está dedicado al diseño, tanto del propio software, como de la ontología que lo acompaña. A continuación, se encuentra el capítulo de la implementación. En este capítulo primero veremos herramientas que se han usado para la construcción de este proyecto. Después veremos la implementación del software en sí, haciendo especial hincapié en aquellos elementos que no sean del todo evidentes para el lector.
+Inmediatamente después está el capítulo \textit{Análisis y diseño}. En la etapa de análisis se descompondrán los requisitos del proyecto y las historias de usuario a realizar. La etapa de diseño, tanto del propio software, como de la ontología que lo acompaña. 
 
-El capítulo dedicado a la validación y las pruebas se ubica inmediatamente después. En este capítulo se describirán las pruebas realizadas y la metodología empleada para comprobar que efectivamente, se está implementando correctamente el software.
+A continuación, se encuentra el capítulo \textit{Implementación}. En este capítulo primero veremos herramientas que se han usado para la construcción de este proyecto. Después veremos la implementación del software en sí, haciendo especial hincapié en aquellos elementos que no sean del todo evidentes para el lector.
 
-Le sigue el capítulo dedicado a la aplicación de ejemplo, donde se llevará a cabo un mini proyecto (objetivo, análisis, diseño, implementación y pruebas) para ver que el software como plataforma de desarrollo para otras aplicaciones tiene sentido o no, y poder identificar posibles inconvenientes prácticos que se hayan encontrado.
+El capítulo dedicado a \textit{Validación y pruebas} se ubica inmediatamente después. En este capítulo se describirán las pruebas realizadas y la metodología empleada para comprobar que efectivamente, se está implementando correctamente el software.
 
-A modo de referencia, el capítulo de manuales, incluye instrucciones de instalación y de uso de Lyncex.
+Le sigue el capítulo dedicado a la \textit{Aplicación de ejemplo}, donde se llevará a cabo un mini proyecto (objetivo, análisis, diseño, implementación y pruebas) para demostrar la viabilidad del software como plataforma de desarrollo para otras aplicaciones y poder identificar posibles inconvenientes prácticos que se hayan encontrado.
 
-Por último, se hablará sobre las conclusiones que podemos extraer del proyecto así como trabajo que podría realizarse en el futuro siguiendo por este camino.
+A modo de referencia, el capítulo \textit{Manuales}, incluye instrucciones de instalación y de uso de Lyncex.
+
+Por último, en \textit{Conclusiones y trabajo futuro} se hablará sobre las conclusiones que podemos extraer del proyecto así como trabajo que podría realizarse en el futuro siguiendo por este camino.
 
 
 \chapter{Conocimientos previos}
 
 En este capítulo trataremos de explicar de la forma más clara posible, conocimientos que creemos necesarios para entender el proyecto en su totalidad.
 
+El contenido se divide en dos secciones: web semántica y Prolog. En la web semántica veremos RDF, RDF Schema y SPARQL, esta sección está más enfocada a la parte de almacenamiento e interacción exterior de la plataforma. La sección de Prolog es un tutorial rápido para conocer el lenguaje sobre el que se va a implementar Lyncex.
+
 \section{Web Semántica}
 
-La web semántica es un concepto amplio, surgido a finales de los 90 y en un principio impulsado por Tim Berners-Lee y su organización, el W3C. La idea principal es dar un paso cualtitativo más en el acceso y descripción de datos respecto al modelo de la web HTML. Dentro de este paraguas existen numerosos proyectos como RDF, SPARQL, LinkedData, ... En este proyecto solo utilizamos algunas de ellas.
+La web semántica es un concepto amplio\cite{semanticweb}, surgido a finales de los 90 y en un principio impulsado por Tim Berners-Lee y su organización, el W3C. La idea principal es dar un paso cualtitativo más en el acceso y descripción de datos respecto al modelo de la web HTML. Dentro de este paraguas existen numerosos proyectos como RDF\cite{rdf11}, SPARQL\cite{sparql}, OWL\cite{owl}, ... En este proyecto solo utilizamos algunas de ellas.
 
 \subsection{RDF}
 
-RDF es una de las tecnologías base, sobre las que se asienta prácticamente toda la web semántica. Se trata de un modelo de representación de la información basado en tripletas.
+RDF es una de las tecnologías base, sobre las que se asienta prácticamente toda la web semántica. Se trata de un modelo de representación de la información basado en tripletas.\cite{rdf11}
 
 \subsubsection{Tripletas}
-Las tripletas son un modo de representar la información mediante tríos, ordenados, de datos.
+Las tripletas son un modo de representar la información mediante ternas, ordenados, de datos.
 Es uno de los modos fundamentales de representación de información
 
 En una tripleta, los elementos se denominan, en este orden, sujeto, predicado y objeto. La estructura básica sigue la de la gramática del lenguaje humano para afirmar hechos.
@@ -133,12 +136,14 @@ maria -> is -> human
 adrian -> likes -> maria
 \end{verbatim}
 Con estos tres elementos, y suponiendo que podemos combinar sujetos, predicados y objetos en otras tripletas, podemos crear grandes redes interrelacionadas, ideales para el almacenamiento de conocimiento.
-Estas se denominan grafos.
-Tres es el número mínimo necesario para poder modelar cualquier descriptible. Las duplas (dos elementos) también son populares en bases de datos, pero necesitan de un contexto externo para su interpretación correcta.
+Estas redes se denominan grafos.
+
+¿Por qué ternas? ¿Por qué tres elementos y no dos por ejemplo? Las ternas es la base ideal para estructurar la información. Con tres grados de libertad en nuestras expresiones básicas son suficientes para un sistema autodescriptivo, tres tiene la mayor densidad de información de cualquier entero. Podemos construir un conjunto de triples que describa cualquier cosa descriptible. Las relaciones binarias, por otro lado, que son la base de las tablas y bases de datos tradicionales, nunca pueden ser autodescriptivas: siempre necesitarán alguna lógica externa al sistema para interpretarlas, es decir, dos grados de libertad son insuficientes.\cite{rdf}
+
 Este sistema además tiene varias ventajas, por ejemplo, la duplicación de las tripletas no es un problema, ya que simplemente se reafirma lo mismo una y otra vez.
 
 La idea de las tripletas es bastante genérica y existen diferentes implementaciones de la idea. La más popular, sin lugar a dudas, es RDF, que describiremos a continuación.
-Las tripletas tienen numerosas ventajas pero también diversos inconvenientes, entre ellos: rendimiento inferior y mayor dificultad a la hora de actualizar el contenido de las tripletas.
+Las tripletas tienen numerosas ventajas pero nunca han llegado a gozar de una amplia popularidad a nivel empresarial.\cite{stackoverflowsurvey}
 Esto, sumado a la falta de educación en este concepto, ha provocado que actualmente, el uso de tripletas sea minoritario.
 
 \subsubsection{Tripletas en RDF}
@@ -149,20 +154,20 @@ Las IRIs son la versión internacionalizada y ampliada de las famosas URL. Cada 
 Los literales son datos puros, sin conexión entre sí. Pueden ser cadenas de texto, números enteros, números decimales, etc... Solo los objetos pueden ser literales.
 Los blank nodes son conexiones anónimas, sin definir explícitamente, entre varias tripletas. Solo pueden ser blank nodes los sujetos y los objetos.
 
-Además RDF define ciertos recursos de utilidad como un tipado y una distinción entre varios tipos elementales de recurso.
+Además RDF define un marco básico para poder describir, de forma muy elemental, la propia información representada.
 
-RDF se define sin representación textual por defecto, aunque existen varios estándares. Uno de los originales es RDF-XML, que usa la sintaxis de XML para definir RDF. Esta sintaxis es especialmente compleja, ya que es verbosa y admite varios modos de uso.
-Otros estándares definen JSON-LD que usa sintaxis de JSON, otro formato genérico popular o RDFa que se integra en HTML. Sin embargo, también existen sintaxis expresamente diseñadas para RDF, que por lo general son más claras que tratar de adaptar otro formato a RDF.
-Algunos ejemplos de estas sintaxis son Turtle, N3, NTriples y TriG.
+RDF se define sin representación textual por defecto, aunque existen varios estándares. Uno de los originales es RDF-XML\cite{rdfxml}, que usa la sintaxis de XML para definir RDF. Esta sintaxis es especialmente compleja, ya que es verbosa y admite varios modos de uso.
+Otros estándares definen JSON-LD\cite{jsonld} que usa sintaxis de JSON, otro formato genérico popular o RDFa\cite{rdfa} que se integra en HTML. Sin embargo, también existen sintaxis expresamente diseñadas para RDF, que por lo general son más claras que tratar de adaptar otro formato a RDF.
+Algunos ejemplos de estas sintaxis son Turtle\cite{turtle}, N3\cite{wiki:n3}, NTriples\cite{ntriples}, TriG\cite{trig} y HDT\cite{hdt}.
 
 En Lyncex se ha decidido usar sintaxis Turtle. Un ejemplo de esta sintaxis a continuación:
 
-\begin{lstlisting}
+\begin{lstlisting}[float,floatplacement=H]
 @base <https://lyncex.com/lyncex#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
 
-<Richard_Feynman>
+<Feynman>
     a foaf:Person ;
     foaf:name "Richard Feynman" ;
     foaf:birthday "02-15" ;
@@ -177,21 +182,44 @@ En Lyncex se ha decidido usar sintaxis Turtle. Un ejemplo de esta sintaxis a con
     foaf:name "John Von Neumman" .
 \end{lstlisting}
 
-Que es equivalente a:
+\begin{lstlisting}[float,floatplacement=H]
+------------------------------------
 
-\begin{adjustbox}{width=\textwidth,keepaspectratio}
-\begin{lstlisting}
-https://lyncex.com/lyncex#Richard_Feynman,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://xmlns.com/foaf/0.1/Person
-https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/name,Richard Feynman
-https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/birthday,"02-15"
-https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/knows,_:1
-https://lyncex.com/lyncex#Richard_Feynman,http://xmlns.com/foaf/0.1/knows,https://lyncex.com/lyncex#Von_Neumman
-_:1,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://xmlns.com/foaf/0.1/Person
-_:1,http://xmlns.com/foaf/0.1/name,Albert Einstein
-https://lyncex.com/lyncex#Von_Neumman,http://www.w3.org/1999/02/22-rdf-syntax-ns#type,http://xmlns.com/foaf/0.1/Person
-https://lyncex.com/lyncex#Von_Neumman,http://xmlns.com/foaf/0.1/name,John Von Neumman
+https://lyncex.com/lyncex#Feynman
+    http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+    http://xmlns.com/foaf/0.1/Person
+https://lyncex.com/lyncex#Feynman
+    http://xmlns.com/foaf/0.1/name
+    Richard Feynman
+https://lyncex.com/lyncex#Feynman
+    http://xmlns.com/foaf/0.1/birthday
+    "02-15"
+https://lyncex.com/lyncex#Feynman
+    http://xmlns.com/foaf/0.1/knows
+    _:1
+https://lyncex.com/lyncex#Feynman
+    http://xmlns.com/foaf/0.1/knows
+    https://lyncex.com/lyncex#Von_Neumman
+_:1
+    http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+    http://xmlns.com/foaf/0.1/Person
+_:1
+    http://xmlns.com/foaf/0.1/name
+    Albert Einstein
+https://lyncex.com/lyncex#Von_Neumman
+    http://www.w3.org/1999/02/22-rdf-syntax-ns#type
+    http://xmlns.com/foaf/0.1/Person
+https://lyncex.com/lyncex#Von_Neumman
+    http://xmlns.com/foaf/0.1/name
+    John Von Neumman
 \end{lstlisting}
-\end{adjustbox}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{feynman.png}
+    \caption{Representación visual de las tripletas de Feynman}
+    \label{fig:feynman}
+\end{figure}
 
 En Turtle primero se inicia definiendo una base para las IRIs y prefijos para no tener que escribir IRIs largas y poco legibles en el resto del documento.
 Las IRIs se definen usando los símbolos < y >. Las IRIs con prefijo llevan el prefijo y el símbolo :. 
@@ -201,19 +229,19 @@ En Turtle existe una forma sencilla de no repetir el sujeto, útil para afirmar 
 
 Al acabar de afirmar cosas sobre un sujeto, se pone un punto. Un azúcar sintáctico usado en el ejemplo es que la propiedad a es equivalente a \begin{verbatim}http://www.w3.org/1999/02/22-rdf-syntax-ns#type\end{verbatim}.
 
-\subsection{RDF schema y ontologías}
+\subsection{RDF Schema y ontologías}
 
 RDF es un modelo de representación de la información muy potente, sin embargo, tal y como lo hemos definido, puede volverse muy caótico en poco tiempo.
 
-La razón es que no hay ningún requisito per sé de como tienen que estructurarse los datos dentro de las tripletas. El principal inconveniente de esto es la interoperabilidad entre diferentes fuentes de información y entre diferentes programas.
+La razón es que no hay ningún requisito per sé de cómo tienen que estructurarse los datos dentro de las tripletas. El principal inconveniente de esto es la interoperabilidad entre diferentes fuentes de información y entre diferentes programas.
 
-Para solucionarlo, una idea que se puede tener es disponer de unos metadatos que informen de como se debe manejar esta información. Esta información que describe la estructura de otra información se denomina ontología. Ya que las ontologías no son más que información, se incorpora como tripletas también y no existe diferencia física de entre las tripletas de una ontología y la de una información cualquiera, la diferencia es puramente semántica. 
+Para solucionarlo, una idea que se puede tener es disponer de unos metadatos que informen de cómo se debe manejar esta información. La información que describe la estructura de otra información se denomina ontología. Ya que las ontologías no son más que información, se incorpora como tripletas también y no existe diferencia física de entre las tripletas de una ontología y la de una información cualquiera, la diferencia es puramente semántica. 
 
-Existen numerosos lenguajes de ontologías bajo RDF, uno de los primeros, impulsado como estándar por el W3C es RDF Schema. Existen otros lenguajes más avanzados como OWL, que incluyen soporte para descripciones más elaboradas.
+Existen numerosos lenguajes de ontologías bajo RDF, uno de los primeros, impulsado como estándar por el W3C es RDF Schema\cite{rdfs}. Existen otros lenguajes más avanzados como OWL\cite{owl}, que incluyen soporte para descripciones más elaboradas.
 
 La base de RDF Schema es la clase, o rdfs:Class, usando la IRI con prefijos. Las clases a su vez pueden ser subclases de otra con rdfs:subClassOf. Las clases podemos usarlas para definir tipos nuevos, que luego se referencian usando la propiedad rdf:type.
 
-A su vez, también podemos definir los predicados, también llamados propiedades. Esto ya venía en RDF, bajo el tipo rdf:Property, pero RDF Schema añade predicados extras como rdfs:domain y rdfs:range. El primero permite definir en una tripleta que usa esta propiedad los elementos de que tipo pueden ser sujetos. Y en el caso del range que clase de valores de aceptan como objeto. Las propiedades se pueden heredar también mediante rdfs:subPropertyOf.
+A su vez, también podemos definir los predicados, también llamados propiedades. Esto ya venía en RDF, bajo el tipo rdf:Property, pero RDF Schema añade predicados extras como rdfs:domain y rdfs:range. El primero permite definir en una tripleta que usa esta propiedad los elementos de que tipo pueden ser sujetos. Y en el caso del range la clase de valores que se aceptan como objeto. Las propiedades se pueden heredar también mediante rdfs:subPropertyOf.
 
 Con estos elementos podemos crear ontologías con esquemas similares a los que tendríamos en programación orientada a objetos, aunque de forma mucho más flexible.
 
@@ -236,27 +264,33 @@ Veamos un ejemplo de ontología sencilla definida con RDF Schema.
     rdfs:range xsd:string .
 
 <Comic>
-    a rdfs:Class .
+    a rdfs:Class ;
     rdfs:subClassOf <Book> ;
     rdfs:label "Comic" ;
     rdfs:comment "A book containing comic strips" .
 
 \end{lstlisting}
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{comic.png}
+    \caption{Diagrama de las tripletas expresadas en el ejemplo comic}
+    \label{fig:comic}
+\end{figure}
 
-En este ejemplo se usa además la ontología XMLSchema, que provee de tipos básicos derivados de XML (entre otras cosas).
+En este ejemplo se usa además la ontología XMLSchema\cite{xmlschema}, que provee de tipos básicos derivados de XML (entre otras cosas).
 
-Una de las ideas básicas de la web semántica es que las ontologías puedan ser reutilizables por distintas partes. Para describir cierta información muy común existen ontologías establecidas tanto de forma general como para nichos específicos (bioinformática, geografía). Algunos de los hogares de ontologías más importantes son la propia W3C, la iniciativa Dublin Core y Schema.org, iniciativa esta última de los grandes buscadores (Google, Bing, Yandex). Estas ontologías pueden ir versionadas.
+Una de las ideas básicas de la web semántica es que las ontologías sean reutilizables por distintas partes. Para describir cierta información muy común existen ontologías establecidas tanto de forma general como para nichos específicos (bioinformática, geografía). Algunos de los repositorios de ontologías más importantes son la propia W3C, la iniciativa Dublin Core\cite{dublincore} y Schema.org\cite{schema}, iniciativa esta última de los grandes buscadores (Google, Bing, Yandex). Estas ontologías pueden ir versionadas.
 
 
 \subsection{SPARQL}
 
-Otro de los estándares definidos por W3C bajo el paraguas de la web semántica es SPARQL. Se trata de un lenguaje de consulta sobre RDF. Además existe una extensión del estándar SPARQL Update, que permite modificar el contenido de la base de datos. Sin embargo, a pesar de llamarse "Update", no existe ninguna operación para esto. Solo existe borrado y creación de nuevas tripletas. Esto es un problema que en Lyncex hemos visto también y que tiene que ver con las bases de RDF y su dificultad de actualización.
+Otro de los estándares definidos por W3C bajo el paraguas de la web semántica es SPARQL\cite{sparql}. Se trata de un lenguaje de consulta sobre RDF. Además existe una extensión del estándar SPARQL Update, que permite modificar el contenido de la base de datos. Sin embargo, a pesar de llamarse ``Update", no existe ninguna operación concreta de actualización. Solo existe borrado y creación de nuevas tripletas.
 
-Una consulta SPARQL empieza opcionalmente con prefijos, muy similares a los de Turtle y con el mismo objetivo. Posteriormente le sigue un SELECT, que indica que variables se deben sacar como resultado. La salida será un listado de una tupla de los valores que hayamos indicado. Si quisiésemos añadir operaciones de agregación, las indicaríamos aquí también.
+Una consulta SPARQL empieza opcionalmente con prefijos, muy similares a los de Turtle y con el mismo objetivo. Posteriormente le sigue un SELECT, que indica que variables se deben proyectar como resultado. La salida será un listado de una tupla de los valores que hayamos indicado. Si quisiésemos añadir operaciones de agregación, las indicaríamos aquí también.
 
 Las variables empiezan siempre por interrogación y adoptan los valores que cumplen con todas las afirmaciones del WHERE. Las afirmaciones del WHERE, son tripletas que deben existir todas ellas en la base de datos (es decir, es un AND implícito). Para combinar tripletas entre sí podemos usar variables intermedias o property paths, que es una sintaxis más corta. Si queremos excluir algunas tripletas de este AND podemos usar OPTIONAL, donde se intentará cumplir los criterios pero si no se cumple, será como si no existiera este bloque. Dentro de los WHERE podemos incluir FILTER, que realizan comprobaciones sobre las variables.
 
-Veamos un ejemplo de consulta:
+En el siguiente ejemplo se muestra una consulta donde se obtiene el nombre y el autor de un libro (una instancia de la clase lyncex:Book).
 
 \begin{lstlisting}
 PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
@@ -272,7 +306,7 @@ WHERE {
 }
 \end{lstlisting}
 
-Un ejemplo algo más avanzado, con datos de Wikidata:
+Un ejemplo algo más avanzado, con datos de Wikidata. Esta consulta, muestra los pares de ciudades hermanadas, usando los nombres en español.
 
 \begin{lstlisting}
 PREFIX wd: <http://www.wikidata.org/entity/>
@@ -292,11 +326,11 @@ WHERE {
 }
 \end{lstlisting}
 
-Existen más modos de consulta además de SELECT. En particular ASK, que simplemente verifica si se cumplen las condiciones de un WHERE en la base de datos, y CONSTRUCT, que permite sacar por salida tripletas, en vez de un listado de tuplas.
+Existen más modos de consulta además de SELECT. En particular ASK, que simplemente verifica si se cumplen las condiciones de un WHERE en la base de datos, y CONSTRUCT, que permite obtener tripletas, en vez de un listado de tuplas.
 
 \section{Prolog}
 
-Prolog es un lenguaje de programación lógico diseñado por Alain Colmerauer, Philippe Roussel y Robert Kowalski en 1972 en Marsella, Francia. Se trata de uno de los primeros y más populares lenguajes de programación lógica. Este se basa en la lógica de primer orden con una base de conocimiento compuesta de hechos y reglas. 
+Prolog\cite{prolog} es un lenguaje de programación lógico diseñado por Alain Colmerauer, Philippe Roussel y Robert Kowalski en 1972 en Marsella, Francia. Se trata de uno de los primeros y más populares lenguajes de programación lógica. Este se basa en la lógica de primer orden con una base de conocimiento compuesta de hechos y reglas. 
 
 El flujo de ejecución de Prolog es una búsqueda con backtracking. Ante un predicado, Prolog trata de demostrar su veracidad, identificando valores para variables si es necesario. En caso de encontrarse con algo indemostrable, vuelve para atrás deshaciendo todo lo hecho hasta llegar a un punto de elección, donde toma otro valor para las variables o elige otra regla que satisfaga el predicado.
 
@@ -304,107 +338,108 @@ Para una implementación eficiente de estos conceptos, Prolog usa cláusulas Hor
 
 \subsection{Base de conocimiento}
 
-Un programa Prolog se define por su base de conocimiento. La forma principal de construir una base de conocimiento es mediante ficheros de texto, sin embargo, esta base de conocimiento también se puede modificar en tiempo de ejecución mediante los predicados assert y retractall, es por ello que se dice que Prolog es un lenguaje homoicónico, ya que la diferencia entre código y datos es inexistente.
+Un programa Prolog se define por su base de conocimiento. La base de conocimiento es una base de datos donde además de información puramente dicha se incluyen reglas que permiten operar sobre la información para generar nueva información. El intérprete de Prolog lo único que hace es recorrer su base de conocimiento de arriba a abajo tratando de demostrar el predicado que se le indica.
 
-Un código cualquiera está compuesto de comentarios y términos. Los términos pueden ser hechos o reglas. La única diferencia es que las reglas tienen condiciones que tienen que verificarse también para poder verificar la validez del término. Con un hecho, su mera definición es suficiente. A su vez los términos de componen de átomos (simples o compuestos), que son elementos constantes y variables, que pueden adoptar un valor. Los átomos empiezan en minúscula y las variables empiezan por mayúscula.
+La forma principal de construir una base de conocimiento es mediante ficheros de texto, sin embargo, esta base de conocimiento también se puede modificar en tiempo de ejecución mediante los predicados assert y retractall, es por ello que se dice que Prolog es un lenguaje homoicónico, ya que la diferencia entre código y datos es inexistente.
 
-\begin{lstlisting}[language=Prolog]
+Un código cualquiera está compuesto de comentarios y términos. Los términos pueden ser hechos o reglas. La única diferencia es que las reglas tienen condiciones que tienen que verificarse también para poder verificar la validez del término. Con un hecho, su mera definición es suficiente. A su vez los términos se componen de átomos (simples o compuestos), que son elementos constantes y variables, que pueden adoptar un valor. Los átomos empiezan en minúscula y las variables empiezan por mayúscula.
+
+Este fichero incluye las siguientes hechos: Sócrates es humano y Kant es humano. Además incluye la siguiente regla: para que X sea mortal, X tiene que ser humano. Si lo cargamos podremos ejecutar diferentes consultas.
+
+\begin{lstlisting}[language=Prolog,float,floatplacement=H]
 
 human(socrates).
 human(kant).
 mortal(X) :- human(X).
 
-\end{lstlisting}
-
-Si cargamos una base de conocimiento con ese fichero podremos ejecutar las siguientes consultas.
-
-\begin{verbatim}
-Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
-SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
-Please run ?- license. for legal details.
-
-For online help and background, visit https://www.swi-prolog.org
-For built-in help, use ?- help(Topic). or ?- apropos(Word).
-
-?- human(socrates).
+?- human(socrates). % ¿Es humano Sócrates?
 true.
 
-?- human(pepito).
+?- human(pepito). % ¿Es humano Pepito?
 false.
 
-?- mortal(X).
+?- mortal(X). % Todos los mortales
 X = socrates ;
 X = kant.
 
-?- assertz(god(zeus)).
+?- assertz(god(zeus)). % Añade Zeus es Dios
 true.
 
-?- god(X).
+?- god(X). % Todos los dioses
 X = zeus.
 
-?- retractall(god(zeus)).
+?- retractall(god(zeus)). % Elimina Zeus es Dios
 true.
 
-?- god(X).
+?- god(X). % Todos los dioses
 false.
+\end{lstlisting}
 
-?- 
-\end{verbatim}
 
 A pesar de ser un lenguaje enfocado a consultas, estas pueden ser transparentes al usuario, ya que existen muchos tipos de predicados especiales como, leer de teclado, imprimir pantalla o incluso ejecutar un servidor HTTP.
 
 \subsection{Operadores y aritmética}
 
-En Prolog, muchos operadores tradicionales son ligeramente diferentes por lo que haremos un repaso. El operador lógico AND es simplemente la coma, usado frecuentemente en reglas complejas. El operador lógico OR es el punto y coma, aunque normalmente se redefine otra regla, y propiciar el funcionamiento del backtracking, ya que queda más legible. Por último, el operador NOT se define como \\+. En Prolog la negación es negación por fallo. Es decir, tratará como fallo aquello que no puede demostrar como true. Esto solo tiene sentido bajo ciertas suposiciones, algunas de las cuales RDF no tiene como la de mundo cerrado (RDF es mundo abierto).
+En Prolog, muchos operadores tradicionales son ligeramente diferentes por lo que haremos un repaso. El operador lógico AND es simplemente la coma, usado frecuentemente en reglas complejas. El operador lógico OR es el punto y coma, aunque normalmente se redefine otra regla, y se deja que el backtracking salte a la otra regla, ya que queda más legible. Por último, el operador NOT se define como \verb|\+|. En Prolog la negación es negación por fallo. Es decir, tratará como fallo aquello que no puede demostrar como true. Esto solo tiene sentido bajo ciertas suposiciones, algunas de las cuales RDF no tiene como la de mundo cerrado (RDF es mundo abierto).
 
-En Prolog existen varios operadores con un funcionamiento similar a la igualdad. Por un lado el operador = realiza la operación de unificación a ambos lados (simétrico). La operación de unificación trata de que los átomos o variables que tengan a los lados coincidan. Por poner un ejemplo sencillo, si en un lado del = tenemos un átomo y en otro una variable, la forma de que coincidan es que la variable adopte el valor del átomo y siempre se verificará a no ser que la variable ya hubiese adoptado otro valor antes que no sea del del átomo. Si por ejemplo hay dos átomos, se comprueba que sean exactamente iguales.
+En Prolog existen varios operadores con un funcionamiento similar a la igualdad. Por un lado el operador = realiza la operación de unificación a ambos lados (simétrico). La operación de unificación, de forma resumida, trata de que los átomos o variables que tengan a los lados coincidan. Por poner un ejemplo sencillo, si en un lado del = tenemos un átomo y en otro una variable, la forma de que coincidan es que la variable adopte el valor del átomo y siempre se verificará a no ser que la variable ya hubiese adoptado otro valor antes que no sea el del átomo. Si por ejemplo hay dos átomos, se comprueba que sean exactamente iguales. Esta operación es recursiva, por lo que en términos compuestos, se realiza la misma operación a un nivel más profundo tantas veces como haga falta.
 
-Merece especial mención el caso de las operaciones aritméticas, ya que en Prolog los símbolos aritméticos se quedan formando parte del átomo y no se evalúan, salvo que se pida explícitamente. Por ello, podemos decir que 4+5 no unifica no 3+6, aunque sus evaluaciones matemáticas sí unificarían entre sí.
+Merece especial mención el caso de las operaciones aritméticas, ya que en Prolog los símbolos aritméticos se quedan formando parte del átomo y no se evalúan, salvo que se pida explícitamente. Por ello, podemos decir que 4+5 no unifica con 3+6, aunque sus evaluaciones matemáticas sí unificarían entre sí.
 
 Para forzar la evaluación podemos usar el operador is, que es asimétrico y evalúa solo el lado derecho. También existe el operador =:= que evalúa de forma simétrica.
 
 Veamos algunos ejemplos de todo esto:
 \begin{lstlisting}[language=Prolog]
-Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
-SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
-Please run ?- license. for legal details.
-
-For online help and background, visit https://www.swi-prolog.org
-For built-in help, use ?- help(Topic). or ?- apropos(Word).
-
+% Dos términos unidos por AND. Cada término escribe un átomo
 ?- write('Un término '), write('Otro término').
 Un término Otro término
 true.
 
+% Dos términos unidos por OR. Cada término escribe un átomo
 ?- write('Un término '); write('Otro término').
 Un término 
 true .
 
+% Falla a posta
 ?- fail.
 false.
 
+% Niega el fallo a posta
 ?- \+ fail.
 true.
 
+% X unifica con Y. Al no tener valores todavía, es cierto.
 ?- X = Y.
 X = Y.
 
+% Sócrates unifica con X. Al X no tener ningún valor, 
+% X adopta el valor de Sócrates. 
 ?- socrates = X.
 X = socrates.
 
+% Sócrates unifica con Platón.
+% Son dos átomos diferentes, falla.
 ?- socrates = platon.
 false.
 
+% Dos término compuestos unifican entre sí, dando valor a las
+% variables Name y Author. Esto es porque siempre que hay dos
+% átomos, coinciden (book, book) y cuando hay un átomo y una 
+% variable sin valor siempre se adopta el valor del átomo.
 ?- book(Name, 'Cervantes') = book('Don Quijote', Author).
 Name = 'Don Quijote',
 Author = 'Cervantes'.
 
+% Los términos no unifican ya que usan átomos diferentes
 ?- 4+5=3+6.
 false.
 
+% Se evalúa el lado derecho y se unifica con X, asignándole
+% el valor resultante
 ?- X is 3+6.
 X = 9.
 
+% Se evalúan ambos lados y se comprueba si se unifica
 ?- 4+5=:=3+6.
 true.
 
@@ -418,13 +453,16 @@ Aparte de los términos, existen otros tipos de estructuras de datos como las li
 Las listas se definen usando corchetes, y sus elementos se separan por comas. Además, podemos incluir una barra vertical para separar el primer elemento (head) del resto (tail). Una regla de suma de una lista sería así:
 
 \begin{lstlisting}[language=Prolog]
+% Caso base. Para la lista vacía, la suma es 0
 sum([], 0).
+% Caso recursivo. Para la lista con elementos, se
+% divide el primer elemento H, del resto T.
+% La suma es Out.
 sum([H|T], Out) :-
     sum(T, X),
     Out is H+X.
-\end{lstlisting}
 
-\begin{lstlisting}
+
 ?- sum([1,2,3], X).
 X = 6.
 \end{lstlisting}
@@ -434,7 +472,11 @@ Algunos términos de interés para trabajar con listas son: member, append, leng
 Los diccionarios por otro lado son estructuras de datos clave valor. Se definen mediante llaves y se separan los pares por coma, mientras que cada elemento del par se separa por dos puntos. Los diccionarios en Prolog además pueden tener una etiqueta, aunque si no queremos, podemos usar la barra baja para aceptar todo tipo de etiqueta. Existe un acceso mediante la sintaxis punto, pero además existen diversos términos por defecto como dict\_create, dict\_pairs, get\_dict, put\_dict, dicts\_join y operadores como :< y >:<.
 
 \begin{lstlisting}
-?- X = _{world:mundo, hello:hola}, write(X.hello), write(X.world).
+% Se unifica el diccionario con X
+% y se escribe los átomos almacenados en los campos 
+?- X = _{world:mundo, hello:hola}, 
+    write(X.hello), 
+    write(X.world).
 holamundo
 X = _9158{hello:hola, world:mundo}.
 \end{lstlisting}
@@ -481,87 +523,93 @@ Por último, vamos a comentar las facilidades que tiene Prolog para trabajar con
 
 El término esencial es rdf, que representa el estado de las tripletas. rdf\_assert y rdf\_retractall permiten añadir y eliminar tripletas. También admite un sistema de prefijos similares a otros formatos de RDF. También existen términos para trabajar con RDF Schema como rdfs\_class\_property (para comprobar, generar las propiedades asociadas a una clase) o rdfs\_individual\_of (para comprobar si un recurso es individuo de una clase).
 
-Además, la librería de RDF soporta diferentes tipos de literales mediante la sintaxis ^^. Estos tipos suelen estar definidos bajo la ontología de XML Schema, que ya hemos mencionado antes.
+Además, la librería de RDF soporta diferentes tipos de literales mediante la sintaxis \verb|^^|. Estos tipos suelen estar definidos bajo la ontología de XML Schema, que ya hemos mencionado antes.
+
+Veamos un ejemplo de su uso añadiendo una tripleta al triplestore y luego consultándola.
 
 \begin{adjustbox}{width=\textwidth,keepaspectratio}
 \begin{lstlisting}
-Welcome to SWI-Prolog (threaded, 64 bits, version 8.1.29)
-SWI-Prolog comes with ABSOLUTELY NO WARRANTY. This is free software.
-Please run ?- license. for legal details.
-
-For online help and background, visit https://www.swi-prolog.org
-For built-in help, use ?- help(Topic). or ?- apropos(Word).
-
+% Importar la librería de RDF
 ?- use_module(library(semweb/rdf11)).
 true.
 
+% Registrar el prefijo foaf
 ?- rdf_register_prefix(foaf, 'http://xmlns.com/foaf/0.1/').
 true.
 
-?- rdf_assert('http://example.com/Cervantes', foaf:name, "Miguel de Cervantes Saavedra").
+% Añadir la tripleta al triplestore
+?- rdf_assert('http://example.com/Cervantes', 
+    foaf:name, 
+    "Miguel de Cervantes Saavedra").
 true.
 
+% Obtener todas las tripletas del triplestore
 ?- rdf(S,P,O).
 S = 'http://example.com/Cervantes',
 P = 'http://xmlns.com/foaf/0.1/name',
 O = "Miguel de Cervantes Saavedra"^^'http://www.w3.org/2001/XMLSchema#string'.
 
+% Obtener todas las tripltas del triplestore cuyo objeto
+% sea de tipo xsd:string
 ?- rdf(S,P,O^^xsd:string).
 S = 'http://example.com/Cervantes',
 P = 'http://xmlns.com/foaf/0.1/name',
 O = "Miguel de Cervantes Saavedra".
-
-?- 
 \end{lstlisting}
 \end{adjustbox}
 
 
 \chapter{Estado del Arte}
 
-Antes de adentrarnos en los detalles de Lyncex conviene recapitular ideas similares ya existentes así como herramientas que nos puedan ayudar. 
+Antes de adentrarnos en los detalles de Lyncex conviene recapitular ideas similares ya existentes así como herramientas que nos puedan ayudar a comprender los fundamentos de este proyecto.
 
 \section{Frameworks web}
 
 \subsection{Django}
 Django es uno de los frameworks web más populares dentro del mundo Python y es una referencia dentro del mundo de los frameworks web por su potencia y claridad de código.\cite{django}
 Fuertemente inspirado por \textbf{Ruby on Rails}, adopta de él su filosofía DRY (Don't Repeat Yourself) y su \textit{convention over configuration}.
+
+DRY\cite{wiki:dry} es un principio de desarrollo de sofware que promueve que no exista código duplicado en un mismo proyecto. Se deben obviar las redundancias usando módulos, paquetes y librerías, aunque sean muy pequeñas, de modo que se puedan evitar inconsistencias futuras entre dos códigos que deben evolucionar a la vez ante un cambio.
+
+Por otro lado, \textit{convention over configuration}\cite{wiki:coc} es un principio de diseño que adoptan numerosos frameworks de cara al programador. La idea es que el framework tenga por defecto opciones muy bien ajustadas y que cubran la mayoría de los casos. Así, solo es necesario configurar aquellas cosas que se salgan de la norma por defecto del framework y que al estar bien elegidos, estos casos deberían ser un número reducido del total.
+
 El framework trabaja con bases de datos relacionales principalmente, pero es una buena base para diseñar la semántica del servidor web.
 
 Django sigue una arquitctura MTV, es decir, Model-Template-View. Es bastante similar al popular MVC, aunque según sus creadores, el controlador es el propio framework.
-En Django el modelo se define como una clase de Python, que gracias al ORM, tiene persistencia en la base de datos. La parte de las plantillas se programa con un lenguaje similar a HTML, pero con capacidad de mostrar variables
+En Django el modelo se define como una clase de Python, que gracias al ORM (Object-Relational Mapping), tiene persistencia en la base de datos. La parte de las plantillas se programa con un lenguaje similar a HTML, pero con capacidad de mostrar variables
 y de cierta lógica (condicional, bucle) con metaetiquetas. La parte de vista es código Python puro. Existe un fichero especial llamado urls.py que contiene un listado que relaciona las URLs con las vistas.
 
-Las vistas pueden acceder a los parámetros GET o POST directamente y operar sobre ellos así como a la sesión del usuario que visita la página.
+Las vistas pueden acceder a los parámetros GET o POST directamente y operar sobre ellos, así como a la sesión del usuario que visita la página.
 Las vistas en Django pueden protegerse mediante un sistema de autenticación sencillo pero seguro, que permite bloquear fácilmente o redirigir si el usuario no ha iniciado sesión o si no tiene los permisos suficientes.
-Estas características de Django tienen el denominador común de que son implementadas usando middleware, es decir, componentes del framework que se introducen entre la petición bruta original
+Estas características de Django tienen el denominador común de que son implementadas usando middleware, es decir, componentes del framework que se introducen entre la petición original
 y la vista.
 
-Otra característica interesante de Django apoyada en el middleware es la gestión de formularios. Los formularios se definen en Django como una clase más, parecida a un modelo de base de datos (de hecho, se puede hacer que sea la misma clase).
-Con esta clase Django puede generar parte de la plantilla automáticamente. Posteriormente, en el método POST, el middleware puede limpiar y validar los campos, de modo que a la vista llegan ya los datos limpios.
+Otra característica interesante de Django, apoyada en el middleware, es la gestión de formularios. Los formularios se definen en Django como una clase más, parecida a un modelo de base de datos (de hecho, se puede hacer que sea la misma clase).
+Con esta clase, Django puede generar parte de la plantilla automáticamente. Posteriormente, en el método POST, el middleware puede limpiar y validar los campos, de modo que a la vista llegan ya los datos limpios.
 
 Por último, existe un componente llamado \textbf{Django REST Framework}, que añade funcionalidad para diseñar una API REST con los mismos patrones y facilidades que el desarrollo web HTML.
 
 \section{Bases de datos}
 \subsection{Apache CouchDB}
-Apache CouchDB es una base de datos NoSQL de tipo documental, almacenados estos en formato JSON.\cite{couchdb}
-Su peculiaridad respecto a otras bases de datos similares como MongoDB viene por la forma de acceder a los datos.
+Apache CouchDB es una base de datos NoSQL de tipo documental, que almacena los datos en JSON.\cite{couchdb}
+Su peculiaridad respecto a otras bases de datos similares, como MongoDB, viene por la forma de acceder a los datos.
 Aunque en las últimas versiones CouchDB también dispone de un lenguaje de consulta, la forma original de acceder a la información era programando lo que se denominan vistas, en JavaScript.
-Estas vistas generan un endpoint HTTP, que al ser llamado ejecutan el código JavaScript, en dos pasos. Primero un paso de map, para seleccionar los datos y realizar alguna transformación individual.
-Posteriormente un paso de reduce permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
+Estas vistas generan un endpoint HTTP, que al ser llamado ejecutan el código JavaScript, en dos pasos. Primero un paso de ``map", para seleccionar los datos y realizar alguna transformación individual.
+Posteriormente un paso de ``reduce" permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
 
 Para interactuar con la base de datos se dispone de una API HTTP, tanto para crear como para borrar y o modificar los documentos.
-Además dispone de un sistema de replicación entre nodos eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
+Además dispone de un sistema de replicación entre nodos, eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
 
 \section{Triplestores}
 
-En esta sección analizaremos las bases de dato del tipo Triplestore. Estas bases de datos son muy similares, por no decir conceptualmente iguales, a las bases de datos de grafos, sin embargo, solo vamos a analizar triplestores que soporten explícitamente el modelo de RDF.
+En esta sección analizaremos las bases de datos del tipo Triplestore. Estas bases de datos son muy similares, por no decir conceptualmente iguales, a las bases de datos de grafos, sin embargo, solo vamos a analizar triplestores que soporten explícitamente el modelo de RDF.
 
 \subsection{TerminusDB}
 TerminusDB es una base de datos programada en Prolog/Rust que comparte junto a CouchDB la característica de ser de tipo NoSQL.\cite{terminusdb}
 Sin embargo, TerminusDB almacena tripletas RDF.
-TerminusDB dispone de un esquema basado en OWL, muy potente y extendido por ellos mismos, que permite modelar ontologías muy completas, con relaciones avanzadas y restricciones potentes. Además incluye unas vistas basada en el concepto de documento, que generan formularios para el administrador y una API que permite interactuar en bloque con ciertas tripletas, tal y como si fuese un documento de CouchDB.
+TerminusDB dispone de un esquema basado en OWL, muy potente y extendido por sus desarrolladores, que permite modelar ontologías muy completas, con relaciones avanzadas y restricciones potentes. Además incluye unas vistas basadas en el concepto de documento, que generan formularios para el administrador y una API que permite interactuar en bloque con ciertas tripletas, tal y como si fuese un documento de CouchDB.
 
-Las consultas se realizan mediante un lenguaje llamado WOQL, basado en JSON-LD. Además existen librerías para JavaScript y Python.
+Las consultas se realizan mediante un lenguaje llamado WOQL, basado en JSON-LD. Además existen librerías para JavaScript y Python. Para editar las ontologías se puede usar su editor web, como se aprecia en la figura \ref{fig:terminusdb}.
 
 \begin{figure}[h]
     \centering
@@ -572,7 +620,7 @@ Las consultas se realizan mediante un lenguaje llamado WOQL, basado en JSON-LD. 
 
 Un ejemplo de WOQL.js y de WOQL en JSON-LD que muestra todas las tripletas cuyo sujeto es de tipo scm:Book.
 
-\begin{lstlisting}[language=Java]
+\begin{lstlisting}[language=Java, float, floatplacement=H]
 
 // WOQL.js
 WOQL.and(
@@ -620,7 +668,7 @@ Soporta queries en SPARQL, SeRQL y en código Prolog. Al estar basada la aplicac
 
 \section{Análisis}
 
-Esta tabla representa como cumplen las historias de usuario cada uno de los programas analizados.
+Esta tabla analiza las características de las tecnologías anteriores respecto a los objetivos de nuestro proyecto y de posibles extensiones futuras.
 
 
 \begin{table}[ht]
@@ -632,6 +680,7 @@ Esta tabla representa como cumplen las historias de usuario cada uno de los prog
     \textbf{Webs estáticas}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
     \textbf{Webs plantillas}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
     \textbf{Webs CRUD}  & Sí               & No                  & Sí              & No            & No                & No                  & Sí              \\
+    \hline
     \textbf{Autenticación} & Sí               & No                  & Sí              & No            & No                & No                  & No              \\
     \textbf{APIs} & Sí               & No                  & Sí (2)          & No            & No                & No                  & No              \\
     \textbf{SPARQL} & No               & No                  & No              & Sí            & Sí                & Sí                  & No             
@@ -644,21 +693,25 @@ Esta tabla representa como cumplen las historias de usuario cada uno de los prog
 Notas:
 \begin{enumerate}
     \item Aunque Django cuenta con un ORM muy potente para trabajar sobre el modelo relacional, nada impide usar otros modelos de almacenamiento.
-    \item A través de Django REST Framework, un componente independiente pero altamente acoplado
+    \item A través de Django REST Framework, un componente independiente pero altamente acoplado al framework Django
 \end{enumerate}
 
-Podemos concluir que no existe ningún software que cumpla el objetivo que nos hemos marcado al inicio del proyecto. Sin embargo, existe software que implementa en cierta medida muchas características que serían deseables en este sistema.
+Podemos concluir que no existe ningún software que cumpla el objetivo que nos hemos marcado al inicio del proyecto. Sin embargo, sí existe software que implementa en cierta medida muchas características que serían deseables en este sistema, por lo que aprovecharemos su experiencia, en la medida de lo posible, para construir Lyncex.
 
 \chapter{Planificación}
 
-En este capítulo hablaremos sobre la metodología Scrum, primero de forma genérica y luego adaptada a nuestro proyecto en particular. Además, veremos el plan de riesgos.
+En este capítulo hablaremos sobre el marco de trabajo Scrum\cite{scrum}, primero de forma genérica y luego adaptada a nuestro proyecto en particular. Además, veremos el plan de riesgos.
 \section{Scrum}
 
 \subsection{Introducción}
-Scrum es una metodología ágil creada por Ken Schwaber y Jeff Sutherland a principios de los años 90.\cite{scrum}
-
-Scrum fue diseñado para que equipos pequeños pudiesen desarrollar productos complejos de forma efectiva, adaptándose a los cambios de requisitos del producto.
+Scrum es un marco de trabajo ágil creada por Ken Schwaber y Jeff Sutherland a principios de los años 90. Fue diseñado para que equipos pequeños pudiesen desarrollar productos complejos de forma efectiva, adaptándose a los cambios de requisitos del producto.
 El pilar fundamental de Scrum es el empirismo. Esta metodología sostiene que la única forma de obtener información correcta y precisa es mediante la experiencia, sin embargo, muchas metodologías de gestión de proyectos apenas tienen en cuenta la retroalimentación constante que genera el trabajo que se realiza semana a semana. Los pilares sobre los que se fundamenta Scrum se pueden resumir en: transparencia, inspección y adaptación.
+
+La transparencia implica que los todos procesos deben tener propiedades de interés observables por aquellos a los que les interese. Además, todos los actores implicados deben tener estándares comunes de comunicación y entendimiento en el proyecto.
+
+La inspección implica que todos los artefactos deben poder ser auditables para detectar posibles variaciones respecto al plan establecido.
+
+Por último, la adaptación implica que si un inspector determina que un proceso no sigue el rumbo adecuado, posiblemente generando artefactos alejados del objetivo, se puede y debe ajustar el trabajo.
 
 \subsection{Actores}
 En Scrum se definen varios actores dentro del proyecto: Product Owner, Scrum Master y equipo de desarrollo. Todos ellos forman parte del equipo Scrum, el cual es independiente y flexible en su forma de trabajar.
@@ -683,7 +736,7 @@ La segunda reunión es mucho más introspectiva, y el objetivo es la mejora del 
 
 \subsection{Artefactos}
 
-Durante un proyecto Scrum existen diversos artefactos. Siguiendo los valores fundacionales, estos deben ser transparentes, sujetos a la inspección y adaptables a las circunstancias.
+Durante un proyecto Scrum se usan diversos artefactos. Siguiendo los valores fundacionales, estos deben ser transparentes, sujetos a la inspección y adaptables a las circunstancias.
 
 El \textbf{Product Backlog} es una lista ordenada de tareas que se deben realizar en el proyecto. Es responsabilidad del Product Owner gestionar esta lista. La lista está ordenada según la prioridad de las tareas. La lista es dinámica y nunca está completa. Continuamente se van añadiendo tareas (funcionalidad nueva, errores, pruebas, ...) y es un reflejo de como el producto evoluciona. Es muy recomendable que las tareas, además de ser claras, incluyan una definición de "completo" para saber de forma objetiva cuando una tarea ha sido finalizada.
 
@@ -769,7 +822,7 @@ R10         & Conocimiento de tecnologías insuficiente         & 2             
     \label{fig:risk-matrix}
 \end{figure}
 
-Una vez realizado este análisis, planificamos qué hacer con cada uno de ellos. Las opciones disponibles son:
+Una vez realizado este análisis, visible en la tabla \ref{table:risks-analysis}, planificamos qué hacer con cada uno de ellos. Las opciones disponibles son:
 
 \begin{itemize}
     \item Aceptar que los riesgos puedan ocurrir
@@ -779,7 +832,7 @@ Una vez realizado este análisis, planificamos qué hacer con cada uno de ellos.
     \item Mitigar el riesgo
 \end{itemize}
 
-La diferencia principal entre evitar/reducir y mitigar un riesgo es que en el primer caso, hemos de realizar una inversión aunque el riesgo finalmente no se materialice, mientras que en el segundo caso, solo deberíamos dedicarle atención una vez sucede.
+La diferencia principal entre evitar/reducir y mitigar un riesgo es que en el primer caso, hemos de realizar una inversión aunque el riesgo finalmente no se materialice, mientras que en el segundo caso, solo deberíamos dedicarle atención una vez sucede. Las soluciones propuestas se encuentran descritas en la tabla \ref{table:risks-plan}.
 
 \begin{table}[]
 \resizebox{\textwidth}{!}{\begin{tabular}{lll}
@@ -815,7 +868,7 @@ R9 &
     \begin{tabular}[c]{@{}l@{}}Reducir el riesgo introduciendo un sistema de\\ testing flexible y polivalente\end{tabular} \\
 R10 &
     Conocimiento de tecnologías insuficiente &
-    \begin{tabular}[c]{@{}l@{}}Evitar el riesgo estudiando más sobre Prolog \\ \\ y RDF.\end{tabular}
+    \begin{tabular}[c]{@{}l@{}}Evitar el riesgo estudiando más sobre Prolog \\ y RDF.\end{tabular}
 \end{tabular}}
 \caption{Plan de riesgos}
 \label{table:risks-plan}
@@ -848,6 +901,7 @@ En este capítulo realizaremos el análisis del proyecto a realizar. Primero exp
 \section{Historias de usuario}
 
 Las historias de usuario que se han seleccionado para este proyecto son las siguientes:
+
 \begin{enumerate}
     \item Almacenar datos junto a sus ontologías en el mismo espacio, validándose. El objetivo es tener un sistema de almacenamiento de tripletas, que sirva de base para el resto de historias. Este almacenamiento deberá ser compatible con tripletas, preferiblemente en formato Turtle y deberá ser manipulable desde el exterior también con operaciones de búsqueda, inserción y eliminación de datos.
     \item Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento. Esta ontología deberá aprovechar otras ontologías existentes, en la medida de la posible. La ontología deberá definirse usando tecnologías interoperables. Se deja la puerta abierta a que se defina una ontología más amplia de la que pueda manejar Lyncex al finalizar el proyecto.
@@ -861,17 +915,69 @@ Las historias de usuario que se han seleccionado para este proyecto son las sigu
 A continuación analizamos los requisitos que surgen de estas historias de usuario.
 
 \subsection{Requisitos funcionales}
+\newcommand{\req}[3]{
+    \begin{table}[]
+        \begin{tabular}{|l|l|}
+        \hline
+        \textbf{Dado}     & #1 \\ \hline
+        \textbf{Cuando}   & #2 \\ \hline
+        \textbf{Entonces} & #3 \\ \hline
+        \end{tabular}
+    \end{table}
+}
+
+\req{un entorno sin datos}
+{realizamos una petición de inserción de datos mediante API}
+{obtenemos un entorno con datos}
+
+\req{un entorno con datos}
+{realizamos una petición de consulta mediante API}
+{obtenemos todas las tripletas almacenadas en el triplestore}
+
+\req{un entorno con datos}
+{realizamos una petición de consulta con filtros mediante API}
+{obtenemos las tripletas almacenadas que cumplen los criterios}
+
+\req{un entorno con datos}
+{realizamos una petición de borrado mediante API}
+{obtenemos un entorno sin datos}
+
+\req{un entorno con datos}
+{realizamos una petición de borrado con filtro mediante API}
+{obtenemos un entorno donde no hay datos que cumplan el filtro}
+
+\req{un entorno con datos}
+{una petición de inserción de datos mediante API}
+{comprobamos el uso correcto de rdfs:range en las tripletas}
+
+\req{un entorno con datos}
+{una petición de inserción de datos mediante API}
+{comprobamos el uso correcto de rdfs:domain en las tripletas}
+
+\req{un entorno sin la ruta X registrada}
+{accedemos a la ruta X}
+{obtenemos un mensaje de página no encontrada}
+
+\req{un entorno con una ruta X con contenido estático textual}
+{accedemos a la ruta X}
+{obtenemos el contenido de texto}
+
+\req{un entorno con una ruta X con contenido estático en base64}
+{accedemos a la ruta X}
+{obtenemos el contenido binario}
+
+
+
 \begin{enumerate}
-    \item El sistema deberá ser capaz de almacenar tripletas RDF.
-    \item El sistema deberá permitir consultar todas las tripletas almacenadas de forma externa mediante una API.
-    \item El sistema deberá permitir consultar las tripletas almacenadas aplicando filtros de forma externa mediante una API.
-    \item El sistema deberá ser capaz de admitir tripletas nuevas de forma externa mediante una API.
-    \item El sistema deberá ser capaz de eliminar tripletas de forma externa mediante una API.
-    \item El sistema deberá ser capaz de eliminar tripletas aplicando filtros de forma externa mediante una API.
-    \item El sistema deberá validar que la propiedad rdfs:range definida en las ontologías residentes en el almacenamiento se cumple.
-    \item El sistema deberá mostrar un error cuando la ruta especificada no concuerde con ninguna página.
-    \item El sistema deberá mostrar contenido estático de tipo textual.
-    \item El sistema deberá mostrar contenido estático de tipo binario codificados en Base64.
+    %\item El sistema deberá permitir consultar todas las tripletas almacenadas de forma externa mediante una API.
+    %\item El sistema deberá permitir consultar las tripletas almacenadas aplicando filtros de forma externa mediante una API.
+    %\item El sistema deberá ser capaz de admitir tripletas nuevas de forma externa mediante una API.
+    %\item El sistema deberá ser capaz de eliminar tripletas de forma externa mediante una API.
+    %\item El sistema deberá ser capaz de eliminar tripletas aplicando filtros de forma externa mediante una API.
+    %\item El sistema deberá validar que la propiedad rdfs:range definida en las ontologías residentes en el almacenamiento se cumple.
+    %\item El sistema deberá mostrar un error cuando la ruta especificada no concuerde con ninguna página.
+    %\item El sistema deberá mostrar contenido estático de tipo textual.
+    %\item El sistema deberá mostrar contenido estático de tipo binario codificados en Base64.
     \item El sistema deberá diferenciar entre peticiones GET y POST.
     \item El sistema deberá disponer de un motor de plantillas con condicionales.
     \item El sistema deberá disponer de un motor de plantillas con bucles.
@@ -893,13 +999,14 @@ A continuación analizamos los requisitos que surgen de estas historias de usuar
 
 \subsection{Requisitos no funcionales}
 \begin{enumerate}
-    \item El sistema deberá estar programado en Prolog
-    \item El sistema deberá funcionar sobre Linux
-    \item El sistema deberá soportar la codificación UTF-8 en todas partes
-    \item La API de comunicación externa será con verbos HTTP
-    \item La API de comunicación externa usará el formato Turtle
-    \item El sistema deberá poder ser instalable por el usuario en menos de 30 minutos
-    \item El sistema debe ser fiable en todo momento
+    \item El sistema deberá estar programado en Prolog.
+    \item El sistema deberá funcionar sobre Linux.
+    \item El sistema deberá almacenar las tripletas en RDF.
+    \item El sistema deberá soportar la codificación UTF-8 en todas partes.
+    \item La API de comunicación externa será con verbos HTTP.
+    \item La API de comunicación externa usará el formato Turtle.
+    \item El sistema deberá poder ser instalable por el usuario en menos de 30 minutos.
+    \item El sistema debe ser fiable en todo momento.
 \end{enumerate}
 
 \section{Diseño de Lyncex}
@@ -1104,7 +1211,7 @@ La comunidad de SWI Prolog es pequeña pero activa y a parte de la gran cantidad
 Entre los módulos que tiene SWI Prolog y que es difícil encontrar en otras implementaciones, debemos destacar los módulos de web semántica y RDF y los de HTTP.
 Sin estos módulos, la realización de Lyncex hubiese sido mucho más compleja y alargada en el tiempo.
 
-\subsection{IDE}
+\subsection{Visual Studio Code}
 Como IDE se ha utilizado Visual Studio Code\cite{vscode}, un editor propiedad de Microsoft, pero multiplataforma.
 Es un IDE con el que ya había familaridad previa y no supone ningún esfuerzo usarlo para este proyecto.
 Visual Studio Code dispone de un sistema de plugins, y entre otros, hay plugins de Prolog y de Turtle.
@@ -1138,6 +1245,42 @@ Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy
 los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
 
 Más detalles sobre Behave en el capítulo de Validación y pruebas.
+
+\section{Detalles de implementación}
+
+En este apartado vamos a mencionar detalles a nivel de implementación surgidos no triviales teniendo en cuenta los apartados anteriores.
+
+\subsection{Estructura física del proyecto}
+El código se encuentra disponible en GitHub (\url{https://github.com/aarroyoc/lyncex}). Se encuentra dividido en varias carpetas. La carpeta .github incluye el pipeline de CI. La carpeta apps contiene la aplicación \textit{BiblioCyL} de ejemplo. La carpeta features contiene las especificaciones de test E2E, así como las implementaciones de los tests. La carpta lyncex contiene el código Prolog de la aplicación. La carpeta tfg incluye esta misma memoria junto con diagramas. En la carpeta raíz existen además ficheros de Licencia y de Docker.
+
+Dentro de la carpeta lyncex existen numerosos ficheros. Los tests unitarios de los términos se definen en el mismo fichero donde está la implementación.
+
+\begin{itemize}
+    \item api.pl - La API HTTP para interactuar con el triplestore
+    \item errorpage.pl - Páginas de error
+    \item handler.pl - Resolución de los handlers
+    \item main.pl - Punto de entrada HTTP, control de acceso
+    \item parameters.pl - Procesado de parámetros
+    \item prefix.pl - Definiciones de prefijos RDF
+    \item query.pl - Resolución de las queries
+    \item setup.pl - Procesado de prefijos y funciones de Semblance
+    \item start.pl - Punto de entrada del proceso
+    \item validation.pl - Validación de ontologías RDF Schema
+    \item controllers/content.pl - ContentController
+    \item controllers/form.pl - FormController
+    \item controllers/login.pl - LoginController
+    \item controllers/template.pl - TemplateController
+\end{itemize}
+
+La separación entre start.pl y main.pl tiene el objetivo de no cargar los tests unitarios en memoria cuando no se van a pasar los tests. start.pl desactiva los tests, mientras que si se llama directamente a main.pl para arrancar el servidor, se cargan los tests.
+
+\subsection{Bugs localizados}
+
+Durante la codificación, se trató de usar el término rdf\_save\_turtle con la opción expand para filtrar las tripletas que debían sacar al usuario. Aquí se descubrió un fallo reconocido por los autores de SWI-Prolog respecto a la compatibilidad de diferentes representaciones de RDF que tiene la librería internamente. Afortunadamente, fue solventado a partir de la versión 8.1.25 de SWI-Prolog.\cite{bug}
+
+\subsection{Dynamic}
+
+Existen en el código varios puntos que usan términos ``dynamic''. Esto es, modifican el programa en tiempo de ejecución. Se ha recurrido a esta solución por ser la más simple para cargar código Prolog nuevo y para tener un estado en la API en la gestión de los blank nodes de RDF. Usar dynamic está altamente desaconsejado, en primer lugar porque no es thread-safe (el resto de la aplicación lo es) y en segundo lugar es subóptimo a nivel de rendimiento.
 
 
 \chapter{Validación y pruebas}
@@ -1258,6 +1401,22 @@ jobs:
         - name: Execute unit tests
           run: docker-compose run test-unit
 \end{lstlisting}
+
+\section{Conclusiones}
+
+El desarrollo de test ha sido fundamental para llevar a buen puerto la aplicación. Se ha comprobado que ningún tipo de test sirve para todo. Un uso de varias técnicas es la únia forma eficaz de detectar errores y regresiones.
+
+En particular, en el desarrollo de Lyncex han sido de gran importancia los test E2E, ya que definían tareas con condiciones de aceptación de forma precisa. Al programarse estos tests antes que el propio código, servían para dar una especificación detallada de ciertas cosas que se habían pasado por alto en el proceso de diseño: ¿qué debe responder la API en caso de error? ¿exactamente como tienen que ser los formularios autogenerados?
+
+Además, han sido de gran importancia para detectar regresiones. Cualquier cambio en un componente, podía influir en otros componentes dada la naturaleza de Prolog. En Prolog, si un término falla, se va a buscar otro término que pueda cumplir las condiciones, pero a veces, puede desembocar en código que no queríamos que se hubiese llamado. Estos caminos se pueden generar por accidente, en componentes totalmente separados. Este tipo de test ha resultado especialmente útil para comprobar que las rutas de ejecución que existen son siempre las deseadas.
+
+Un miedo que existía al empezar a realizar los tests, es que estos no fuesen lo suficientemente robustos, es decir, variase su resultado con demasiada facilidad. Los tests unitarios no han tenido este problema, pero los tests E2E, han fallado a veces por variaciones menores. En múltiples ocasiones se han tenido que crear steps especiales en Behave para controlar casos especiales que la sintaxis Given/When/Then no manejaba bien, como los saltos de línea en el propio test.
+
+El tiempo dedicado a los tests también ha sido mayor del que esperábamos. Si bien el tiempo dedicado al test está asociado a su implementación, muchas veces nos hemos encontrado con problemas para replicar exactamente el comportamiento que queríamos desde Behave/Python. A veces, se ha tenido que refactorizar parte de los tests ya hechos por haber encontrado algún fallo a posteriori.
+
+El hecho de mantener un sistema de integración continua, no ha sido excesivamente complicado y ha ayudado a encontrar alguna regresión cuando no se habían ejecutado los tests en local. Sin embargo, los tests en local apenas llevan tiempo de ejecución, y en ese sentido, un sistema de CI tampoco supone un ahorro de tiempo. Si los tests durasen más tiempo (media hora) sí hubiese sido un componente esencial.
+
+En general, podemos decir que los tests han servidor para mantener un nivel de calidad constante en todo el software mientras iba creciendo y ha sido un tiempo bien invertido.
 
 \chapter{Aplicación de ejemplo}
 
