@@ -21,4 +21,4 @@ clean:
 	rm lyncex-2.png
 
 plantuml/*.png:
-	cd plantuml; plantuml *.txt
+	cd plantuml; plantuml -charset UTF-8 *.txt

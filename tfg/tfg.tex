@@ -1,11 +1,6 @@
-\documentclass[12pt]{report} %fuente a 12pt
+\documentclass[openright,twoside,12pt]{book}
 
-% MÁRGENES: 2,5 cm sup. e inf.; 3 cm izdo. y dcho.
-\usepackage[
-a4paper,
-vmargin=2.5cm,
-hmargin=3cm
-]{geometry}
+\usepackage[a4paper,left=2cm,top=2.5cm,right=1.5cm,bottom=2.5cm]{geometry} 
 
 % ENLACES
 \usepackage{hyperref}
@@ -17,12 +12,36 @@ hmargin=3cm
 \usepackage{graphicx}
 \usepackage{float}
 \usepackage{listings}
+\lstset{
+    breaklines=true
+}
 \usepackage[titletoc,toc,page]{appendix}
 \usepackage{adjustbox}
 \usepackage{rotating}
 \usepackage{caption}
 \renewcommand{\appendixtocname}{Ap\'endices}
 \renewcommand{\appendixpagename}{Ap\'endices}
+
+\usepackage{lscape}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{wrapfig}
+\setlength{\parskip}{10pt plus 1pt minus 1pt}
+\rhead[]{}
+
+\renewcommand{\headrulewidth}{0.5pt}
+\rfoot[\thepage]{\thepage}
+\cfoot[]{}
+\renewcommand{\footrulewidth}{0pt}
+\fancypagestyle{plain}{
+\fancyhead[R]{}
+\fancyfoot[C]{}
+\fancyfoot[R]{\thepage}
+\renewcommand{\headrulewidth}{0.5pt}
+\renewcommand{\footrulewidth}{0pt}
+}
+
+\pagestyle{fancy}
 
 % REVISAR FUENTES
 % REVISAR FOTOS
@@ -35,7 +54,75 @@ hmargin=3cm
 
 \begin{document}
 
-\maketitle
+\begin{titlepage}
+
+\begin{center}
+\vspace*{-1in}
+\begin{figure}[htb]
+\begin{center}
+\includegraphics[width=3cm]{uva.png}
+\end{center}
+\end{figure}
+\begin{large}
+\textbf{Universidad de Valladolid}
+\end{large}
+
+\vspace*{0.15in}
+
+\vspace*{0.6in}
+\begin{large}
+\textbf{ESCUELA DE INGENIERÍA INFORMÁTICA}
+
+\end{large}
+\vspace*{0.2in}
+\textbf{ GRADO EN INGENIERÍA INFORMÁTICA}\\
+\textbf{ MENCIÓN EN COMPUTACIÓN }
+\vspace*{0.5in}
+\rule{140mm}{0.1mm}\\
+\vspace*{0.3in}
+\begin{large}
+\textbf{Lyncex: describiendo una aplicación web como conocimiento}
+\end{large}
+\vspace*{0.5in}
+\rule{140mm}{0.1mm}\\
+\vspace*{2in}
+\begin{large}
+\begin{flushright}
+\textbf{Alumno/a: Adrián Arroyo Calle \\
+\vspace*{0.3in}
+Tutor/es/as: Miguel Ángel Martínez Prieto \\ María Aránzazu Simón Hurtado}
+\end{flushright}
+\end{large}
+\end{center}
+
+\end{titlepage}
+
+\newpage
+\mbox{}	
+\thispagestyle{empty} % para que no se numere esta página
+
+%\chapter*{}
+%\pagenumbering{Roman} % para comenzar la numeración de paginas en números romanos
+%\begin{flushright}
+%\textit{%Dedicatoria,\\
+%A mi familia, por haber estado conmigo \\
+%A María, por descubrirme un mundo nuevo}
+%\end{flushright}
+
+\chapter*{Resumen} % si no queremos que añada la palabra "Capitulo"
+\addcontentsline{toc}{chapter}{Resumen} % si queremos que aparezca en el índice
+\markboth{RESUMEN}{RESUMEN} % encabezado
+\begin{flushleft}
+Una plataforma de desarrollo de aplicaciones web basada en Prolog y RDF. La plataforma combina un servidor web y un una base de datos de tripletas. Sobre la base de datos se almacena tanto los datos propios de la aplicación, como el comportamiento que debe tener la aplicación web. De este modo, la programación de la aplicación web se realiza modificando las propias tripletas de la base de datos, como si fuesen otro dato más, a través de una API HTTP.
+\end{flushleft}
+
+
+\chapter*{Abstract} % si no queremos que añada la palabra "Capitulo"
+\addcontentsline{toc}{chapter}{Abstract} % si queremos que aparezca en el índice
+\markboth{ABSTRACT}{ABSTRACT} % encabezado
+\begin{flushleft}
+A development platform for web applications based on Prolog and RDF. The platform combines a web server and a triplestore. The triplestore contains the data of the application itself along with the webapp, defined with triples also. The application programming is done by modifying the triples in the triplestore, as if they were normal data, through an HTTP API.
+\end{flushleft}
 
 \tableofcontents
 
@@ -43,34 +130,36 @@ hmargin=3cm
 
 \listoftables
 
+\pagenumbering{arabic}
+
 \chapter{Introducción}
 
 \section{Motivación}
 
-En ciencias de la computación, de forma recurrente se divide entre código, lo que va a ejecutar la máquina, y datos.
+En ciencias de la computación, de forma recurrente se distingue entre código, lo que va a ejecutar la máquina, y datos.
 Esta diferencia, aunque pueda resultar evidente, es innecesaria, ya que el código no deja de ser dato, solo que con una semántica diferente.
 Von Neumann, en su modelo de computadora\cite{wiki:neumann}, elimina las diferencias a nivel de hardware entre código y datos, de modo muy exitoso, hasta tal punto que esta idea sigue siendo la base de los procesadores modernos actuales.
 
 Hoy día, en la creación de aplicaciones web, se separa por un lado el código y por otro los datos que van a circular a través de él. 
-Pero, ¿sería posible plantear una aplicacón web descrita de forma comparable a como se describen los datos? En este Trabajo Fin de Grado exploraremos esta idea mediante un framework o plataforma de desarrollo que sirva como prueba de concepto. El servidor web pasa a ser una base de datos, dónde las diferencias entre código y datos son puramente semánticas. Para ello usaremos tecnología madura como RDF para la representación de la información.\cite{rdf}
+Pero, ¿sería posible plantear una aplicación web descrita de forma comparable a como se describen los datos? En este Trabajo Fin de Grado exploraremos esta idea mediante un framework o plataforma de desarrollo que sirva como prueba de concepto. El servidor web pasa a ser una base de datos, donde las diferencias entre código y datos son puramente semánticas. Para ello usaremos tecnología madura como RDF para la representación de la información.\cite{rdf}
 
 De este modo, podríamos resumir esta plataforma como una base de datos y a la vez un servidor web configurable a través del contenido semántico de la propia base de datos.
 
-La idea surge principalmente de estudiar la base de datos CouchDB y su concepto de integrar código ejecutable por HTTP en la base de datos. Apache CouchDB es una base de datos NoSQL de tipo documental. Los documentos almacenados son de tipo JSON, generalmente sin esquema. Sin embargo, hay ciertos documentos especiales que representan vistas de la base de datos. Estas se programan en JavaScript y debido a su flexibilidad, se pueden llegar a implementar apliaciones completas bajo ese modelo, en particular aplicaciones CRUD.\cite{couchapp}
+La idea surge principalmente de estudiar la base de datos CouchDB y su concepto de integrar código ejecutable por HTTP en la base de datos. Apache CouchDB es una base de datos NoSQL de tipo documental. Los documentos almacenados son de tipo JSON, generalmente sin esquema. Sin embargo, hay ciertos documentos especiales que representan vistas de la base de datos. Estas se programan en JavaScript y debido a su flexibilidad, se pueden llegar a implementar aplicaciones completas bajo ese modelo, en particular aplicaciones CRUD.\cite{couchapp}
 
 \section{Objetivos}
 
-El objetivo principal de este trabajo es construir una entorno de desarrollo que implemente el concepto de base de datos y servidor web en un mismo entorno, usando tripletas para su representación. Sobre esta plataforma deberán poder ejecutarse aplicaciones simples y la llamaremos a partir de ahora, Lyncex.
+El objetivo principal de este trabajo es construir una entorno de desarrollo que implemente el concepto de base de datos y servidor web en un mismo entorno, usando tripletas para su representación. Sobre esta plataforma deberán poder ejecutarse aplicaciones simples, y la llamaremos a partir de ahora Lyncex.
 
-La implementación resultante no deberá ser de un nivel de producción, pero deberá ser útil para validar los conceptos con los que se va a trabajar, así como el estado de ciertas tecnologías (Prolog y RDF) con de relativa poca popularidad en el mundo empresarial.\cite{stackoverflowsurvey}
+La implementación resultante no deberá ser de un nivel de producción, pero deberá ser útil para validar los conceptos con los que se va a trabajar, así como el estado de ciertas tecnologías (Prolog y RDF) con relativa poca popularidad en el mundo empresarial.\cite{stackoverflowsurvey}
 
-Además de la implementación en código, se definirá una ontología que defina el funcionamiento de la plataforma de desarrollo. Esta ontología es una interfaz sobre la que un trabajo posterior podría diseñar implementaciones alternativas, mejorando el código original o extendiendo la funcionalidad.
+Además de la implementación en código, se creará una ontología que defina el funcionamiento de la plataforma de desarrollo. Esta ontología es una interfaz sobre la que un trabajo posterior podría diseñar implementaciones alternativas, mejorando el código original o extendiendo la funcionalidad.
 
 En este proyecto se reforzarán los conocimientos del lenguaje Prolog, en concreto en una vertiente altamente práctica, como es su utilidad para desarrollo de aplicaciones web.
 
 \section{Alcance}
 
-Para cumplir los objetivos identificamos cinco historias de usuario diferentes. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario. Más adelante entraremos en el detalle de los requisitos que llevan aparejados cada una de estas historias de usuario, pero su enumeración y dependencias se muestran en la figura \ref{fig:dependencia}.
+Para cumplir los objetivos identificamos cinco historias de usuario diferentes. Cada historia de usuario refleja un conjunto de funcionalidades que debemos tener implementadas para dar por completada la historia de usuario. Más adelante entraremos en el detalle de los requisitos que llevan asociados cada una de estas historias de usuario, pero su enumeración y dependencias se muestran en la figura \ref{fig:dependencia}.
 
 \begin{figure}[h]
     \centering
@@ -79,7 +168,7 @@ Para cumplir los objetivos identificamos cinco historias de usuario diferentes. 
     \label{fig:dependencia}
 \end{figure}
 
-De estas historias, cuatro de ellas son un incremento funcional del mismo sistema, Lyncex, y se debe completar una antes de pasar a la siguiente. La quinta, el desarrollo de la ontología, se desarrolla de forma paralela al resto del sistema.
+De estas historias, cuatro de ellas son un incremento funcional del mismo sistema, Lyncex, y se debe completar una antes de pasar a la siguiente. La quinta, el desarrollo de la ontología, se realiza de forma paralela al resto del sistema.
 
 El proyecto no trata de crear ninguna base de datos desde cero, ni enfrentarse a muchos de los retos comunes que existen en este tipo de sistemas como restricciones de rendimiento o problemas de escalabilidad y sincronización. Tampoco intenta crear un framework web listo para ir a producción, ya que siguen faltando componentes esenciales de cualquier framework web.
 
@@ -98,9 +187,9 @@ Posteriormente se tratará la \textit{Planificación} en el capítulo homónimo.
 
 Inmediatamente después está el capítulo \textit{Análisis y diseño}. En la etapa de análisis se descompondrán los requisitos del proyecto y las historias de usuario a realizar. La etapa de diseño, tanto del propio software, como de la ontología que lo acompaña. 
 
-A continuación, se encuentra el capítulo \textit{Implementación}. En este capítulo primero veremos herramientas que se han usado para la construcción de este proyecto. Después veremos la implementación del software en sí, haciendo especial hincapié en aquellos elementos que no sean del todo evidentes para el lector.
+A continuación, se encuentra el capítulo \textit{Implementación}. En este capítulo primero veremos herramientas que se han usado para la construcción de este proyecto. Después la implementación del software en sí, haciendo especial hincapié en aquellos elementos que no sean del todo evidentes para el lector.
 
-El capítulo dedicado a \textit{Validación y pruebas} se ubica inmediatamente después. En este capítulo se describirán las pruebas realizadas y la metodología empleada para comprobar que efectivamente, se está implementando correctamente el software.
+El capítulo dedicado a \textit{Validación y pruebas} se ubica inmediatamente después. En este capítulo se describirán las pruebas realizadas y la metodología empleada para comprobar que, efectivamente, se está implementando correctamente el software.
 
 Le sigue el capítulo dedicado a la \textit{Aplicación de ejemplo}, donde se llevará a cabo un mini proyecto (objetivo, análisis, diseño, implementación y pruebas) para demostrar la viabilidad del software como plataforma de desarrollo para otras aplicaciones y poder identificar posibles inconvenientes prácticos que se hayan encontrado.
 
@@ -124,11 +213,11 @@ La web semántica es un concepto amplio\cite{semanticweb}, surgido a finales de 
 RDF es una de las tecnologías base, sobre las que se asienta prácticamente toda la web semántica. Se trata de un modelo de representación de la información basado en tripletas.\cite{rdf11}
 
 \subsubsection{Tripletas}
-Las tripletas son un modo de representar la información mediante ternas, ordenados, de datos.
+Las tripletas son un modo de representar la información mediante ternas ordenadas de datos.
 Es uno de los modos fundamentales de representación de información
 
 En una tripleta, los elementos se denominan, en este orden, sujeto, predicado y objeto. La estructura básica sigue la de la gramática del lenguaje humano para afirmar hechos.
-El sujeto es el ente sobre el que vamos a afirmar algo, el predicado es la acción y/o propiedad del sujeto y el objeto, que es el contenido de la propiedad que se define.
+El sujeto es el ente sobre el que vamos a afirmar algo, el predicado es la acción y/o propiedad del sujeto, y el objeto es el contenido de la propiedad que se define.
 Veamos algunos ejemplos de este concepto:
 \begin{verbatim}
 maria -> likes -> chocolate
@@ -140,7 +229,7 @@ Estas redes se denominan grafos.
 
 ¿Por qué ternas? ¿Por qué tres elementos y no dos por ejemplo? Las ternas es la base ideal para estructurar la información. Con tres grados de libertad en nuestras expresiones básicas son suficientes para un sistema autodescriptivo, tres tiene la mayor densidad de información de cualquier entero. Podemos construir un conjunto de triples que describa cualquier cosa descriptible. Las relaciones binarias, por otro lado, que son la base de las tablas y bases de datos tradicionales, nunca pueden ser autodescriptivas: siempre necesitarán alguna lógica externa al sistema para interpretarlas, es decir, dos grados de libertad son insuficientes.\cite{rdf}
 
-Este sistema además tiene varias ventajas, por ejemplo, la duplicación de las tripletas no es un problema, ya que simplemente se reafirma lo mismo una y otra vez.
+Este sistema, además, tiene varias ventajas, por ejemplo, la duplicación de las tripletas no es un problema, ya que simplemente se reafirma lo mismo una y otra vez.
 
 La idea de las tripletas es bastante genérica y existen diferentes implementaciones de la idea. La más popular, sin lugar a dudas, es RDF, que describiremos a continuación.
 Las tripletas tienen numerosas ventajas pero nunca han llegado a gozar de una amplia popularidad a nivel empresarial.\cite{stackoverflowsurvey}
@@ -149,24 +238,25 @@ Esto, sumado a la falta de educación en este concepto, ha provocado que actualm
 \subsubsection{Tripletas en RDF}
 
 RDF (Resource Description Framework) es un estándar desarrollado por Tim Berners-Lee en los años 90.
-RDF define un modelo concreto para usar tripletas derivado de la World Wide Web, para ello se impone que los elementos o términos puedan ser solo de tres tipos: IRIs, blank nodes y literales.
-Las IRIs son la versión internacionalizada y ampliada de las famosas URL. Cada IRI representa un recurso, tratándose de un identificadores universal y son la base de las interconexiones entre tripletas. En RDF se pueden usar IRIs en el sujeto, el predicado y el objeto.
+RDF define un modelo concreto para usar tripletas derivado de la World Wide Web. Para ello se impone que los elementos o términos puedan ser solo de tres tipos: IRIs, blank nodes y literales.
+Las IRIs son la versión internacionalizada y ampliada de las famosas URL. Cada IRI representa un recurso, tratándose de un identificador universal, y son la base de las interconexiones entre tripletas. En RDF se pueden usar IRIs en el sujeto, el predicado y el objeto.
 Los literales son datos puros, sin conexión entre sí. Pueden ser cadenas de texto, números enteros, números decimales, etc... Solo los objetos pueden ser literales.
 Los blank nodes son conexiones anónimas, sin definir explícitamente, entre varias tripletas. Solo pueden ser blank nodes los sujetos y los objetos.
 
-Además RDF define un marco básico para poder describir, de forma muy elemental, la propia información representada.
+Además, RDF define un marco básico para poder describir, de forma muy elemental, la propia información representada.
 
 RDF se define sin representación textual por defecto, aunque existen varios estándares. Uno de los originales es RDF-XML\cite{rdfxml}, que usa la sintaxis de XML para definir RDF. Esta sintaxis es especialmente compleja, ya que es verbosa y admite varios modos de uso.
 Otros estándares definen JSON-LD\cite{jsonld} que usa sintaxis de JSON, otro formato genérico popular o RDFa\cite{rdfa} que se integra en HTML. Sin embargo, también existen sintaxis expresamente diseñadas para RDF, que por lo general son más claras que tratar de adaptar otro formato a RDF.
 Algunos ejemplos de estas sintaxis son Turtle\cite{turtle}, N3\cite{wiki:n3}, NTriples\cite{ntriples}, TriG\cite{trig} y HDT\cite{hdt}.
 
-En Lyncex se ha decidido usar sintaxis Turtle. Un ejemplo de esta sintaxis a continuación:
+En Lyncex se ha decidido usar sintaxis Turtle. Ejemplo de esta sintaxis a continuación. La figura \ref{fig:feynman} contiene una representación gráfica del contenido representado.
 
-\begin{lstlisting}[float,floatplacement=H]
+\begin{lstlisting}
 @base <https://lyncex.com/lyncex#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-
+\end{lstlisting}
+\begin{lstlisting}
 <Feynman>
     a foaf:Person ;
     foaf:name "Richard Feynman" ;
@@ -176,15 +266,21 @@ En Lyncex se ha decidido usar sintaxis Turtle. Un ejemplo de esta sintaxis a con
         foaf:name "Albert Einstein"
     ] ;
     foaf:knows <Von_Neumman> .
-
+\end{lstlisting}
+\begin{lstlisting}
 <Von_Neumman>
     a foaf:Person ;
     foaf:name "John Von Neumman" .
 \end{lstlisting}
 
-\begin{lstlisting}[float,floatplacement=H]
-------------------------------------
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{feynman.png}
+    \caption{Representación visual de las tripletas de Feynman}
+    \label{fig:feynman}
+\end{figure}
 
+\begin{lstlisting}
 https://lyncex.com/lyncex#Feynman
     http://www.w3.org/1999/02/22-rdf-syntax-ns#type
     http://xmlns.com/foaf/0.1/Person
@@ -214,20 +310,14 @@ https://lyncex.com/lyncex#Von_Neumman
     John Von Neumman
 \end{lstlisting}
 
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{feynman.png}
-    \caption{Representación visual de las tripletas de Feynman}
-    \label{fig:feynman}
-\end{figure}
-
-En Turtle primero se inicia definiendo una base para las IRIs y prefijos para no tener que escribir IRIs largas y poco legibles en el resto del documento.
+En Turtle primero se inicia definiendo una base para las IRIs y prefijos, para no tener que escribir IRIs largas y poco legibles en el resto del documento.
 Las IRIs se definen usando los símbolos < y >. Las IRIs con prefijo llevan el prefijo y el símbolo :. 
 Los literales llevan comillas y los blank nodes se definen con [ y ] y en su interior se definen las tripletas teniendo como sujeto el propio blank node.
 
 En Turtle existe una forma sencilla de no repetir el sujeto, útil para afirmar varias cosas sobre un mismo sujeto. Se utiliza el símbolo ; para iniciar una nueva tripleta sobre el mismo sujeto.
 
-Al acabar de afirmar cosas sobre un sujeto, se pone un punto. Un azúcar sintáctico usado en el ejemplo es que la propiedad a es equivalente a \begin{verbatim}http://www.w3.org/1999/02/22-rdf-syntax-ns#type\end{verbatim}.
+Al acabar de afirmar cosas sobre un sujeto, se pone un punto. Un azúcar sintáctico usado en el ejemplo es que la propiedad \verb|a| es equivalente a: \\
+\texttt{http://www.w3.org/1999/02/22-rdf-syntax-ns\#type}.
 
 \subsection{RDF Schema y ontologías}
 
@@ -235,13 +325,13 @@ RDF es un modelo de representación de la información muy potente, sin embargo,
 
 La razón es que no hay ningún requisito per sé de cómo tienen que estructurarse los datos dentro de las tripletas. El principal inconveniente de esto es la interoperabilidad entre diferentes fuentes de información y entre diferentes programas.
 
-Para solucionarlo, una idea que se puede tener es disponer de unos metadatos que informen de cómo se debe manejar esta información. La información que describe la estructura de otra información se denomina ontología. Ya que las ontologías no son más que información, se incorpora como tripletas también y no existe diferencia física de entre las tripletas de una ontología y la de una información cualquiera, la diferencia es puramente semántica. 
+Para solucionarlo, una idea que se puede tener es disponer de unos metadatos que informen de cómo se debe manejar esta información. La información que describe la estructura de otra información se denomina ontología. Ya que las ontologías no son más que información, se incorporan como tripletas también y no existe diferencia física de entre las tripletas de una ontología y la de una información cualquiera, la diferencia es puramente semántica. 
 
-Existen numerosos lenguajes de ontologías bajo RDF, uno de los primeros, impulsado como estándar por el W3C es RDF Schema\cite{rdfs}. Existen otros lenguajes más avanzados como OWL\cite{owl}, que incluyen soporte para descripciones más elaboradas.
+Existen numerosos lenguajes de ontologías bajo RDF. Uno de los primeros, impulsado como estándar por el W3C es RDF Schema\cite{rdfs}. Existen otros lenguajes más avanzados como OWL\cite{owl}, que incluyen soporte para descripciones más elaboradas.
 
 La base de RDF Schema es la clase, o rdfs:Class, usando la IRI con prefijos. Las clases a su vez pueden ser subclases de otra con rdfs:subClassOf. Las clases podemos usarlas para definir tipos nuevos, que luego se referencian usando la propiedad rdf:type.
 
-A su vez, también podemos definir los predicados, también llamados propiedades. Esto ya venía en RDF, bajo el tipo rdf:Property, pero RDF Schema añade predicados extras como rdfs:domain y rdfs:range. El primero permite definir en una tripleta que usa esta propiedad los elementos de que tipo pueden ser sujetos. Y en el caso del range la clase de valores que se aceptan como objeto. Las propiedades se pueden heredar también mediante rdfs:subPropertyOf.
+A su vez, también podemos definir los predicados, también llamados propiedades. Esto ya venía en RDF, bajo el tipo rdf:Property, pero RDF Schema añade predicados extras como rdfs:domain y rdfs:range. El primero permite definir en una tripleta la clase de los sujetos que tengan la propiedad. Y en el caso del range, la clase de valores que se aceptan como objeto. Dicho de otra forma, en una propiedad, rdfs:domain comprueba la clase correcta al lado izquierdo (sujeto) y rdfs:range al lado derecho (objeto). Las propiedades se pueden heredar también mediante rdfs:subPropertyOf.
 
 Con estos elementos podemos crear ontologías con esquemas similares a los que tendríamos en programación orientada a objetos, aunque de forma mucho más flexible.
 
@@ -270,6 +360,7 @@ Veamos un ejemplo de ontología sencilla definida con RDF Schema.
     rdfs:comment "A book containing comic strips" .
 
 \end{lstlisting}
+
 \begin{figure}
     \centering
     \includegraphics[width=\textwidth]{comic.png}
@@ -288,7 +379,7 @@ Otro de los estándares definidos por W3C bajo el paraguas de la web semántica 
 
 Una consulta SPARQL empieza opcionalmente con prefijos, muy similares a los de Turtle y con el mismo objetivo. Posteriormente le sigue un SELECT, que indica que variables se deben proyectar como resultado. La salida será un listado de una tupla de los valores que hayamos indicado. Si quisiésemos añadir operaciones de agregación, las indicaríamos aquí también.
 
-Las variables empiezan siempre por interrogación y adoptan los valores que cumplen con todas las afirmaciones del WHERE. Las afirmaciones del WHERE, son tripletas que deben existir todas ellas en la base de datos (es decir, es un AND implícito). Para combinar tripletas entre sí podemos usar variables intermedias o property paths, que es una sintaxis más corta. Si queremos excluir algunas tripletas de este AND podemos usar OPTIONAL, donde se intentará cumplir los criterios pero si no se cumple, será como si no existiera este bloque. Dentro de los WHERE podemos incluir FILTER, que realizan comprobaciones sobre las variables.
+Las variables empiezan siempre por interrogación y adoptan los valores que cumplen con todas las afirmaciones del WHERE. Las afirmaciones del WHERE, son tripletas que deben existir todas ellas en la base de datos (es decir, es un AND implícito). Para combinar tripletas entre sí podemos usar variables intermedias o property paths, que es una sintaxis más corta. Si queremos excluir algunas tripletas de este AND, podemos usar OPTIONAL, donde se intentará cumplir los criterios, pero si no se cumple, será como si no existiera este bloque. Dentro de los WHERE podemos incluir FILTER, que realizan comprobaciones sobre las variables.
 
 En el siguiente ejemplo se muestra una consulta donde se obtiene el nombre y el autor de un libro (una instancia de la clase lyncex:Book).
 
@@ -338,15 +429,15 @@ Para una implementación eficiente de estos conceptos, Prolog usa cláusulas Hor
 
 \subsection{Base de conocimiento}
 
-Un programa Prolog se define por su base de conocimiento. La base de conocimiento es una base de datos donde además de información puramente dicha se incluyen reglas que permiten operar sobre la información para generar nueva información. El intérprete de Prolog lo único que hace es recorrer su base de conocimiento de arriba a abajo tratando de demostrar el predicado que se le indica.
+Un programa Prolog se define por su base de conocimiento. La base de conocimiento es una base de datos donde, además de información puramente dicha, se incluyen reglas que permiten operar sobre la información para generar nueva información. El intérprete de Prolog lo único que hace es recorrer su base de conocimiento de arriba a abajo tratando de demostrar el predicado que se le indica.
 
 La forma principal de construir una base de conocimiento es mediante ficheros de texto, sin embargo, esta base de conocimiento también se puede modificar en tiempo de ejecución mediante los predicados assert y retractall, es por ello que se dice que Prolog es un lenguaje homoicónico, ya que la diferencia entre código y datos es inexistente.
 
 Un código cualquiera está compuesto de comentarios y términos. Los términos pueden ser hechos o reglas. La única diferencia es que las reglas tienen condiciones que tienen que verificarse también para poder verificar la validez del término. Con un hecho, su mera definición es suficiente. A su vez los términos se componen de átomos (simples o compuestos), que son elementos constantes y variables, que pueden adoptar un valor. Los átomos empiezan en minúscula y las variables empiezan por mayúscula.
 
-Este fichero incluye las siguientes hechos: Sócrates es humano y Kant es humano. Además incluye la siguiente regla: para que X sea mortal, X tiene que ser humano. Si lo cargamos podremos ejecutar diferentes consultas.
+Este programa incluye las siguientes hechos: Sócrates es humano y Kant es humano. Además incluye la siguiente regla: para que X sea mortal, X tiene que ser humano. Si lo cargamos podremos ejecutar diferentes consultas.
 
-\begin{lstlisting}[language=Prolog,float,floatplacement=H]
+\begin{lstlisting}[language=Prolog]
 
 human(socrates).
 human(kant).
@@ -357,6 +448,8 @@ true.
 
 ?- human(pepito). % ¿Es humano Pepito?
 false.
+\end{lstlisting}
+\begin{lstlisting}
 
 ?- mortal(X). % Todos los mortales
 X = socrates ;
@@ -364,7 +457,8 @@ X = kant.
 
 ?- assertz(god(zeus)). % Añade Zeus es Dios
 true.
-
+\end{lstlisting}
+\begin{lstlisting}
 ?- god(X). % Todos los dioses
 X = zeus.
 
@@ -380,7 +474,7 @@ A pesar de ser un lenguaje enfocado a consultas, estas pueden ser transparentes 
 
 \subsection{Operadores y aritmética}
 
-En Prolog, muchos operadores tradicionales son ligeramente diferentes por lo que haremos un repaso. El operador lógico AND es simplemente la coma, usado frecuentemente en reglas complejas. El operador lógico OR es el punto y coma, aunque normalmente se redefine otra regla, y se deja que el backtracking salte a la otra regla, ya que queda más legible. Por último, el operador NOT se define como \verb|\+|. En Prolog la negación es negación por fallo. Es decir, tratará como fallo aquello que no puede demostrar como true. Esto solo tiene sentido bajo ciertas suposiciones, algunas de las cuales RDF no tiene como la de mundo cerrado (RDF es mundo abierto).
+En Prolog, muchos operadores tradicionales son ligeramente diferentes por lo que haremos un repaso. El operador lógico AND es simplemente la coma, usado frecuentemente en reglas complejas. El operador lógico OR es el punto y coma, aunque normalmente se redefine otra regla, y se deja que el backtracking salte a la otra regla, ya que queda más legible. Por último, el operador NOT se define como \verb|\+|. En Prolog la negación es negación por fallo. Es decir, tratará como fallo aquello que no puede demostrar como true. Esto solo tiene sentido bajo ciertas suposiciones, algunas de las cuales RDF no tiene, como la de mundo cerrado (RDF es mundo abierto).
 
 En Prolog existen varios operadores con un funcionamiento similar a la igualdad. Por un lado el operador = realiza la operación de unificación a ambos lados (simétrico). La operación de unificación, de forma resumida, trata de que los átomos o variables que tengan a los lados coincidan. Por poner un ejemplo sencillo, si en un lado del = tenemos un átomo y en otro una variable, la forma de que coincidan es que la variable adopte el valor del átomo y siempre se verificará a no ser que la variable ya hubiese adoptado otro valor antes que no sea el del átomo. Si por ejemplo hay dos átomos, se comprueba que sean exactamente iguales. Esta operación es recursiva, por lo que en términos compuestos, se realiza la misma operación a un nivel más profundo tantas veces como haga falta.
 
@@ -389,61 +483,70 @@ Merece especial mención el caso de las operaciones aritméticas, ya que en Prol
 Para forzar la evaluación podemos usar el operador is, que es asimétrico y evalúa solo el lado derecho. También existe el operador =:= que evalúa de forma simétrica.
 
 Veamos algunos ejemplos de todo esto:
+
 \begin{lstlisting}[language=Prolog]
 % Dos términos unidos por AND. Cada término escribe un átomo
 ?- write('Un término '), write('Otro término').
 Un término Otro término
 true.
+\end{lstlisting}
+\begin{lstlisting}
 
 % Dos términos unidos por OR. Cada término escribe un átomo
 ?- write('Un término '); write('Otro término').
 Un término 
 true .
 
+\end{lstlisting}
+\begin{lstlisting}
 % Falla a posta
 ?- fail.
 false.
-
+\end{lstlisting}
+\begin{lstlisting}
 % Niega el fallo a posta
 ?- \+ fail.
 true.
-
+\end{lstlisting}
+\begin{lstlisting}
 % X unifica con Y. Al no tener valores todavía, es cierto.
 ?- X = Y.
 X = Y.
-
+\end{lstlisting}
+\begin{lstlisting}
 % Sócrates unifica con X. Al X no tener ningún valor, 
 % X adopta el valor de Sócrates. 
 ?- socrates = X.
 X = socrates.
-
-% Sócrates unifica con Platón.
-% Son dos átomos diferentes, falla.
+\end{lstlisting}
+\begin{lstlisting}
+% Sócrates unifica con Platón. Son dos átomos diferentes, falla.
 ?- socrates = platon.
 false.
-
-% Dos término compuestos unifican entre sí, dando valor a las
+\end{lstlisting}
+\begin{lstlisting}
+% Dos términos compuestos unifican entre sí, dando valor a las
 % variables Name y Author. Esto es porque siempre que hay dos
 % átomos, coinciden (book, book) y cuando hay un átomo y una 
 % variable sin valor siempre se adopta el valor del átomo.
 ?- book(Name, 'Cervantes') = book('Don Quijote', Author).
 Name = 'Don Quijote',
 Author = 'Cervantes'.
-
+\end{lstlisting}
+\begin{lstlisting}
 % Los términos no unifican ya que usan átomos diferentes
 ?- 4+5=3+6.
 false.
-
-% Se evalúa el lado derecho y se unifica con X, asignándole
-% el valor resultante
+\end{lstlisting}
+\begin{lstlisting}
+% Se evalúa el lado derecho y se unifica con X
 ?- X is 3+6.
 X = 9.
-
+\end{lstlisting}
+\begin{lstlisting}
 % Se evalúan ambos lados y se comprueba si se unifica
 ?- 4+5=:=3+6.
-true.
-
-?- 
+true. 
 \end{lstlisting}
 
 \subsection{Listas y diccionarios}
@@ -455,13 +558,14 @@ Las listas se definen usando corchetes, y sus elementos se separan por comas. Ad
 \begin{lstlisting}[language=Prolog]
 % Caso base. Para la lista vacía, la suma es 0
 sum([], 0).
+\end{lstlisting}
+\begin{lstlisting}
 % Caso recursivo. Para la lista con elementos, se
 % divide el primer elemento H, del resto T.
 % La suma es Out.
 sum([H|T], Out) :-
     sum(T, X),
     Out is H+X.
-
 
 ?- sum([1,2,3], X).
 X = 6.
@@ -487,12 +591,15 @@ Uno de los detalles más importantes de Prolog son sus capacidades de metaprogra
 
 El metapredicado principal es call, que permite llamar al término que deseemos. La interfaz de comandos de Prolog no deja de ser un call por debajo. La flexibilidad es que el término al que llamamos no tiene por qué ser siempre el mismo. Sin embargo, este término suele ser demasiado bajo nivel para la mayoría de casos.
 
-Por encima tenemos forall. forall toma primero un término que generan varios puntos de elección (por ejemplo, con member, generará un punto por cada elemento de la lista). El segundo parámetro es un término que tiene que ser verdadero para todos los puntos de elección.
+Por encima tenemos forall. Este toma primero un término que generan varios puntos de elección (por ejemplo, con member, generará un punto por cada elemento de la lista). El segundo parámetro es un término que tiene que ser verdadero para todos los puntos de elección.
 
 \begin{lstlisting}
+% Para cada elemento de la lista comprueba que es impar
 ?- List = [1,3,5,7], forall(member(X, List), 1 is X mod 2).
 List = [1, 3, 5, 7].
-
+\end{lstlisting}
+\begin{lstlisting}
+% Para cada elemento de la lista comprueba que es par
 ?- List = [1,3,5,7], forall(member(X, List), 0 is X mod 2).
 false.
 \end{lstlisting}
@@ -500,6 +607,7 @@ false.
 El término findall nos permite encontrar todos los posibles resultados de un término. Para ello, primero indicaremos la variable que vamos a tratar de obtener todos sus valores, después el término en sí que genera soluciones diferentes para las variables y por último la lista donde se van a almacenar las soluciones.
 
 \begin{lstlisting}
+% Encuentra a todos los humanos
 ?- findall(Name, human(Name), Names).
 Names = [socrates, kant].
 \end{lstlisting}
@@ -507,12 +615,16 @@ Names = [socrates, kant].
 Por último, maplist nos permite realizar un map sobre una lista. En primera posición marcamos el término que se va a aplicar para cada elemento, con N parámetros. A continuación N listas correspondientes a los N parámetros. Pueden ser tanto de entrada como de salida.
 
 \begin{lstlisting}
+% Escribe la lista
 ?- maplist(write, [1,2,3]).
 123
 true.
-
+\end{lstlisting}
+\begin{lstlisting}
+% Suma cada sublista
 ?- maplist(sum, [[1,2,3],[4,5,6]], OutList).
 OutList = [6, 15].
+% Siendo sum el predicado definido anteriormente
 \end{lstlisting}
 
 Otros metapredicados de interés pueden ser include, findnsols, bagof o setof.
@@ -527,7 +639,6 @@ Además, la librería de RDF soporta diferentes tipos de literales mediante la s
 
 Veamos un ejemplo de su uso añadiendo una tripleta al triplestore y luego consultándola.
 
-\begin{adjustbox}{width=\textwidth,keepaspectratio}
 \begin{lstlisting}
 % Importar la librería de RDF
 ?- use_module(library(semweb/rdf11)).
@@ -556,7 +667,6 @@ S = 'http://example.com/Cervantes',
 P = 'http://xmlns.com/foaf/0.1/name',
 O = "Miguel de Cervantes Saavedra".
 \end{lstlisting}
-\end{adjustbox}
 
 
 \chapter{Estado del Arte}
@@ -566,12 +676,12 @@ Antes de adentrarnos en los detalles de Lyncex conviene recapitular ideas simila
 \section{Frameworks web}
 
 \subsection{Django}
-Django es uno de los frameworks web más populares dentro del mundo Python y es una referencia dentro del mundo de los frameworks web por su potencia y claridad de código.\cite{django}
+Django es uno de los frameworks web más populares dentro del mundo Python y es una referencia dentro del mundo de los frameworks web por su potencia y claridad de código\cite{django}.
 Fuertemente inspirado por \textbf{Ruby on Rails}, adopta de él su filosofía DRY (Don't Repeat Yourself) y su \textit{convention over configuration}.
 
-DRY\cite{wiki:dry} es un principio de desarrollo de sofware que promueve que no exista código duplicado en un mismo proyecto. Se deben obviar las redundancias usando módulos, paquetes y librerías, aunque sean muy pequeñas, de modo que se puedan evitar inconsistencias futuras entre dos códigos que deben evolucionar a la vez ante un cambio.
+DRY\cite{wiki:dry} es un principio de desarrollo de software que promueve que no exista código duplicado en un mismo proyecto. Se deben obviar las redundancias usando módulos, paquetes y librerías, aunque sean muy pequeñas, de modo que se puedan evitar inconsistencias futuras entre dos códigos que deben evolucionar a la vez ante un cambio.
 
-Por otro lado, \textit{convention over configuration}\cite{wiki:coc} es un principio de diseño que adoptan numerosos frameworks de cara al programador. La idea es que el framework tenga por defecto opciones muy bien ajustadas y que cubran la mayoría de los casos. Así, solo es necesario configurar aquellas cosas que se salgan de la norma por defecto del framework y que al estar bien elegidos, estos casos deberían ser un número reducido del total.
+Por otro lado, \textit{convention over configuration}\cite{wiki:coc} es un principio de diseño que adoptan numerosos frameworks de cara al programador. La idea es que el framework tenga por defecto opciones muy bien ajustadas y que cubran la mayoría de los casos. Así, solo es necesario configurar aquellas cosas que se salgan de la norma por defecto del framework y que al, estar bien elegidos, deberían ser un número reducido del total.
 
 El framework trabaja con bases de datos relacionales principalmente, pero es una buena base para diseñar la semántica del servidor web.
 
@@ -584,28 +694,28 @@ Las vistas en Django pueden protegerse mediante un sistema de autenticación sen
 Estas características de Django tienen el denominador común de que son implementadas usando middleware, es decir, componentes del framework que se introducen entre la petición original
 y la vista.
 
-Otra característica interesante de Django, apoyada en el middleware, es la gestión de formularios. Los formularios se definen en Django como una clase más, parecida a un modelo de base de datos (de hecho, se puede hacer que sea la misma clase).
+Otra característica interesante de Django, apoyada en el middleware, es la gestión de formularios. Se definen en Django como una clase más, parecida a un modelo de base de datos (de hecho, se puede hacer que sea la misma clase).
 Con esta clase, Django puede generar parte de la plantilla automáticamente. Posteriormente, en el método POST, el middleware puede limpiar y validar los campos, de modo que a la vista llegan ya los datos limpios.
 
 Por último, existe un componente llamado \textbf{Django REST Framework}, que añade funcionalidad para diseñar una API REST con los mismos patrones y facilidades que el desarrollo web HTML.
 
 \section{Bases de datos}
 \subsection{Apache CouchDB}
-Apache CouchDB es una base de datos NoSQL de tipo documental, que almacena los datos en JSON.\cite{couchdb}
+Apache CouchDB es una base de datos NoSQL de tipo documental, que almacena los datos en JSON\cite{couchdb}.
 Su peculiaridad respecto a otras bases de datos similares, como MongoDB, viene por la forma de acceder a los datos.
 Aunque en las últimas versiones CouchDB también dispone de un lenguaje de consulta, la forma original de acceder a la información era programando lo que se denominan vistas, en JavaScript.
-Estas vistas generan un endpoint HTTP, que al ser llamado ejecutan el código JavaScript, en dos pasos. Primero un paso de ``map", para seleccionar los datos y realizar alguna transformación individual.
-Posteriormente un paso de ``reduce" permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
+Estas vistas generan un endpoint HTTP, que al ser llamado ejecuta el código JavaScript, en dos pasos. Primero un paso de ``map", para seleccionar los datos y realizar alguna transformación individual.
+Posteriormente un paso de ``reduce", permite realizar agregaciones. El código JavaScript que se ejecuta se almacena en la base de datos junto al resto de documentos.
 
 Para interactuar con la base de datos se dispone de una API HTTP, tanto para crear como para borrar y o modificar los documentos.
-Además dispone de un sistema de replicación entre nodos, eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
+Además, dispone de un sistema de replicación entre nodos, eventualmente consistente y relativamente simple, de forma que hay otros proyectos que implementan el mismo protocolo (PouchDB para navegadores web por ejemplo).
 
 \section{Triplestores}
 
 En esta sección analizaremos las bases de datos del tipo Triplestore. Estas bases de datos son muy similares, por no decir conceptualmente iguales, a las bases de datos de grafos, sin embargo, solo vamos a analizar triplestores que soporten explícitamente el modelo de RDF.
 
 \subsection{TerminusDB}
-TerminusDB es una base de datos programada en Prolog/Rust que comparte junto a CouchDB la característica de ser de tipo NoSQL.\cite{terminusdb}
+TerminusDB es una base de datos programada en Prolog/Rust que comparte junto a CouchDB la característica de ser de tipo NoSQL\cite{terminusdb}.
 Sin embargo, TerminusDB almacena tripletas RDF.
 TerminusDB dispone de un esquema basado en OWL, muy potente y extendido por sus desarrolladores, que permite modelar ontologías muy completas, con relaciones avanzadas y restricciones potentes. Además incluye unas vistas basadas en el concepto de documento, que generan formularios para el administrador y una API que permite interactuar en bloque con ciertas tripletas, tal y como si fuese un documento de CouchDB.
 
@@ -618,9 +728,10 @@ Las consultas se realizan mediante un lenguaje llamado WOQL, basado en JSON-LD. 
     \label{fig:terminusdb}
 \end{figure}
 
-Un ejemplo de WOQL.js y de WOQL en JSON-LD que muestra todas las tripletas cuyo sujeto es de tipo scm:Book.
+Un ejemplo de WOQL.js y de WOQL en JSON-LD que muestra todas las tripletas cuyo sujeto es de tipo scm:Book podemos encontrarlo a continuación.
 
-\begin{lstlisting}[language=Java, float, floatplacement=H]
+\noindent\begin{minipage}{\textwidth}
+\begin{lstlisting}[language=Java]
 
 // WOQL.js
 WOQL.and(
@@ -652,19 +763,39 @@ WOQL.and(
   ]
 }
 \end{lstlisting}
+\end{minipage}
 
 \subsection{Apache Jena}
-Apache Jena es una base de datos de tripletas RDF, una de las más maduras si nos atenemos a su longevidad (Jena 1.0 es del año 2000).\cite{jena}
+Apache Jena es una base de datos de tripletas RDF, una de las más maduras si nos atenemos a su longevidad (Jena 1.0 es del año 2000)\cite{jena}.
 Se trata de un proyecto con diversos componentes. Por un lado una API en Java para tratar con RDF, un motor de alto rendimiento SPARQL (ARQ) con soporte al estándar SPARQL Update, un almacenamiento persistente llamado TDB y un servidor que combina todo a través de una API, Fuseki. Además dispone de una API para tratar con ontologías OWL y una API de inferencias para usar diferentes razonadores RDF Schema y OWL. Las búsquedas sobre texto pueden realizarse usando por debajo el motor Apache Lucene, usado en otras bases de datos de búsqueda como Elasticsearch.
 
 
-\subsection{Virtuoso y Marklogic}
-OpenLink Virtuoso y MarkLogic son bases de datos multimodelo, entre ellos soportan el almacenamiento de tripletas.\cite{virtuoso}\cite{marklogic}.
-Virtuoso tiene una versión opensource usada detrás de grandes silos de conocimiento como DBPedia o Wikidata. Ambas soportan queries vía SPARQL.
+\subsection{Virtuoso}
+OpenLink Virtuoso es una base de datos multimodelo, entre los modelos soportan el almacenamiento de tripletas\cite{virtuoso}.
+
+Una de sus características principales es que permite que estos modelos interactúen entre sí. De este modo, es posible acceder a contenido mediante RDF/SPARQL que realmente está almacenado como una tabla SQL. También dispone de servicios web, configurables desde la propia interfaz web. Estos servicios web sin embargo, están muy enfocados a APIs y no a aplicaciones finales. En la figura \ref{fig:virtuoso} se aprecia la interfaz web de Virtuoso.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{virtuoso.png}
+    \caption{Interfaz web de Virtuoso}
+    \label{fig:virtuoso}
+\end{figure}
+
+Virtuoso es un software de pago, aunque tiene una versión opensource usada detrás de grandes silos de conocimiento como DBPedia o Wikidata. Ambas soportan queries vía SPARQL.
 
 \subsection{ClioPatria}
-ClioPatria es una aplicación que combina las librerías de RDF y HTTP de SWI-Prolog para ofrecer una base de datos semántica completa.\cite{cliopatria}
-Soporta queries en SPARQL, SeRQL y en código Prolog. Al estar basada la aplicación en componentes independientes, podemos usarlos como base de nuestra aplicación.
+ClioPatria es una aplicación opensource que combina las librerías de RDF y HTTP de SWI-Prolog para ofrecer una base de datos semántica completa\cite{cliopatria}.
+Soporta queries en SPARQL, SeRQL y en código Prolog. Incluye una potente interfaz de administración web, con soporte a diversos usuarios. Desde esta interfaz también es posible asignar prefijos RDF a nivel global. La interfaz permite cargar tripletas desde tres formatos (RDF/XML, Turtle y NTriples), soportando que estén de forma remota y comprimidos en formatos como Zip. Desde la interfaz también podemos escribir código SPARQL con un editor interactivo y podemos visualizar grafos. El resultado de una consulta SPARQL puede verse en la figura \ref{fig:cliopatria}.
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{cliopatria.png}
+    \caption{Resultado de consulta SPARQL en ClioPatria}
+    \label{fig:cliopatria}
+\end{figure}
+
+ClioPatria además destaca por tener un buen motor de búsqueda de texto, permitiendo buscar por subcadenas dentro de las tripletas. El servidor es fácilmente extensible mediante un gestor de paquetes propio, llamado CPACK. Al estar basada la aplicación en componentes independientes, podemos usarlos como base de nuestra aplicación.
 
 \section{Análisis}
 
@@ -693,7 +824,7 @@ Esta tabla analiza las características de las tecnologías anteriores respecto 
 Notas:
 \begin{enumerate}
     \item Aunque Django cuenta con un ORM muy potente para trabajar sobre el modelo relacional, nada impide usar otros modelos de almacenamiento.
-    \item A través de Django REST Framework, un componente independiente pero altamente acoplado al framework Django
+    \item Django por sí solo no está especialmente indicado realizar APIs HTTP (está más enfocado en HTML), es posible usar la librería Django REST Framework para añadir APIs web sobre proyectos Django.
 \end{enumerate}
 
 Podemos concluir que no existe ningún software que cumpla el objetivo que nos hemos marcado al inicio del proyecto. Sin embargo, sí existe software que implementa en cierta medida muchas características que serían deseables en este sistema, por lo que aprovecharemos su experiencia, en la medida de lo posible, para construir Lyncex.
@@ -704,10 +835,10 @@ En este capítulo hablaremos sobre el marco de trabajo Scrum\cite{scrum}, primer
 \section{Scrum}
 
 \subsection{Introducción}
-Scrum es un marco de trabajo ágil creada por Ken Schwaber y Jeff Sutherland a principios de los años 90. Fue diseñado para que equipos pequeños pudiesen desarrollar productos complejos de forma efectiva, adaptándose a los cambios de requisitos del producto.
-El pilar fundamental de Scrum es el empirismo. Esta metodología sostiene que la única forma de obtener información correcta y precisa es mediante la experiencia, sin embargo, muchas metodologías de gestión de proyectos apenas tienen en cuenta la retroalimentación constante que genera el trabajo que se realiza semana a semana. Los pilares sobre los que se fundamenta Scrum se pueden resumir en: transparencia, inspección y adaptación.
+Scrum es un marco de trabajo ágil creado por Ken Schwaber y Jeff Sutherland a principios de los años 90. Fue diseñado para que equipos pequeños pudiesen desarrollar productos complejos de forma efectiva, adaptándose a los cambios de requisitos del producto.
+El pilar fundamental de Scrum es el empirismo. Esta metodología sostiene que la única forma de obtener información correcta y precisa es mediante la experiencia. Sin embargo, muchas metodologías de gestión de proyectos apenas tienen en cuenta la retroalimentación constante que genera el trabajo que se realiza semana a semana. Los pilares sobre los que se fundamenta Scrum se pueden resumir en: transparencia, inspección y adaptación.
 
-La transparencia implica que los todos procesos deben tener propiedades de interés observables por aquellos a los que les interese. Además, todos los actores implicados deben tener estándares comunes de comunicación y entendimiento en el proyecto.
+La transparencia implica que todos los procesos deben tener propiedades de interés observables por aquellos a los que les interese. Además, todos los actores implicados deben tener estándares comunes de comunicación y entendimiento en el proyecto.
 
 La inspección implica que todos los artefactos deben poder ser auditables para detectar posibles variaciones respecto al plan establecido.
 
@@ -716,7 +847,7 @@ Por último, la adaptación implica que si un inspector determina que un proceso
 \subsection{Actores}
 En Scrum se definen varios actores dentro del proyecto: Product Owner, Scrum Master y equipo de desarrollo. Todos ellos forman parte del equipo Scrum, el cual es independiente y flexible en su forma de trabajar.
 
-El \textbf{Product Owner} es el encargado de organizar el Product Backlog. Tiene que expresar claramente las tareas que hay que realizar, de forma transparente y asegurándose que el equipo de desarrollo entiende las tareas. Además debe priorizar las tareas de forma que maximice el valor del producto final y teniendo en cuenta el desempeño de los miembros del equipo de desarrollo. Define las condiciones para que una tarea pueda ser clasificada como completada.
+El \textbf{Product Owner} es el encargado de organizar el Product Backlog. Tiene que expresar claramente las tareas que hay que realizar, de forma transparente y asegurándose que el equipo de desarrollo entiende las tareas. Además, debe priorizar las tareas de forma que maximice el valor del producto final y teniendo en cuenta el desempeño de los miembros del equipo de desarrollo. Define las condiciones para que una tarea pueda ser clasificada como completada.
 
 El \textbf{equipo de desarrollo} es el equipo de profesionales que debe completar las tareas. Ante un Sprint backlog, deben organizarse entre sí para poder completar la mayoría de tareas allí descritas. Los equipos deben ser multidisciplinares, y aunque haya personas especializadas en algún punto, es el equipo como conjunto el que responde ante las tareas. El tamaño de los equipos ideal estaría entre 3 y 9 personas.
 
@@ -726,36 +857,36 @@ El \textbf{Scrum Master} es la persona encargada de promover el uso de Scrum y d
 
 El evento principal en Scrum es el sprint. Los sprints son periodos de tiempo, de duración inferior a un mes (habitualmente dos semanas), donde se mejora el valor del producto de forma incremental. Los sprints comienzan justo cuando ha acabado el anterior. Durante el sprint no se debe modificar el objetivo del sprint y debe ser considerado como un proyecto independiente. Dentro de los sprints existen varios eventos.
 
-El \textbf{sprint planning} es la reunión de todo el equipo, moderada por el Scrum Master que tiene lugar al inicio del sprint. En esta reunión se tienen que decidir de forma consensuada que tareas van a formar parte del Sprint Backlog (y serán realizadas en ese sprint). En primer lugar se debe tener claro el objetivo del sprint, las tareas seleccionadas del Product Backlog para formar parte del Sprint Backlog deben ser tareas que acerquen a todo el equipo a mejorar el objetivo. Además deben ser tareas realizables. Posteriormente, el equipo de desarrollo debe discuitir como va a realizar las tareas, pidiendo ayuda si hace falta al Product Owner para que especifique.
+El \textbf{sprint planning} es la reunión de todo el equipo, moderada por el Scrum Master que tiene lugar al inicio del sprint. En esta reunión se tienen que decidir de forma consensuada qué tareas van a formar parte del Sprint Backlog (y serán realizadas en ese sprint). En primer lugar se debe tener claro el objetivo del sprint, las tareas seleccionadas del Product Backlog para formar parte del Sprint Backlog deben ser tareas que acerquen a todo el equipo a mejorar el objetivo. Además, deben ser tareas realizables. Posteriormente, el equipo de desarrollo debe discutir cómo va a realizar las tareas, pidiendo ayuda si hace falta al Product Owner para que especifique.
 
-Cada día dentro del sprint el equipo de desarrollo tendrá un \textbf{daily scrum}, una reunión de 15 minutos donde decidirá que va a hacer cada miembro del equipo durante las siguientes 24 horas.
+Cada día dentro del sprint el equipo de desarrollo tendrá un \textbf{daily scrum}, una reunión de 15 minutos donde decidirá qué va a hacer cada miembro del equipo durante las siguientes 24 horas.
 
-Al acabar el sprint, tiene lugar los \textbf{sprint review} y \textbf{sprint retrospective}. La primera es una reunión donde se valora el trabajo realizado, lo restante, se reevalúan prioridades y se comentan posibles dificultades que haya podido haber y en general, cualquier cosa que pueda servir para la mejora del producto.
+Al acabar el sprint, tiene lugar el \textbf{sprint review} y el \textbf{sprint retrospective}. La primera es una reunión donde se valora el trabajo realizado, el trabajo restante, se reevalúan prioridades y se comentan posibles dificultades que haya podido haber y en general, cualquier cosa que pueda servir para la mejora del producto.
 
-La segunda reunión es mucho más introspectiva, y el objetivo es la mejora del equipo, como hacer que trabaje mejor, problemas interpersonales, etc
+La segunda reunión es mucho más introspectiva, y el objetivo es la mejora del equipo, cómo hacer que trabaje mejor, problemas interpersonales, etc
 
 \subsection{Artefactos}
 
 Durante un proyecto Scrum se usan diversos artefactos. Siguiendo los valores fundacionales, estos deben ser transparentes, sujetos a la inspección y adaptables a las circunstancias.
 
-El \textbf{Product Backlog} es una lista ordenada de tareas que se deben realizar en el proyecto. Es responsabilidad del Product Owner gestionar esta lista. La lista está ordenada según la prioridad de las tareas. La lista es dinámica y nunca está completa. Continuamente se van añadiendo tareas (funcionalidad nueva, errores, pruebas, ...) y es un reflejo de como el producto evoluciona. Es muy recomendable que las tareas, además de ser claras, incluyan una definición de "completo" para saber de forma objetiva cuando una tarea ha sido finalizada.
+El \textbf{Product Backlog} es una lista ordenada de tareas que se deben realizar en el proyecto. Es responsabilidad del Product Owner gestionar esta lista. La lista está ordenada según la prioridad de las tareas. La lista es dinámica y nunca está completa. Continuamente se van añadiendo tareas (funcionalidad nueva, errores, pruebas, ...) y es un reflejo de cómo el producto evoluciona. Es muy recomendable que las tareas, además de ser claras, incluyan una definición de ``completo" para saber de forma objetiva cuando una tarea ha sido finalizada.
 
-El \textbf{Sprint Backlog} es un conjunto de tareas seleccionadas del Product Backlog más tareas que surgen durante el propio sprint. Todas ellas deben ser mencionadas en los daily scrum. Solo el equipo de desarrollo puede modificar el sprint backlog una vez ha comenzado el sprint y siempre y cuando no modifique el objetivo del sprint. Idealmente, todas las tareas del sprint backlog deberían estar completas al acabar el sprint.
+El \textbf{Sprint Backlog} es el conjunto de tareas seleccionadas del Product Backlog para realizar durante el sprint más tareas que surgen durante el propio sprint. Todas ellas deben ser mencionadas en los daily scrum. Solo el equipo de desarrollo puede modificar el sprint backlog una vez ha comenzado el sprint y siempre y cuando no modifique el objetivo del sprint. Idealmente, todas las tareas del sprint backlog deberían estar completas al acabar el sprint.
 
 El \textbf{incremento} son las tareas finalizadas al acabar el sprint y que incrementan el valor del producto. El incremento debe ser algo inspeccionable y un paso adelante hacia el objetivo. El incremento debe estar en condiciones de uso aunque el Product Owner puede decidir no publicar una nueva versión.
 
 \section{Metodología de trabajo}
-Para el proyecto se ha tratado de seguir una metodología similar a Scrum, obviando ciertas diferencias inherentes al trabajo invididual.
+Para el proyecto se ha seguido una adaptación de Scrum para entornos académicos (UVagile\cite{uvagile})considerando que este TFG es un proyecto de trabajo individual.
 
 En primer lugar se fija el tiempo de los sprints a 3 semanas. Tiempo suficiente para avanzar de forma significativa y poder acabar bastantes tareas, sin con ello perder el foco para poder iterar en caso de que haya que hacer cambios o cierta parte se quede atascada. No habrá dailies, aunque existirá una comunicación constante mediante la herramienta Slack con los tutores por si hubiese dudas puntuales.
 
 El product backlog se define en un tablero de Trello, donde se anotan todas las tareas pendientes, más grandes o más pequeñas. Estas tareas son definidas por mí mismo, haciendo el rol de Product Owner.
 
-Al principio del sprint tiene lugar una reunión que combina el sprint review y el sprint planning. Esta reunión se realizaba principalmente usando la herramienta Google Hangouts. Primero se repasaba el sprint backlog del sprint anterior, para ver qué se movido al incremento. Además, se mencionaban ciertos problemas que habían sido encontrados: problemas en la definición de completado, dificultades a la hora de modelar ciertos aspectos, bugs pertenecientes a librerías que usamos, etc.
+Al principio del sprint tiene lugar una reunión que combina el sprint review y el sprint planning. Esta reunión se realizaba principalmente usando la herramienta Google Hangouts. Primero se repasaba el sprint backlog del sprint anterior, para ver qué se había movido al incremento. Además, se mencionaban ciertos problemas que habían sido encontrados: problemas en la definición de completado, dificultades a la hora de modelar ciertos aspectos, bugs pertenecientes a librerías que usamos, etc.
 
-Además se repasa la parte del sprint backlog que no ha sido completada. Esta se repasa para ver los motivos de que no hubiese podido ser complatada y si tiene sentido seguir con ella en el siguiente sprint o si es mejor eliminarla.
+Además, se repasa la parte del sprint backlog que no ha sido completada. Se repasa para ver los motivos por los que no había podido ser completada y si tiene sentido seguir con ella en el siguiente sprint o si es mejor eliminarla.
 
-Una vez acabada esta parte, comienza la parte de sprint planning, donde se seleccionan las tareas del product backlog que pasan al sprint backlog para el sprint siguiente. Además se analizan por encima como se piensan implementar, aunque esto no es concluyente en ningún caso.
+Una vez acabada esta parte, comienza la parte de sprint planning, donde se seleccionan las tareas del product backlog que pasan al sprint backlog para el sprint siguiente. Además, se analizan por encima como se piensan implementar, aunque esto no es concluyente en ningún caso.
 
 Durante la reunión estan presentes uno o dos tutores, desempeñando ellos un rol de Scrum Master (Miguel Ángel Martínez Prieto y María Aránzazu Simón Hurtado).
 
@@ -765,13 +896,13 @@ El resto del sprint, el equipo de desarrollo (yo mismo) va modificando las tarea
 
 En la sección de alcance vimos las cinco historias de usuario propuestas para llevar a cabo los objetivos del proyecto. Posteriormente en la sección de análisis las descompondremos, pero antes de ello, vamos a realizar una estimación del esfuerzo a realizar.
 
-Para ello vamos a asignar a cada historia de usuario unos puntos de historia. Estos puntos de historia de usuario representan el esfuerzo que a priori creemos que hay que realizar para completar esa historia de usuario. Estas estimaciones mejoran con la experiencia del equipo de desarrollo, por lo que en este proyecto podemos esperar que sean unas estimaciones bastante poco precisas. 
+Para ello, vamos a asignar a cada historia de usuario unos puntos de historia. Estos puntos de historia de usuario representan el esfuerzo que a priori creemos que hay que realizar para completar esa historia de usuario. Estas estimaciones mejoran con la experiencia del equipo de desarrollo, por lo que en este proyecto podemos esperar que sean unas estimaciones bastante poco precisas. Estos puntos pueden traducirse en horas de trabajo, con una conversión que solo puede calcularse una vez el equipo de desarrollo haya finalizado ya algunas historias de usuario.
 
-Para asignar puntos de historia existen diversos métodos. Uno de ellos es planning poker, donde el equipo de desarrollo tiene cartas enumeradas. De forma simultánea cada desarrollador elige una carta con los puntos que considera debe llevar esa historia de usuario y la muestra. El objetivo es alcanzar el consenso de todo el equipo, de forma que se debate y se vuelve a realizar hasta que una amplia mayoría otorgue los mismos puntos.
+Para asignar puntos de historia existen diversos métodos. Uno de ellos es planning poker, donde el equipo de desarrollo tiene cartas enumeradas. De forma simultánea cada desarrollador elige una carta con los puntos que considera debe llevar esa historia de usuario y la muestra. El objetivo es alcanzar el consenso de todo el equipo, de forma que se debate y se vuelve a realizar la tirada de cartas hasta que una amplia mayoría otorgue los mismos puntos.
 
-Las cartas pueden ir enumeradas de distinta forma, pero en este proyecto se ha optado por la sucesión de Fibonacci. Esta sucesión funciona bien para estimar puntos de historia ya que tiene en consideración la ley de Weber sobre las comparaciones que realizamos los seres humanos.\cite{fibonacci}
+Las cartas pueden ir enumeradas de distinta forma, pero en este proyecto se ha optado por la sucesión de Fibonacci. Esta sucesión funciona bien para estimar puntos de historia ya que tiene en consideración la ley de Weber sobre las comparaciones que realizamos los seres humanos\cite{fibonacci}.
 
-Después de la sesión de planning poker realizada entre Miguel Ángel y yo, el resultado fue el siguiente:
+Después de la sesión de planning poker, el resultado fue el siguiente:
 
 \begin{itemize}
     \item Almacenar datos junto a sus ontologías en el mismo espacio, validándose - 5 puntos
@@ -783,7 +914,7 @@ Después de la sesión de planning poker realizada entre Miguel Ángel y yo, el 
 
 \section{Plan de gestión de riesgos}
 
-Para estar prevenidos antes posibles riesgos que pudieran darse en la ejecución de este proyecto, se planifica con antelación ciertos problemas que podrían surgir. Este plan se elabora en cuatro fases:
+Para estar prevenidos ante posibles riesgos que pudieran darse en la ejecución de este proyecto, se planifican con antelación ciertos problemas que podrían surgir. Este plan se elabora en cuatro fases:
 \begin{enumerate}
     \item Identificación de los riesgos
     \item Análisis y priorización de los riesgos
@@ -876,17 +1007,15 @@ R10 &
 
 \section{Presupuesto}
 
-En esta sección vamos a analizar el costo que tendrá realizar el proyecto. Vamos a asumir tres tipos de gastos: gastos de personal, gastos administrativos y gastos de material.
+En esta sección vamos a analizar el costo que tendrá realizar el proyecto. Vamos a asumir dos tipos de gastos: gastos de personal y gastos de material.
 
 Los gastos de material van a ser de 0€, ya que vamos a usar servicios en su modalidad gratuita (GitHub, GitHub Actions) y se va a usar para programar el equipo personal del desarrollador.
 
-Los gastos administrativos van a ser el precio de matrícula de la universidad para realizar el proyecto, que teniendo en cuenta que son 12 ECTS y usando el precio unitario de 21,01€, supone un coste de 252,12€. Afortunadamente, existe podemos optar a ayudas que nos rebajan el importe un 75\% hasta dejarlo en 63.03€.
-
 Los gastos de personal también van a ser de 0€, ya que el desarrollador no va a cobrar por el proyecto. Solo tenemos en cuenta al desarrollador ya que el tutor y debe tener asignados varios proyectos de forma simultánea y su sueldo no depende sustancialmente de la realización de este proyecto. 
 
-Podemos estimar el gasto de personal del desarrollador en varios escenarios. Vamos a suponer que solo va a cobrar las horas estimadas por la universidad en la realización del proyecto, es decir, 12 ECTS. Cada ECTS representa 25 horas de trabajo, así que serían 300 horas. Si dividiésemos las 300 horas en jornadas de 8 horas, tendríamos 37,5 jornadas. Redondeamos a 38 jornadas. Según el SMI de 2020, al ser un trabajo por un periodo inferior a 120 días, el precio diario se fija en 44,99€. Así pues las 38 jornadas a 44,99€, daría 1709,62€ de salario bruto.\cite{smi} Esto sería un precio por debajo de mercado ya que en el sector es difícil encontrar trabajos que utilicen el SMI.
+Podemos estimar el gasto de personal del desarrollador en varios escenarios. Vamos a suponer que solo va a cobrar las horas estimadas que serían 300 horas. Si dividiésemos las 300 horas en jornadas de 8 horas, tendríamos 37,5 jornadas. Redondeamos a 38 jornadas. Según el SMI de 2020, al ser un trabajo por un periodo inferior a 120 días, el precio diario se fija en 44,99€. Así pues las 38 jornadas a 44,99€, daría 1709,62€ de salario bruto.\cite{smi} Esto sería un precio por debajo de mercado ya que en el sector es difícil encontrar trabajos que utilicen el SMI.
 
- 
+Otro escenario más realista sería asumir un sueldo de mercado. En ese caso, cada jornada van a ser 98€ brutos, que multiplicado por el número de jornadas (37,5) serían 3675€. Esta estimación es mucho más realista.
 
 % Merece especial mención la historia de usuario de desarrollo de ontología. Si bien podría ser un requisito previo de cara a otras historias de usuario, en la práctica
 % se han desarrollado de forma paralela, añadiendo lo necesario a la ontología en cada historia de usuario nueva.
@@ -903,11 +1032,11 @@ En este capítulo realizaremos el análisis del proyecto a realizar. Primero exp
 Las historias de usuario que se han seleccionado para este proyecto son las siguientes:
 
 \begin{enumerate}
-    \item Almacenar datos junto a sus ontologías en el mismo espacio, validándose. El objetivo es tener un sistema de almacenamiento de tripletas, que sirva de base para el resto de historias. Este almacenamiento deberá ser compatible con tripletas, preferiblemente en formato Turtle y deberá ser manipulable desde el exterior también con operaciones de búsqueda, inserción y eliminación de datos.
-    \item Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento. Esta ontología deberá aprovechar otras ontologías existentes, en la medida de la posible. La ontología deberá definirse usando tecnologías interoperables. Se deja la puerta abierta a que se defina una ontología más amplia de la que pueda manejar Lyncex al finalizar el proyecto.
-    \item Servir páginas web estáticas definidas mediante esa ontología. Se entiende por páginas estáticas aquellas cuyo contenido no depende más que de si mismo.
-    \item Servir páginas web que necesiten leer datos del almacenamiento (plantillas). Estas páginas son aquellas que implementan un procesamiento extra (plantillas) y además pueden leer y escribir datos en en el almacenamiento. Además pueden acceder a valores de parámetros GET y POST y pueden realizar validaciones.
-    \item Servir páginas web CRUD con formularios. Los formularios son una abstracción para la manipulación de datos que facilita el trabajo en datos agrupados sobre un sujeto. Esta abstracción deberá permitir realizar formularios automáticamente en HTML, validarlos. Editar y borrar su contenido. Además habrá páginas públicas y páginas privadas protegidas por un usuario/contraseña.
+    \item\textbf{HU1}. Almacenar datos junto a sus ontologías en el mismo espacio, validándose. El objetivo es tener un sistema de almacenamiento de tripletas, que sirva de base para el resto de historias. Este almacenamiento deberá ser compatible con tripletas, preferiblemente en formato Turtle y deberá ser manipulable desde el exterior también con operaciones de búsqueda, inserción y eliminación de datos.
+    \item\textbf{HU2}. Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento. Esta ontología deberá aprovechar otras ontologías existentes, en la medida de la posible. La ontología deberá definirse usando tecnologías interoperables. Se deja la puerta abierta a que se defina una ontología más amplia de la que pueda manejar Lyncex al finalizar el proyecto. El objetivo es poder tener una documentación formal de cara a desarroladores externos.
+    \item\textbf{HU3}. Servir páginas web estáticas definidas mediante esa ontología. Se entiende por páginas estáticas aquellas cuyo contenido no depende más que de sí mismo.
+    \item\textbf{HU4}. Servir páginas web que necesiten leer datos del almacenamiento (plantillas). Estas páginas son aquellas que implementan un procesamiento extra (plantillas) y, además, pueden leer y escribir datos en en el almacenamiento. Pueden acceder a valores de parámetros GET y POST y pueden realizar validaciones.
+    \item\textbf{HU5}. Servir páginas web CRUD con formularios. Los formularios son una abstracción para la manipulación de datos que facilita el trabajo en datos agrupados sobre un sujeto. Esta abstracción deberá permitir realizar formularios automáticamente en HTML, validarlos. Editar y borrar su contenido. Además habrá páginas públicas y páginas privadas protegidas por un usuario/contraseña.
 \end{enumerate}
 
 \section{Requisitos}
@@ -915,114 +1044,86 @@ Las historias de usuario que se han seleccionado para este proyecto son las sigu
 A continuación analizamos los requisitos que surgen de estas historias de usuario.
 
 \subsection{Requisitos funcionales}
-\newcommand{\req}[3]{
-    \begin{table}[]
-        \begin{tabular}{|l|l|}
-        \hline
-        \textbf{Dado}     & #1 \\ \hline
-        \textbf{Cuando}   & #2 \\ \hline
-        \textbf{Entonces} & #3 \\ \hline
-        \end{tabular}
-    \end{table}
-}
 
-\req{un entorno sin datos}
-{realizamos una petición de inserción de datos mediante API}
-{obtenemos un entorno con datos}
+Los requisitos funcionales encontrados son:
 
-\req{un entorno con datos}
-{realizamos una petición de consulta mediante API}
-{obtenemos todas las tripletas almacenadas en el triplestore}
-
-\req{un entorno con datos}
-{realizamos una petición de consulta con filtros mediante API}
-{obtenemos las tripletas almacenadas que cumplen los criterios}
-
-\req{un entorno con datos}
-{realizamos una petición de borrado mediante API}
-{obtenemos un entorno sin datos}
-
-\req{un entorno con datos}
-{realizamos una petición de borrado con filtro mediante API}
-{obtenemos un entorno donde no hay datos que cumplan el filtro}
-
-\req{un entorno con datos}
-{una petición de inserción de datos mediante API}
-{comprobamos el uso correcto de rdfs:range en las tripletas}
-
-\req{un entorno con datos}
-{una petición de inserción de datos mediante API}
-{comprobamos el uso correcto de rdfs:domain en las tripletas}
-
-\req{un entorno sin la ruta X registrada}
-{accedemos a la ruta X}
-{obtenemos un mensaje de página no encontrada}
-
-\req{un entorno con una ruta X con contenido estático textual}
-{accedemos a la ruta X}
-{obtenemos el contenido de texto}
-
-\req{un entorno con una ruta X con contenido estático en base64}
-{accedemos a la ruta X}
-{obtenemos el contenido binario}
-
-
-
+\subsubsection{HU1}
 \begin{enumerate}
-    %\item El sistema deberá permitir consultar todas las tripletas almacenadas de forma externa mediante una API.
-    %\item El sistema deberá permitir consultar las tripletas almacenadas aplicando filtros de forma externa mediante una API.
-    %\item El sistema deberá ser capaz de admitir tripletas nuevas de forma externa mediante una API.
-    %\item El sistema deberá ser capaz de eliminar tripletas de forma externa mediante una API.
-    %\item El sistema deberá ser capaz de eliminar tripletas aplicando filtros de forma externa mediante una API.
-    %\item El sistema deberá validar que la propiedad rdfs:range definida en las ontologías residentes en el almacenamiento se cumple.
-    %\item El sistema deberá mostrar un error cuando la ruta especificada no concuerde con ninguna página.
-    %\item El sistema deberá mostrar contenido estático de tipo textual.
-    %\item El sistema deberá mostrar contenido estático de tipo binario codificados en Base64.
-    \item El sistema deberá diferenciar entre peticiones GET y POST.
-    \item El sistema deberá disponer de un motor de plantillas con condicionales.
-    \item El sistema deberá disponer de un motor de plantillas con bucles.
-    \item El sistema deberá disponer de un motor de plantillas que permita imprimir valores del almacenamiento.
-    \item El sistema deberá poder leer parámetros GET y exponerlos en las plantillas.
-    \item El sistema deberá poder leer parámetros POST y exponerlos en las plantillas.
-    \item El sistema deberá poder ejecutar validaciones de expresiones regulares sobre el contenido de los parámetros.
-    \item El sistema deberá poder ejecutar validaciones Prolog sobre el contenido de los parámetros. 
-    \item El sistema deberá poder ejecutar código Prolog para resolver las variables de salida de la plantilla
-    \item El sistema deberá generar un formulario HTML automáticamente basado en una ontología
-    \item El sistema deberá poder validar los formularios con expresiones regulares
-    \item El sistema deberá poder validar los formularios con código Prolog
-    \item El sistema deberá poder guardar directamente los formularios
-    \item El sistema deberá permitir visualizar el contenido de los formularios ya guardados
-    \item El sistema deberá poder editar formularios ya almacenados
-    \item El sistema deberá poder borrar el contenido de formularios ya almacenados
-    \item El sistema deberá poder restringir el acceso a una página mediante usuario y controseña
+    \item\textbf{RF1}. El sistema deberá permitir consultar todas las tripletas almacenadas de forma externa mediante una API.
+    \item\textbf{RF2}. El sistema deberá permitir consultar las tripletas almacenadas aplicando filtros de forma externa mediante una API.
+    \item\textbf{RF3}. El sistema deberá ser capaz de admitir tripletas nuevas de forma externa mediante una API.
+    \item\textbf{RF4}. El sistema deberá ser capaz de eliminar tripletas de forma externa mediante una API.
+    \item\textbf{RF5}. El sistema deberá ser capaz de eliminar tripletas aplicando filtros de forma externa mediante una API.
+    \item\textbf{RF6}. El sistema deberá validar que la propiedad rdfs:domain definida en las ontologías residentes en el almacenamiento se cumple.
+    \item\textbf{RF7}. El sistema deberá validar que la propiedad rdfs:range definida en las ontologías residentes en el almacenamiento se cumple.
 \end{enumerate}
+
+\subsubsection{HU2}
+\begin{enumerate}
+    \item\textbf{RF8}. Deberá existir una ontología en formato Turtle que permita usar el sistema 
+\end{enumerate}
+
+\subsubsection{HU3}
+\begin{enumerate}
+    \item\textbf{RF9}. El sistema deberá mostrar un error cuando la ruta especificada no concuerde con ninguna página.
+    \item\textbf{RF10}. El sistema deberá mostrar contenido estático de tipo textual.
+    \item\textbf{RF11}. El sistema deberá mostrar contenido estático de tipo binario codificados en Base64.
+\end{enumerate}
+
+\subsubsection{HU4}
+\begin{enumerate}
+    \item\textbf{RF12}. El sistema deberá diferenciar entre peticiones GET y POST.
+    \item\textbf{RF13}. El sistema deberá disponer de un motor de plantillas con condicionales.
+    \item\textbf{RF14}. El sistema deberá disponer de un motor de plantillas con bucles.
+    \item\textbf{RF15}. El sistema deberá disponer de un motor de plantillas que permita imprimir valores del almacenamiento.
+    \item\textbf{RF16}. El sistema deberá poder leer parámetros GET y exponerlos en las plantillas.
+    \item\textbf{RF17}. El sistema deberá poder leer parámetros POST y exponerlos en las plantillas.
+    \item\textbf{RF18}. El sistema deberá poder ejecutar validaciones de expresiones regulares sobre el contenido de los parámetros.
+    \item\textbf{RF19}. El sistema deberá poder ejecutar validaciones Prolog sobre el contenido de los parámetros. 
+    \item\textbf{RF20}. El sistema deberá poder ejecutar código Prolog para resolver las variables de salida de la plantilla
+\end{enumerate}
+
+\subsubsection{HU5}
+\begin{enumerate}
+    \item\textbf{RF21}. El sistema deberá generar un formulario HTML automáticamente basado en una ontología
+    \item\textbf{RF22}. El sistema deberá poder validar los formularios con expresiones regulares
+    \item\textbf{RF23}. El sistema deberá poder validar los formularios con código Prolog
+    \item\textbf{RF24}. El sistema deberá poder guardar directamente los formularios
+    \item\textbf{RF25}. El sistema deberá permitir visualizar el contenido de los formularios ya guardados
+    \item\textbf{RF26}. El sistema deberá poder editar formularios ya almacenados
+    \item\textbf{RF27}. El sistema deberá poder borrar el contenido de formularios ya almacenados
+    \item\textbf{RF28}. El sistema deberá poder restringir el acceso a una página mediante usuario y contraseña
+\end{enumerate}
+
+Los criterios de aceptación reales que se han seguido en el proyecto se encuentran expresados en lenguaje Gherkin. Se encuentran tanto en el repositorio de código como en el Apéndice B.
 
 \subsection{Requisitos no funcionales}
 \begin{enumerate}
-    \item El sistema deberá estar programado en Prolog.
-    \item El sistema deberá funcionar sobre Linux.
-    \item El sistema deberá almacenar las tripletas en RDF.
-    \item El sistema deberá soportar la codificación UTF-8 en todas partes.
-    \item La API de comunicación externa será con verbos HTTP.
-    \item La API de comunicación externa usará el formato Turtle.
-    \item El sistema deberá poder ser instalable por el usuario en menos de 30 minutos.
-    \item El sistema debe ser fiable en todo momento.
+    \item\textbf{RNF1}. El sistema deberá estar programado en Prolog.
+    \item\textbf{RNF2}. El sistema deberá funcionar sobre Linux.
+    \item\textbf{RNF3}. El sistema deberá almacenar las tripletas en RDF.
+    \item\textbf{RNF4}. El sistema deberá soportar la codificación UTF-8 en todas partes.
+    \item\textbf{RNF5}. La API de comunicación externa será con verbos HTTP.
+    \item\textbf{RNF6}. La API de comunicación externa usará el formato Turtle.
+    \item\textbf{RNF7}. El sistema deberá poder ser instalable por el usuario en menos de 30 minutos.
+    \item\textbf{RNF8}. El sistema debe ser fiable en todo momento.
 \end{enumerate}
+
 
 \section{Diseño de Lyncex}
 
 \subsection{Arquitectura}
-En primer lugar debemos tener en cuenta que Lyncex es un sistema preparada para trabajar en un modelo cliente-servidor, donde el cliente es un navegador web. Esto nos permite partir en varias capas. Sin embargo, la capa de presentación es muy ligera y depende mucho del templatizado que realice el usuario. La capa de negocio es donde se implementa prácticamente toda la aplicación y la capa de datos es donde tiene lugar la persistencia.
+En primer lugar debemos tener en cuenta que Lyncex es un sistema preparado para trabajar en un modelo cliente-servidor, donde el cliente es un navegador web. Esto nos permite dividir el framework en varias capas. Sin embargo, la capa de presentación es muy ligera y depende mucho del renderizado de las plantillas que realice el usuario. La capa de negocio es donde se implementa prácticamente toda la aplicación y la capa de datos es donde tiene lugar la persistencia. 
 
-\begin{figure}
+\begin{sidewaysfigure}
     \centering
-    \includegraphics[width=\textwidth]{plantuml/front-controller.png}
+    \includegraphics[width=\textwidth]{arquitectura.png}
     \caption{Arquitectura de Lyncex}
     \label{fig:arquitectura}
-\end{figure}
+\end{sidewaysfigure}
 
 Entrando dentro de la capa de negocio tenemos la aplicación del patrón Front Controller.
-Este patrón, diseñado para aplicaciones web donde existe un único punto de entrada. Este realiza tareas comunes y finalmente delega la acción concreta a un controlador. Alrededor de los controladores existen helpers que implementan funcionalidad común.
+Este patrón, fue diseñado para aplicaciones web donde existe un único punto de entrada. Este realiza tareas comunes y, finalmente, delega la acción concreta a un controlador. Alrededor de los controladores existen helpers que implementan funcionalidad común. Un esquema fundamental de la arquitectura aparece en la figura \ref{fig:arquitectura}.
 
 \subsection{API}
 
@@ -1041,11 +1142,11 @@ De esta forma, se pueden realizar backups rápidos de la aplicación.
 
 Los filtros se implementan mediante parámetros GET.
 
-El componente API además dispone de una validación elemental de RDF Schema.
-Esto se consigue si tanto los datos como las ontologías que los definen coexisten en la aplicación.
-Se verifica básicamente el uso correcto de instancias y propiedades mediante rdfs:range.
+El componente API, además, dispone de una validación elemental de RDF Schema.
+Esto se consigue si tanto los datos como las ontologías que los definen coexisten en la aplicación sin incumplir las restricciones de la ontología.
+Se verifica básicamente el uso correcto de instancias y propiedades mediante rdfs:domain y rdfs:range.
 Técnicamente, RDF Schema no es un lenguaje de validación al uso, sino más bien de descripción de datos, pero demasiado abierto como para hacer comprobaciones estrictas.
-Es por ello que solo se valida este único comportamiento.
+Es por ello que solo se validan estos dos únicos comportamiento.
 
 \section{Diseño de la ontología}
 
@@ -1058,18 +1159,18 @@ Es por ello que solo se valida este único comportamiento.
 
 La ontología es el concepto clave de interacción de las aplicaciones con el sistema. A nivel técnico no dejan de ser tripletas, pero se les otorga un valor semántico especial, con consecuencia en Lyncex.
 
-La ontología completa se puede ver en formato Turtle en el Anexo I.
+La ontología completa se puede ver en formato Turtle en el Anexo I. En la figura \ref{fig:ontologia} podemos ver una representación visual de esta.
 
-El diseño de la ontología se basa en dos clases base, encapsuladas dentro de un Application. Prefix y Controller. Prefix simplemente añade prefijos RDF para poder usarlos luego en el código del Handler. Controller es la clase de la cual derivan controladores más especializados. La clase base por si misma no tiene ninguna funcionalidad asociada más allá de la URL, el método de acceso y el control de acceso. Esto la hace imposible de usar de forma práctica de forma directa.
+El diseño de la ontología se basa en dos clases principales, Prefix y Controller, encapsuladas dentro de una clase maestra, Application. Prefix simplemente añade prefijos RDF para poder usarlos luego en el código del Handler. Controller es la clase de la cual derivan controladores más especializados. La clase base por sí misma no tiene ninguna funcionalidad asociada más allá de la URL, el método de acceso y el control de acceso. Esto la hace imposible de usar de forma directa.
 
 \subsection{Controladores}
 Los controladores son los componentes que implementan la funcionalidad principal definida por la ontología.
 Al llegar una petición, se van probando los diferentes tipos de controladores hasta encontrar uno que sea del tipo al definido en la tripleta: (Controlador, rdf:type, lyncex:TipoControlador).
 Inicialmente se han diseñado cuatro controladores.
 
-Antes de todos ellos se comprueba si el usuario puede llamarlos o no. Existen dos usuarios, anónimos y el administrador.
+Antes de todos ellos se comprueba si el usuario puede llamarlos o no. Existen dos usuarios: anónimos, y el administrador.
 
-Esto se comprueba siempre al principio, antes incluso de entrar en el código específico del controlador es por ello que no se ha incluido en los diagramas de secuencia de los controladores.
+Esto se comprueba siempre al principio, antes incluso de entrar en el código específico del controlador. Por ello no se ha incluido en los diagramas de secuencia de los controladores. Este flujo se puede ver en la figura \ref{fig:loginflow}.
 
 \begin{figure}[h]
     \centering
@@ -1083,7 +1184,7 @@ El más básico de todos, simplemente devuelve lo que tenga definido en la tripl
 de la tripleta (Controlador, lyncex:mime, MimeType). El nodo Content es del tipo ContentAsText o ContentAsBase64, permitiendo ambos modos de representación del contenido.
 Ambos tipos forman parte de la ontología de W3C llamada \textit{Representing Content in RDF 1.0}\cite{cnt}.
 El tipo ContentAsText está pensado para formatos de tipo texto (HTML, CSS, JavaScript) mientras que ContentAsBase64 está pensado para formatos binarios (imágenes, sonidos, etc).
-Hay que mencionar, que en ningún caso almacenar ficheros binarios codificados en base 64 es una opción óptima y esta opción se ofrece más como una conveniencia.
+Hay que mencionar, que en ningún caso almacenar ficheros binarios codificados en base 64 es una opción óptima, y esta opción se ofrece más como una conveniencia. Su diagrama de secuencia se presenta en la figura \ref{fig:contentcontroller}.
 
 \begin{figure}[h]
     \centering
@@ -1097,11 +1198,13 @@ El TemplateController se encarga de gestionar las plantillas. Estas plantillas s
 El TemplateController realiza las siguientes operaciones en orden:
 \begin{enumerate}
     \item Procesado de parámetros GET y POST definidos previamente por instancias lyncex:Parameter
-    \item Templatizado de queries (si lo hubiera) especificadas (instancias de lyncex:Query)
+    \item Renderizado de queries (si lo hubiera) especificadas (instancias de lyncex:Query)
     \item Resolución de las queries (si hubiera)
     \item Ejecución de los handlers (si hubiera) (instancias de lyncex:Handler)
-    \item Templatizado final
+    \item Renderizado final
 \end{enumerate}
+
+Su diagrama de secuencia lo podemos observar en la figura \ref{fig:templatecontroller}.
 
 \begin{sidewaysfigure}[h]
     \centering
@@ -1114,7 +1217,7 @@ El TemplateController realiza las siguientes operaciones en orden:
 El FormController es una abstracción por encima del TemplateController.
 Su funcionamiento depende de si se realiza una petición POST o GET. Ante una petición POST, el controlador procesará los parámetros.
 Buscará la existencia de un parámetro llamado \_id en primer lugar, ya que definirá el sujeto sobre el que se van a almacenar tripletas.
-A continuación recorrerá el resto de parámetros. El nombre de cada parámetro es la URL de la propiedad y el valor será el valor de la propiedad.
+A continuación recorrerá el resto de parámetros. El nombre de cada parámetro es la URL de la propiedad, y el valor será el valor de la propiedad.
 Actualmente no se soporta crear dos tripletas de la misma propiedad en el mismo procesado.
 
 Si tenemos una operación GET, el controlador leerá la clase base y todas las propiedades que pueda extraer de la clase. Para ello es importante que la ontología de los datos esté cargada, si no, no será capaz de adivinar qué propiedades admite la clase.
@@ -1122,7 +1225,9 @@ Una vez tenga el listado de propiedades, generará un formulario HTML ajustando 
 
 Existe un caso particular de la operación GET que sucede cuando existe el parámetro \_id. Este parámetro debe indicar una IRI de una instancia de la clase. En ese caso el formulario que se genera lleva precargados los datos ya existentes, permitiendo editar el contenido y borrar todas las tripletas con ese sujeto. La operación de edición es simplemente un borrado seguido de los mismos pasos para añadir tripletas desde un formulario vacío.
 
-En el caso de las propiedades que tengan multiplicidad mayor que 1, se debe indicar con la propiedad lyncex:multiple igual a true en la ontología. Esto provocará que la representación gráfica del formulario cambie y además, modificará ligeramente la lógica de guardado.
+En el caso de las propiedades que tengan multiplicidad mayor que 1, se debe indicar con la propiedad lyncex:multiple igual a true en la ontología. Esto provocará que la representación gráfica del formulario cambie y, además, modificará ligeramente la lógica de guardado.
+
+Podemos observar los diagramas de secuencia en las figuras \ref{fig:formcontrollerget} y \ref{fig:formcontrollerpost}.
 
 \begin{sidewaysfigure}[h]
     \centering
@@ -1140,7 +1245,9 @@ En el caso de las propiedades que tengan multiplicidad mayor que 1, se debe indi
 
 \subsubsection{LoginController}
 
-El LoginController es un tipo de controlador muy específico, especialmente diseñado para manejar el flujo de autenticación del usuario administrador en la aplicación. Es en esencia un FormController modificado para tratar únicamente el formulario de inicio de sesión. Además, no guarda datos en el almacenamiento RDF, sino que guarda datos en el SessionStorage.
+El LoginController es un tipo de controlador muy específico, especialmente diseñado para manejar el flujo de autenticación del usuario administrador en la aplicación. Es en esencia un FormController modificado para tratar únicamente el formulario de inicio de sesión. Además, no guarda datos en el almacenamiento RDF, sino que guarda datos en el SessionStorage. 
+
+Las figuras \ref{fig:logincontrollerget} y \ref{fig:logincontrollerpost} muestran los diagramas de secuencia de este controlador.
 
 \begin{sidewaysfigure}[h]
     \centering
@@ -1167,13 +1274,13 @@ La validación regex, simplemente comprueba que el valor del parámetro cumpla c
 La validación Prolog es código Prolog que define un término validation(X). Dentro de este código se puede llamar a cualquier código Prolog.
 La validación será exitosa si el término se puede evaluar a true, en caso contrario, se considerará que el parámetro está mal y fallará.
 
-En el caso del FormController, las validaciones tienen que ubicarse en otro lugar. Ya que el FormController importa implícitamente todos los parámetros de una ontología, no se puede adjutar una validación de la misma forma.
-La solución si usamos un FormController es extender la propia ontología.
+En el caso del FormController, las validaciones tienen que ubicarse en otro lugar. Ya que el FormController importa implícitamente todos los parámetros de una ontología, no se puede adjuntar una validación de la misma forma.
+La solución, si usamos un FormController, es extender la propia ontología.
 Así, en un sujeto de tipo rdf:Property, podemos añadir lyncex:validation y lyncex:code\_validation, que funcionan como validación regex y validación Prolog, respectivamente.
 
 \subsection{Queries}
 
-Las queries son consultas que generan un diccionario sobre las diferentes propiedades de un sujeto. Estas consultas luego sirven para mostrar información dinámica en las plantillas. Para ello se declara una IRI de un sujeto y se recorren sus propiedades, generando un diccionario siendo las claves las propiedades y el valor, el propio valor u objeto correspondiente. Esta abstracción no es 100\% compatible con el modelo RDF, pero es muy cómoda en determinadas ocasiones. Existen tres limitaciones básicas de las queries:
+Las queries son consultas que generan un diccionario sobre las diferentes propiedades de un sujeto. Estas consultas luego sirven para mostrar información dinámica en las plantillas. Para ello se declara una IRI de un sujeto y se recorren sus propiedades, generando un diccionario, siendo las claves las propiedades, y el valor el propio valor u objeto correspondiente. Esta abstracción no es 100\% compatible con el modelo RDF, pero es muy cómoda en determinadas ocasiones. Existen tres limitaciones básicas de las queries:
 \begin{itemize}
     \item Las propiedades toman el nombre del último componente de la IRI. Es decir, si una propiedad es 'http://www.w3.org/2006/vcard/ns\#email', en el diccionario aparecerá bajo la propiedad email.
     \item En caso de varias propiedades que resulten tener el mismo nombre final (dos emails por ejemplo), se tomará el último valor encontrado.
@@ -1181,6 +1288,8 @@ Las queries son consultas que generan un diccionario sobre las diferentes propie
 \end{itemize}
 
 Para dotar de mayor flexibilidad a las queries, se admite que la IRI del sujeto pueda ser una plantilla y que se pueda componer mediante plantillas de simple-template. Así pues, quedan a disposición de la plantilla las variables de los parámetros definidos con anterioridad.
+
+Podemos observar el flujo de resolución de las queries en la figura \ref{fig:queryflow}.
 
 \begin{figure}
     \centering
@@ -1192,6 +1301,8 @@ Para dotar de mayor flexibilidad a las queries, se admite que la IRI del sujeto 
 \subsection{Handlers}
 
 Los handlers son otro tipo de consultas. En este caso se basan en ejecutar código Prolog que genere un diccionario válido para las plantillas. Al tratarse de código Prolog, disponemos de una gran flexibilidad para realizar casi cualquier cosa. No existen limitaciones a la hora de llamar a términos estándar de Prolog, así como a términos del módulo rdf11. Además se incluye acceso a un diccionario de parámetros. Su inconveniente principal es una mayor dificultad de uso y la mayor verbosidad.
+
+Podemos observar el flujo de resolución de los handlers en la figura \ref{fig:handlerflow}.
 
 \begin{figure}
     \centering
@@ -1229,9 +1340,9 @@ Además mejora mucho la seguridad por defecto de los procesos que se ejecutan en
 Docker además permite ejecutar contenedores en MacOS y Windows mediante una virtualización transparente de Linux.
 Existen otros sistemas parecidos, como LXD, pero Docker tiene varias ventajas: poder describir entornos como código versionable (Dockerfile) y poder orquestar de forma sencilla entornos pequeños y medianos (docker-compose).
 
-El fichero Dockerfile (y Dockerfile.test para los tests E2E) es una definición de construcción de imágenes. Parte de una imagen base (FROM) y ejecuta comandos para construir una imagen derivada de esta (RUN, COPY) y realiza configuraciones (WORKDIR, CMD, USER). Para ejecutar el programa debemos construir un contenedor que parta de esa imagen inmutable. El contenedor puede realizar cambios en su sistema de archivos aislado, pero salvo que lo configuremos de forma explícita, estos cambios se perderán al borrar el contenedor. Los contenedores también se pueden parar y reanudar. Estas imágenes generadas quedan almacenadas por defecto en el repositorio local, pero se pueden subir a cualquier repositorio de Docker. Los más populares son Docker Hub, Quay.io y Azure Container Registry.
+El fichero Dockerfile (y Dockerfile.test para los tests E2E) es una definición de construcción de imágenes. Parte de una imagen base (FROM) y ejecuta comandos para construir una imagen derivada de esta (RUN, COPY) y realiza configuraciones (WORKDIR, CMD, USER). Para ejecutar el programa, debemos construir un contenedor que parta de esa imagen inmutable. El contenedor puede realizar cambios en su sistema de archivos aislado, pero salvo que lo configuremos de forma explícita, estos cambios se perderán al borrar el contenedor. Los contenedores también se pueden parar y reanudar. Estas imágenes generadas quedan almacenadas por defecto en el repositorio local, pero se pueden subir a cualquier repositorio de Docker. Los más populares son Docker Hub, Quay.io y Azure Container Registry.
 
-El fichero docker-compose.yml es una definición de los contenedores que tienen que lanzarse, con sus puertos, volúmenes, etc. Podemos basarnos en imágenes locales y también podemos sobreescribir ciertas configuraciones (como el comando). Además se pueden definir dependencias entre contenedores a la hora de arrancar.
+El fichero docker-compose.yml es una definición de los contenedores que tienen que lanzarse, con sus puertos, volúmenes, etc. Podemos basarnos en imágenes locales y también podemos sobreescribir ciertas configuraciones (como el comando). Además, se pueden definir dependencias entre contenedores a la hora de arrancar.
 
 \subsection{Git y GitHub}
 Para versionar el código fuente se ha usado el sistema Git, usando como almacenamiento GitHub. Principalmente se ha usado a través de la línea de comandos.
@@ -1242,7 +1353,7 @@ Esta acción construía las imágenes de Docker necesarias y pasaba los tests de
 \subsection{Behave}
 Para asegurarnos que las historias de usuario se implementaban correctamente se ha decidido usar Behave.
 Se trata de un framework para definir tests en lenguaje Gherkin, un lenguaje muy similar al lenguaje natural. Estos tests se componen de pasos,
-los cuáles son implementados en Python. Como las historias de usuario nos hablan de como debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
+los cuáles son implementados en Python. Como las historias de usuario nos hablan de cómo debe reaccionar el sistema con el exterior, no hay problema en implementar los tests de este tipo en otro lenguaje.
 
 Más detalles sobre Behave en el capítulo de Validación y pruebas.
 
@@ -1251,7 +1362,7 @@ Más detalles sobre Behave en el capítulo de Validación y pruebas.
 En este apartado vamos a mencionar detalles a nivel de implementación surgidos no triviales teniendo en cuenta los apartados anteriores.
 
 \subsection{Estructura física del proyecto}
-El código se encuentra disponible en GitHub (\url{https://github.com/aarroyoc/lyncex}). Se encuentra dividido en varias carpetas. La carpeta .github incluye el pipeline de CI. La carpeta apps contiene la aplicación \textit{BiblioCyL} de ejemplo. La carpeta features contiene las especificaciones de test E2E, así como las implementaciones de los tests. La carpta lyncex contiene el código Prolog de la aplicación. La carpeta tfg incluye esta misma memoria junto con diagramas. En la carpeta raíz existen además ficheros de Licencia y de Docker.
+El código se encuentra disponible en GitHub (\url{https://github.com/aarroyoc/lyncex}). Se encuentra dividido en varias carpetas. La carpeta .github incluye el pipeline de CI (Continuous Integration). La carpeta apps contiene la aplicación \textit{BiblioCyL} de ejemplo. La carpeta features contiene las especificaciones de test E2E, así como las implementaciones de los tests. La carpeta lyncex contiene el código Prolog de la aplicación. La carpeta tfg incluye esta misma memoria junto con diagramas. En la carpeta raíz existen además ficheros de Licencia y de Docker.
 
 Dentro de la carpeta lyncex existen numerosos ficheros. Los tests unitarios de los términos se definen en el mismo fichero donde está la implementación.
 
@@ -1272,11 +1383,18 @@ Dentro de la carpeta lyncex existen numerosos ficheros. Los tests unitarios de l
     \item controllers/template.pl - TemplateController
 \end{itemize}
 
-La separación entre start.pl y main.pl tiene el objetivo de no cargar los tests unitarios en memoria cuando no se van a pasar los tests. start.pl desactiva los tests, mientras que si se llama directamente a main.pl para arrancar el servidor, se cargan los tests.
+La separación entre start.pl y main.pl tiene el objetivo de no cargar los tests unitarios en memoria cuando no se van a pasar los tests. start.pl desactiva los tests, mientras que si se llama directamente a main.pl para arrancar el servidor, se cargan los tests. Su relación con los componentes se describe en la figura \ref{fig:manifest}.
+
+\begin{sidewaysfigure}
+    \centering
+    \includegraphics[width=\textwidth]{manifests.png}
+    \caption{Relación ficheros-componentes}
+    \label{fig:manifest}
+\end{sidewaysfigure}
 
 \subsection{Bugs localizados}
 
-Durante la codificación, se trató de usar el término rdf\_save\_turtle con la opción expand para filtrar las tripletas que debían sacar al usuario. Aquí se descubrió un fallo reconocido por los autores de SWI-Prolog respecto a la compatibilidad de diferentes representaciones de RDF que tiene la librería internamente. Afortunadamente, fue solventado a partir de la versión 8.1.25 de SWI-Prolog.\cite{bug}
+Durante la codificación, se trató de usar el término rdf\_save\_turtle con la opción expand para filtrar las tripletas que se debían devolver al usuario. Aquí se descubrió un fallo reconocido por los autores de SWI-Prolog respecto a la compatibilidad de diferentes representaciones de RDF que tiene la librería internamente. Afortunadamente, fue solventado a partir de la versión 8.1.25 de SWI-Prolog\cite{bug}.
 
 \subsection{Dynamic}
 
@@ -1295,24 +1413,27 @@ No obstante, hay una prueba manual completa en forma de la aplicación de ejempl
 
 \section{Tests unitarios}
 
-Entendemos por tests unitarios aquellos que prueban de forma aislada una parte del código. En el proyecto se han implementado tests unitarios usando el framework PlUnit. Los tests unitarios de PlUnit tienen la siguiente estructura:
+Entendemos por tests unitarios aquellos que prueban de forma aislada una parte del código. En el proyecto se han implementado tests unitarios usando el framework PlUnit. Los tests unitarios de PlUnit tienen la siguiente estructura. En este ejemplo se prueba el predicado process\_parameters, con datos de prueba que simulan una petición real. Se comprueba que el predicado devuelve correctamente un diccionario con los datos de parámetros de entrada y las tripletas especificadas.
 
 \begin{lstlisting}[language=Prolog]
 
-:- begin_tests(api).
+:- begin_tests(parameters).
 
-test(bnode) :-
-    X = rdf(node(1), lyncex:content, node(2)),
-    X = rdf(SOrg, _, OOrg),
-    map_bnode(SOrg, OOrg, S, O),
-    \+ S = node(_),
-    \+ O = node(_).
+test(process_parameters_empty) :-
+    Controller = 'http://example.com/Controller',
+    Parameter = 'http://example.com/ControllerParameter',
+    ParamName = "id",
+    rdf_assert(Controller, lyncex:parameter, Parameter),
+    rdf_assert(Parameter, lyncex:param_name, ParamName),
+    FormData = [id="42"],
+    process_parameters(FormData, Controller, OutDict),
+    OutDict = _{id:"42"}.
 
-:- end_tests(api).
+:- end_tests(parameters).
 
 \end{lstlisting}
 
-Se definen zonas de test delimitadas por begin\_tests y end\_tests. En su interior definimos reglas test, que deben ser cumplirse. En este ejemplo, queríamos probar la regla map\_bnode y si todo va bien, todas los términos deben ser verdaderos. La ejecución de los tests se detalla en el manual de instalación.
+Se definen zonas de test delimitadas por begin\_tests y end\_tests. En su interior definimos reglas test, que deben ser cumplirse. En este ejemplo, queríamos probar la regla map\_bnode y si todo va bien, todos los términos deben ser verdaderos. La ejecución de los tests se detalla en el manual de instalación.
 
 Para ejecutar los tests unitarios, el método recomendado es usar Docker Compose y ejecutar:
 
@@ -1328,11 +1449,11 @@ Estos tests son muy importantes ya que durante el desarrollo se definía cada ta
 
 Los test E2E se implementan con Behave, que es una herramienta específica para realizar Behaviour Driven Development (BDD). La idea es definir, en lenguaje natural, las condiciones de aceptación de una característica. Para ello usa las palabras Given/When/Then (y los conectores And/But), más conocido como lenguaje Gherkin. Las principales ventajas de este modelo es que podemos trasladar todas las condiciones de aceptación a código y que los tests los pueden escribir personas con escaso conocimiento técnico. El corolario de la primera consecuencia es que siempre vamos a estar atentos ante regresiones en el código.
 
-Las frases con Given son precondiciones. Acciones que se realizan para dejar el sistema en un estado listo para ejecutar la prueba. Las frases con When (idealmente solo una frase), representan el sujeto a prueba, el estímulo que tenemos que hacer para desencadenar aquello que queremos probar. Finalmente, con Then deberíamos comprobar que el test arroja los resultados esperados. Deben ser principalmente aserciones.
+Las frases con Given son precondiciones, acciones que se realizan para dejar el sistema en un estado listo para ejecutar la prueba. Las frases con When (idealmente solo una frase), representan el sujeto a prueba, el estímulo que tenemos que hacer para desencadenar aquello que queremos probar. Finalmente, con Then deberíamos comprobar que el test arroja los resultados esperados. Deben ser principalmente aserciones.
 
 Behave permite implementar los pasos en Python, en un fichero paralelo (carpeta steps).
 
-Veamos un ejemplo de un test E2E.
+Veamos un ejemplo de un test E2E. En este ejemplo se vacía el contenido de Lyncex y se carga el fichero test3.ttl como preparación. Se prueba que la visita a la a URL /person3?id=42 devuelve un código 200 y una respuesta HTML válida tanto en declaración (response type) como en contenido.
 
 \begin{lstlisting}
 Scenario: Parameters (GET, valid)
@@ -1374,10 +1495,11 @@ docker-compose run test-e2e
 
 \section{GitHub Actions}
 
-GitHub Actions es un servicio de integración continua/despliegue continuo (CI/CD por sus siglas). Se encuentra integrado dentro del servicio web GitHub y nos permite definir tareas que se ejecutan ante ciertas acciones de entrada. Uno de los usos más habituales es la de comprobar, cuando llegan commits nuevos al repositorio Git, que los tests siguen pasando.
+GitHub Actions es un servicio de integración continua/despliegue continuo (CI/CD por sus siglas). Se encuentra integrado dentro del servicio web GitHub y nos permite definir tareas que se ejecutan ante ciertas acciones de entrada. Uno de los usos más habituales es el de comprobar, cuando llegan commits nuevos al repositorio Git, que los tests siguen pasando.
 
 El proyecto cuenta con un fichero que activa GitHub Actions. Este fichero simplemente ejecuta los dos tipos de tests automatizados y si alguno de ellos finaliza incorrectamente, marca el commit en rojo y envía un correo para avisar de que hay código que no pasa los tests en el repositorio.
 
+\noindent\begin{minipage}{\textwidth}
 \begin{lstlisting}
 name: Test
 on: [push]
@@ -1401,10 +1523,11 @@ jobs:
         - name: Execute unit tests
           run: docker-compose run test-unit
 \end{lstlisting}
+\end{minipage}
 
 \section{Conclusiones}
 
-El desarrollo de test ha sido fundamental para llevar a buen puerto la aplicación. Se ha comprobado que ningún tipo de test sirve para todo. Un uso de varias técnicas es la únia forma eficaz de detectar errores y regresiones.
+El desarrollo de test ha sido fundamental para llevar a buen puerto la aplicación. Se ha comprobado que ningún tipo de test sirve para todo. Un uso de varias técnicas es la única forma eficaz de detectar errores y regresiones.
 
 En particular, en el desarrollo de Lyncex han sido de gran importancia los test E2E, ya que definían tareas con condiciones de aceptación de forma precisa. Al programarse estos tests antes que el propio código, servían para dar una especificación detallada de ciertas cosas que se habían pasado por alto en el proceso de diseño: ¿qué debe responder la API en caso de error? ¿exactamente como tienen que ser los formularios autogenerados?
 
@@ -1414,15 +1537,15 @@ Un miedo que existía al empezar a realizar los tests, es que estos no fuesen lo
 
 El tiempo dedicado a los tests también ha sido mayor del que esperábamos. Si bien el tiempo dedicado al test está asociado a su implementación, muchas veces nos hemos encontrado con problemas para replicar exactamente el comportamiento que queríamos desde Behave/Python. A veces, se ha tenido que refactorizar parte de los tests ya hechos por haber encontrado algún fallo a posteriori.
 
-El hecho de mantener un sistema de integración continua, no ha sido excesivamente complicado y ha ayudado a encontrar alguna regresión cuando no se habían ejecutado los tests en local. Sin embargo, los tests en local apenas llevan tiempo de ejecución, y en ese sentido, un sistema de CI tampoco supone un ahorro de tiempo. Si los tests durasen más tiempo (media hora) sí hubiese sido un componente esencial.
+El hecho de mantener un sistema de integración continua, no ha sido excesivamente complicado y ha ayudado a encontrar alguna regresión cuando no se habían ejecutado los tests en local. Sin embargo, los tests en local apenas llevan tiempo de ejecución, y en ese sentido, un sistema de CI tampoco supone un ahorro de tiempo. Si los tests durasen más tiempo (media hora), sí hubiese sido un componente esencial.
 
-En general, podemos decir que los tests han servidor para mantener un nivel de calidad constante en todo el software mientras iba creciendo y ha sido un tiempo bien invertido.
+En general, podemos decir que los tests han servido para mantener un nivel de calidad constante en todo el software mientras iba creciendo y ha sido un tiempo bien invertido.
 
 \chapter{Aplicación de ejemplo}
 
 Con el fin de demostrar que Lyncex es un framework útil, se ha decidido escribir una aplicación de ejemplo. Esta aplicación será una prueba manual de que el sistema funciona y servirá para validar conceptos.
 
-\subsection{Objetivo y alcance}
+\section{Objetivo y alcance}
 
 La aplicación tendrá como objetivo poder editar el dataset de bibliotecas de Castilla y León. Este dataset, ya está expresado en formato RDF en el portal Datos Abiertos de la Junta de Castilla y León, usando dos ontologías comunes: vCard y FOAF.
 
@@ -1435,9 +1558,9 @@ Definimos las siguientes historias de usuario:
     \item Mostrar bibliotecas en un mapa. Poner cada biblioteca en un mapa interactivo.
 \end{enumerate}
 
-\subsection{Análisis y Diseño}
+\section{Análisis y Diseño}
 
-Los requisitos que podemos sacar de las historias de usuario son los siguientes:
+Los requisitos que podemos obtener de las historias de usuario son los siguientes:
 
 \subsubsection{Requisitos funcionales}
 \begin{enumerate}
@@ -1453,11 +1576,11 @@ Los requisitos que podemos sacar de las historias de usuario son los siguientes:
     \item El sistema deberá ejecutarse como una aplicación dentro de Lyncex
 \end{enumerate}
 
-\subsection{Arquitectura}
+\section{Arquitectura}
 
 La arquitectura es básicamente un recubrimiento por encima de la de Lyncex. Se trata de una aplicación web con tres capas: presentación, negocio y datos. En las tres capas se delega parte del trabajo a Lyncex.
 
-Los datos ya tienen definida dos ontologías que especifican como son los datos. En este caso son FOAF y vCard. La primera sirve para modelar interacciones sociales (personas y agentes) y la segunda modela una agenda de contactos. No obstante, vamos a ignorar las relaciones con la ontología FOAF en nuestra aplicación, ya que son secundarias.
+Los datos ya tienen definida dos ontologías que especifican cómo son los datos. En este caso son FOAF\cite{foaf} y vCard\cite{vcard}. La primera sirve para modelar interacciones sociales (personas y agentes) y la segunda modela una agenda de contactos. No obstante, vamos a ignorar las relaciones con la ontología FOAF en nuestra aplicación, ya que son secundarias.
 
 \begin{sidewaysfigure}
     \centering
@@ -1466,7 +1589,7 @@ Los datos ya tienen definida dos ontologías que especifican como son los datos.
     \label{fig:vcard}
 \end{sidewaysfigure}
 
-\subsection{Componentes}
+\section{Componentes}
 
 La aplicación se compone de dos componentes: un script de transformación de la entrada y por otro lado, la propia aplicación, que consideramos suficientemente pequeña como para ser un componente por sí mismo.
 
@@ -1483,21 +1606,21 @@ Aun así, podemos dividir la aplicación en diferentes páginas:
 El script surge como consecuencia del primer requisito no funcional. Es necesario realizar una transformación de los datos a Turtle si no lo estuviesen. Los datos en la paǵina oficial de datos abiertos se encuentran en RDF, pero en su sintaxis XML. Es por ello necesario realizar un pequeño script que realice la transformación inicial.
 
 
-\subsection{Implementación}
+\section{Implementación}
 
 Para la implementación se han usado las mismas herramientas que para el desarrollo de Lyncex, es decir, Visual Studio Code, Git, y, evidentemente, RDF. El script se realizó con Python usando la librería rdflib.
 
 La aplicación intenta usar todas las características presentes en Lyncex. 
 
-Inicialmente define un prefijo para vCard. Posteriormente va definiendo las páginas como controladores de Lyncex. HomePage es un ContentController. BookPage y BookListPage son TemplateControllers, ambos usando handler, queries y parámetros. LoginPage es un LoginController y BookForm y GeoForm son FormController con control de acceso.
+Inicialmente define un prefijo para vCard. Posteriormente va definiendo las páginas como controladores de Lyncex. HomePage es un ContentController. BookPage y BookListPage son TemplateControllers, ambos usando handler, queries y parámetros. LoginPage es un LoginController, y BookForm y GeoForm son FormController con control de acceso.
 
-\subsection{Validación y pruebas} 
+\section{Validación y pruebas} 
 
 La aplicación de ejemplo no dispone de pruebas automatizadas, pero sí se han ejecutado pruebas manuales. Cabe destacar que la implementación de esta aplicación sacó a la luz bugs originales de Lyncex. Gracias a ello se implementó la función exists dentro del sistema de plantillas.
 
-\subsection{Tour}
+\section{Tour}
 
-Para comprobar el funcionamiento de esta aplicación de ejemplo, vamos a hacer un tour de alto nivel. Suponemos que tenemos una instancia de Lyncex arrancada en localhost, en el puerto 11011 y está vacío el triplestore.
+Para comprobar el funcionamiento de esta aplicación de ejemplo, vamos a hacer un tour de alto nivel. Suponemos que tenemos una instancia de Lyncex arrancada en localhost, en el puerto 11011, y está vacío el triplestore.
 
 Lo primero será añadir las tripletas necesarias. Hay tres archivos:
 \begin{itemize}
@@ -1508,25 +1631,25 @@ Lo primero será añadir las tripletas necesarias. Hay tres archivos:
 
 La manera de cargarlas, mediante cURL, es la siguiente:
 \begin{verbatim}
-curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@vcard.ttl" http://localhost:11011/_api
-curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@bibliocyl.ttl" http://localhost:11011/_api
-curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@bibliocylapp.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" \
+    --data-binary "@vcard.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" \
+    --data-binary "@bibliocyl.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" \
+    --data-binary "@bibliocylapp.ttl" http://localhost:11011/_api
 \end{verbatim}
 
-Una vez hecho esto, podemos acceder a diferentes páginas desde el navegador. La página de inicio estará disponible escribiendo localhost:11011 en el navegador:
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{tour/bibliocyl1.png}
-    \caption{HomePage de BiblioCyL}
-    \label{fig:bibliocyl1}
-\end{figure}
+Una vez hecho esto, podemos acceder a diferentes páginas desde el navegador. La página de inicio estará disponible escribiendo localhost:11011 en el navegador, tal y como se ve en la figura \ref{fig:bibliocyl1}.
 
 Esto corresponde a las siguientes tripletas:
+
 \begin{lstlisting}
 <HomePage>
     a lcx:ContentController ;
     lcx:url "" ;
     lcx:method "get" ;
+\end{lstlisting}
+\begin{lstlisting}
     lcx:content [
         a cnt:ContentAsText ;
         cnt:chars """
@@ -1538,16 +1661,10 @@ Esto corresponde a las siguientes tripletas:
     lcx:mime "text/html" .
 \end{lstlisting}
 
-Hacemos click en el enlace. Esto nos lleva al BookListPage, el listado de todas las bibliotecas del dataset:
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{tour/bibliocyl2.png}
-    \caption{BookListPage}
-    \label{fig:bibliocyl2}
-\end{figure}
+Hacemos click en el enlace. Esto nos lleva al BookListPage, el listado de todas las bibliotecas del dataset, que podemos ver en la figura \ref{fig:bibliocyl2}.
 
 Esto se corresponde a estas tripletas:
+
 \begin{lstlisting}
 <BookListPage>
     a lcx:TemplateController ;
@@ -1559,11 +1676,15 @@ Esto se corresponde a estas tripletas:
         <h1>Listado de bibliotecas de Castilla y León</h1>
         <ul>
         {% each cards, card %}
-            <li><a href=/book?id={{ card.id }}>{{ card.name }}</a></li>
+            <li>
+            <a href=/book?id={{ card.id }}>{{ card.name }}</a>
+            </li>
         {% end %}
         </ul>
         """
     ] ;
+\end{lstlisting}
+\begin{lstlisting}
     lcx:handler [
         a lcx:Handler ;
         lcx:handler_name "cards" ;
@@ -1579,16 +1700,10 @@ Esto se corresponde a estas tripletas:
     ] .
 \end{lstlisting}
 
-Hacemos click en una biblioteca cualquiera, en este caso, la de Berlanga de Duero. Esto nos mostrará la vista con detalles de la biblioteca que son la URL y el correo, si existieran, mostrando además un mapa de su localización. Esto es el BookPage.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{tour/bibliocyl3.png}
-    \caption{BookPage}
-    \label{fig:bibliocyl3}
-\end{figure}
+Hacemos click en una biblioteca cualquiera, en este caso, la de Berlanga de Duero. Esto nos mostrará la vista con detalles de la biblioteca que son la URL y el correo, si existieran, mostrando además un mapa de su localización. Esto es el BookPage. Se muestra en la figura \ref{fig:bibliocyl3}.
 
 El BookPage se implementa con estas tripletas:
+
 \begin{lstlisting}
 <BookPage>
     a lcx:TemplateController ;
@@ -1598,6 +1713,8 @@ El BookPage se implementa con estas tripletas:
         a lcx:Parameter ;
         lcx:param_name "id"
     ] ;
+\end{lstlisting}
+\begin{lstlisting}
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars """
@@ -1608,14 +1725,24 @@ El BookPage se implementa con estas tripletas:
         {% if exists(atom(email), card) %}
         <p><a href={{ card.email }}>Email</a></p>
         {% end %}
-        <iframe width=425 height=350 frameborder=0 scrolling=no marginheight=0 marginwidth=0 src=https://www.openstreetmap.org/export/embed.html?bbox=-10.206298828125002%2C39.232253141714914%2C1.3842773437500002%2C44.33956524809713&marker={{ geo.lat }}%2C{{ geo.lon }} style=border: 1px solid black></iframe>
+        <iframe width=425 height=350 frameborder=0 
+            scrolling=no marginheight=0 marginwidth=0 
+            src=https://www.openstreetmap.org/export/
+            embed.html?bbox=-10.206298828125002%2C39.
+            232253141714914%2C1.3842773437500002%2C44.
+            33956524809713&marker={{ geo.lat }}%2C{{ geo.lon }}
+            style=border: 1px solid black></iframe>
         """
     ] ;
+\end{lstlisting}
+\begin{lstlisting}
     lcx:query [
         a lcx:Query ;
         lcx:query_name "card" ;
         lcx:template_subject "http://book.lyncex.com/aarroyoc/dev/lyncex/apps/{{ id }}"
     ] ;
+\end{lstlisting}
+\begin{lstlisting}
     lcx:handler [
         a lcx:Handler ;
         lcx:handler_name "geo" ;
@@ -1631,44 +1758,23 @@ El BookPage se implementa con estas tripletas:
     ] .
 \end{lstlisting}
 
-Vamos a añadir una biblioteca nueva. Si tratamos de acceder a /admin/book tendremos un mensaje de \textit{Forbidden} y no podremos ver el formulario. Accedemos primero a /login, donde se nos mostrará el LoginPage:
-
-\begin{figure}
-    \centering
-    \includegraphics{tour/bibliocyl4.png}
-    \caption{LoginPage}
-    \label{fig:bibliocyl4}
-\end{figure}
+Vamos a añadir una biblioteca nueva. Si tratamos de acceder a /admin/book tendremos un mensaje de \textit{Forbidden} y no podremos ver el formulario. Accedemos primero a /login, donde se nos mostrará el LoginPage, como se aprecia en la figura \ref{fig:bibliocyl4}:
 
 \begin{lstlisting}
 <LoginPage>
     a lcx:LoginController ;
     lcx:url "login" ;
     lcx:username "aarroyoc" ;
-    lcx:password "123456" ;
+    lcx:password "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92" ;
     lcx:template  [
         a cnt:ContentAsText ;
         cnt:chars "{% unescape login %}"
     ] .
 \end{lstlisting}
 
-Una vez hayamos ingresado los credenciales correctos, ya podremos entrar a /admin/book (el BookForm). Se nos mostrará un formulario con diversos campos a rellenar. El primero es la IRI del sujeto sobre el que vamos a crear tripletas nuevas. Es necesario modificarlo, el valor que hay es solo una plantilla. Además para el campo geo deberemos indicar una IRI del sujeto geo. Este sujeto lo podemos crear entrando a /admin/geo (es el GeoForm).
+Una vez hayamos ingresado los credenciales correctos, ya podremos entrar a /admin/book (el BookForm, figura \ref{fig:bibliocyl5}). Se nos mostrará un formulario con diversos campos a rellenar. El primero es la IRI del sujeto sobre el que vamos a crear tripletas nuevas. Es necesario modificarlo, el valor que hay es solo una plantilla. Además para el campo geo deberemos indicar una IRI del sujeto geo. Este sujeto lo podemos crear entrando a /admin/geo (es el GeoForm).
 
-\begin{figure}
-    \centering
-    \includegraphics{tour/bibliocyl5.png}
-    \caption{BookForm}
-    \label{fig:bibliocyl5}
-\end{figure}
-
-Si queremos editar el contenido podemos acceder a la URL /admin/book?\_id=IRI, una vez allí veremos los campos rellenados, podremos editar el contenido y podremos borrar el sujeto del triplestore.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=\textwidth]{tour/bibliocyl7.png}
-    \caption{BookForm edición y borrado}
-    \label{fig:bibliocyl7}
-\end{figure}
+Si queremos editar el contenido podemos acceder a la URL /admin/book?\_id=IRI (figura \ref{fig:bibliocyl7}), una vez allí veremos los campos rellenados, podremos editar el contenido y podremos borrar el sujeto del triplestore.
 
 \begin{lstlisting}
 <BookForm>
@@ -1677,6 +1783,8 @@ Si queremos editar el contenido podemos acceder a la URL /admin/book?\_id=IRI, u
     lcx:access "private" ;
     lcx:base_subject "http://book.lyncex.com/aarroyoc/dev/lyncex/apps/" ;
     lcx:class <http://www.w3.org/2006/vcard/ns#VCard> ;
+\end{lstlisting}
+\begin{lstlisting}
     lcx:template [
         a cnt:ContentAsText ;
         cnt:chars """
@@ -1694,6 +1802,48 @@ Si queremos editar el contenido podemos acceder a la URL /admin/book?\_id=IRI, u
 
 Con esto, hemos visto las características principales de Lyncex aplicadas sobre un conjunto de datos reales.
 
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl1.png}
+    \caption{HomePage de BiblioCyL}
+    \label{fig:bibliocyl1}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl2.png}
+    \caption{BookListPage}
+    \label{fig:bibliocyl2}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl3.png}
+    \caption{BookPage}
+    \label{fig:bibliocyl3}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl4.png}
+    \caption{LoginPage}
+    \label{fig:bibliocyl4}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl5.png}
+    \caption{BookForm}
+    \label{fig:bibliocyl5}
+\end{figure}
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\textwidth]{tour/bibliocyl7.png}
+    \caption{BookForm edición y borrado}
+    \label{fig:bibliocyl7}
+\end{figure}
+
 \section{Conclusiones}
 
 El desarrollo de esta aplicación ha servido para encontrar fallos y extraer algunas conclusiones.
@@ -1706,7 +1856,7 @@ Se han detectado errores en la gestión de propiedades opcionales que requiriero
 
 Sobre aspectos positivos se ha encontrado que, aunque hay todavía muchos detalles sin pulir, en general la aplicación es fácil de programar. El programador que usa Lyncex necesita poco tiempo para realizar la aplicación entera. 
 
-Como aspectos negativos, hemos visto que es difícil actualizar la aplicación una vez está ejecutándose, ya que aunque es posible, es difícil seleccionar todo lo que queremos reemplazar. Además, el contenido estático complementario (como el CSS) no se adapta muy bien al formato de tener que introducirlo como un string más.
+Como aspectos negativos, hemos visto que es difícil actualizar la aplicación una vez está ejecutándose, ya que, aunque es posible, es difícil seleccionar todo lo que queremos reemplazar. Además, el contenido estático complementario (como el CSS) no se adapta muy bien al formato de tener que introducirlo como un string más.
 
 \chapter{Manuales}
 
@@ -1728,7 +1878,7 @@ sudo apt update
 sudo apt install docker.io docker-compose
 \end{verbatim}
 
-Una vez instalado podemos obtener el código de la aplicación. Para esto hará falta tener Git, aunque desde GitHub también se pueden generar comprimidos tar.gz o zip que no necesitan tener instalado Git:
+Una vez instalado, podemos obtener el código de la aplicación. Para esto hará falta tener Git, aunque desde GitHub también se pueden generar comprimidos tar.gz o zip que no necesitan tener instalado Git:
 \begin{verbatim}
 git clone https://github.com/aarroyoc/lyncex/ lyncex
 cd lyncex
@@ -1741,7 +1891,7 @@ docker-compose build
 
 Esto comenzará la descarga de Prolog, así como de Python y numerosas dependencias. Guardará las imágenes en el almacén local de Docker. 
 
-Ahora podemos realizar la configuración de los contenedores. Edita el fichero docker-compose.yml con un editor de textos cualquiera. El campo más importante es el de ports. Aquí podemos configurar el puerto sobre el que va a estar escuchando Lyncex. Para realizar el cambio hay que modificar "11011:11011" a "PUERTO\_DESEADO:11011". Otra configuración de interés es la activación o no del validador de RDF Schema. La variable de entorno LYNCEX\_RDF\_SCHEMA\_VALIDATION controla su activación. Por defecto está a true, necesario además para pasar los tests con éxito, pero en ciertas ocasiones puede tener sentido desactivar la validación ya que se trabaja con datos que no siguen la ontología de forma estricta.
+Ahora podemos realizar la configuración de los contenedores. Edita el fichero docker-compose.yml con un editor de textos cualquiera. El campo más importante es el de ports. Aquí podemos configurar el puerto sobre el que va a estar escuchando Lyncex. Para realizar el cambio hay que modificar ``11011:11011" a ``PUERTO\_DESEADO:11011". Otra configuración de interés es la activación o no del validador de RDF Schema. La variable de entorno LYNCEX\_RDF\_SCHEMA\_VALIDATION controla su activación. Por defecto está a true, necesario además para pasar los tests con éxito, pero en ciertas ocasiones puede tener sentido desactivar la validación ya que se trabaja con datos que no siguen la ontología de forma estricta.
 
 Una vez configurado, ya podemos ejecutar Lyncex:
 \begin{verbatim}
@@ -1751,7 +1901,7 @@ Y Lyncex estará ya disponible.
 
 \subsection{Tests}
 
-Una vez instalado puede ser interesante ejecutar los tests automatizados para comprobar que efectivamente la versión instalada tiene un cierto nivel de confiabilidad.
+Una vez instalado, puede ser interesante ejecutar los tests automatizados para comprobar que efectivamente la versión instalada tiene un cierto nivel de confiabilidad.
 
 Para ello lo primero es suspender la ejecución del contenedor web, con Control-C o mediante el comando siguiente:
 \begin{verbatim}
@@ -1775,10 +1925,9 @@ docker-compose down
 
 \section{Manual de usuario}
 
-En este manual veremos como usar Lyncex una vez instalado. 
+En este manual veremos cómo usar Lyncex una vez instalado. 
 
-\subsection{API HTTP}
-Para el manual usaremos la herramienta cURL, para realizar peticiones HTTP mediante comandos sencillos. También se pueden usar otras herramientas similares como Postman o incluso, realizar las llamadas HTTP desde un programa personalizado.
+Para el manual usaremos la herramienta cURL, para realizar peticiones HTTP mediante comandos sencillos. También se pueden usar otras herramientas similares como Postman, o incluso realizar las llamadas HTTP desde un programa personalizado.
 
 Vamos a supone que Lyncex se encuentra ejecutándose en localhost en el puerto 11011.
 
@@ -1801,7 +1950,8 @@ Veamos un ejemplo, si tenemos este fichero Turtle, con el nombre author.ttl:
 
 Podemos guardar las tripletas de la siguiente forma:
 \begin{verbatim}
-curl -X POST -H "Content-Type: text/turtle; charset=utf-8" --data-binary "@author.ttl" http://localhost:11011/_api
+curl -X POST -H "Content-Type: text/turtle; charset=utf-8" \
+    --data-binary "@author.ttl" http://localhost:11011/_api
 \end{verbatim}
 
 Si el fichero es correcto y la validación de ontologías también lo es, responderá OK.
@@ -1813,7 +1963,8 @@ curl -X GET http://localhost:11011/_api/query
 \end{verbatim}
 
 El resultado seguramente sea diferente al fichero original, pero equivalente en cuanto a información:
-\begin{verbatim}                                                 
+
+\begin{lstlisting}                                               
 @prefix    dc: <http://purl.org/dc/elements/1.1/> .
 @prefix stuff: <http://example.org/stuff/1.0/> .
 
@@ -1824,23 +1975,25 @@ El resultado seguramente sea diferente al fichero original, pero equivalente en 
                 stuff:homePage <http://purl.org/net/dajobe/>
                 ] ;
     dc:title "RDF/XML Syntax Specification (Revised)" .
-\end{verbatim}
+\end{lstlisting}
 
 La API GET soporta filtros, para obtener grafos parciales. Para ello se fija el valor del sujeto, objeto o predicado a un valor fijo y se sacan todas las tripletas que cumplen con ese valor fijo en la posición correspondiente. Esto se hace mediante los parámetros GET llamados subject, predicate y object respectivamente. Por ejemplo, si queremos filtrar por las tripletas que tienen dc:title como predicado:
 
-\begin{verbatim}
-curl -X GET "http://localhost:11011/_api/query?predicate=http://purl.org/dc/elements/1.1/title"
-\end{verbatim}
+\begin{lstlisting}
+curl -X GET \
+"http://localhost:11011/_api/query?predicate=http://purl.org/dc/elements/1.1/title"
+\end{lstlisting}
 
 Obtendremos como resultado:
-\begin{verbatim}
+
+\begin{lstlisting}
 @prefix dc: <http://purl.org/dc/elements/1.1/> .
 
 # Named toplevel resources (1)
 
 <http://www.w3.org/TR/rdf-syntax-grammar>
     dc:title "RDF/XML Syntax Specification (Revised)" .
-\end{verbatim}
+\end{lstlisting}
 
 También podemos borrar las tripletas almacenadas mediante el verbo DELETE y el endpoint /\_api/delete. Este endpoint también soporta parámetros similar al GET con filtros. El uso es sencillo:
 
@@ -1848,16 +2001,11 @@ También podemos borrar las tripletas almacenadas mediante el verbo DELETE y el 
 curl -X DELETE "http://localhost:11011/_api/delete"
 \end{verbatim}
 
-\subsection{Uso de la ontología}
-
-USO BASICO
-MULTIPLICIDAD
-VARIABLES MAGICAS
-PREDICADOS EXTRA (db, exists)
-
 \chapter{Conclusiones y trabajo futuro}
 
-Para acabar la memoria, en este último capítulo vamos a repasar algunas de las conclusiones obtenidas.
+Para acabar la memoria, en este último capítulo vamos a repasar algunas de las conclusiones obtenidas, así como vías de trabajo futuras.
+
+\section{Conclusiones}
 
 Por un lado, la metodología Scrum ha resultado ser efectiva. Creemos que en este caso, donde podía haber requisitos cambiantes, ha sido una elección correcta. La planificación sin embargo, se ha desviado mucho respecto a la realidad, aunque esto es atribuible a la falta de experiencia.
 
@@ -1869,17 +2017,22 @@ RDF por su parte ha demostrado ser un sistema potente, pero con lagunas. Si bien
 
 El testing mediante BDD ha sido extremadamente útil y práctico. Ha permitido detectar regresiones y en prácticamente todo el ciclo de desarrollo. Además permitía saber fácilmente cuando una tarea había sido completada con éxito.
 
+Se ha intentado en todo momento que la experiencia de desarrollo sea ideal.
+El framework ha demostrado ser flexible, permitiendo realizar prácticamente lo que se quiera hacer, aunque convenientemente optimizado solamente para las tareas más comunes, como son los CRUD y los formularios. Es sencillo de instalar y configurar en cualquier distribución Linux, gracias a Docker y Docker Compose.
+
+Por último, el hecho de tener una ontología por separado, definida de forma independiente pero abierta, permite que se pueda extender por otros autores, dotándole de mayor funcionalidad. E implementaciones independientes pueden tratar de implementar la funcionalidad semántica de igual forma que lo hace Lyncex, mejorando en aspectos que se consideren peores de Lyncex.
+
+\section{Trabajo futuro}
+
 En cuanto al diseño, se han quedado muchas cosas interesantes en el tintero. Una propuesta de futuro sería desacoplar el Triplestore del propio proceso web. Esto se eligió por simplicidad, pero de cara a un producto más profesional, sería necesario que la base de datos tuviese más potencia y escalabilidad. Un triplestore externo podría lograrlo de forma sencilla.
 
 También es importante un aspecto aquí parcialmente ignorado, como es la seguridad. En futuras iteraciones se debería implementar un sistema de control de acceso más potente, así como una gestión de secretos más ergonómica. Existen diversas formas de diseñar este sistema. Un control de acceso fino a nivel de tripleta puede ser excesivo pero sería muy flexible.
 
 El contenido estático también debería poder ser más ergonómico, ya que inyectarlo dentro de ficheros Turtle es un proceso incómodo y propenso a errores. En contenido binario este problema se magnifica.
 
-Sin embargo, las conclusiones finales es que este diseño de framework web basado en RDF y el contenido semántico es válido y viable. Se ha intentado en todo momento que la experiencia de desarrollo sea ideal. Creemos que solo mediante una interfaz Turtle hay demasiados problemas. Quizá una herramienta o un IDE para interactuar específicamente con este sistema arreglaría muchos problemas de ergonomía encontrados.
+Respecto a la usabilidad de cara al desarrollador, opinamos que permitir solo la comunicación mediante una interfaz Turtle no es óptimo de cara al desarrollador. Quizá una herramienta o un IDE para interactuar específicamente con este sistema arreglaría muchos problemas de ergonomía encontrados.
 
-El framework ha demostrado ser flexible, permitiendo realizar prácticamente lo que se quiera hacer, aunque convenientemente optimizado solamente para las tareas más comunes, como son los CRUD y los formularios. Es sencillo de instalar y configurar en cualquier distro Linux, gracias a Docker y Docker Compose.
-
-Por último, el hecho de tener una ontología por separado, definida de forma independiente pero abierta, permite que se pueda extender por otros autores, dotándole de mayor funcionalidad. E implementaciones independientes pueden tratar de implementar la funcionalidad semántica de igual forma que lo hace Lyncex, mejorando en aspectos que se consideren peores de Lyncex.
+\section{Palabras finales}
 
 A nivel personal considero que la aplicación cumple con los objetivos marcados, y que si bien, no cumple los requisitos para ser usado en producción, es suficiente para proponer este concepto de plataforma de desarrollo.
 
@@ -1889,27 +2042,17 @@ Durante este tiempo he podido aprender y profundizar sobre ciertos aspectos de l
 \begin{appendices}
 \chapter{Ontología}
 \lstinputlisting{lyncex.ttl}
+\chapter{Criterios de aceptación en Gherkin}
+En este apéndice se presentan los criterios de aceptación reales, expresados en lenguaje Gherkin, que se han usado en Behave para validar que se iban cumpliendo los requisitos funcionales.
+\lstinputlisting{api.feature}
+\lstinputlisting{forms.feature}
+\lstinputlisting{session.feature}
+\lstinputlisting{static.feature}
+\lstinputlisting{template.feature}
 \end{appendices}
 \bibliographystyle{acm}
-
+\clearpage
+\addcontentsline{toc}{chapter}{Bibliografía}
 \bibliography{ref}
 
 \end{document}
-
-
-% Los objetivos principales que se propusieron para Lyncex y que debían ser cumplidas son:
-
-% \begin{itemize}
-%     \item US1: Almacenar tripletas de datos junto a sus ontologías en el mismo espacio, validándose
-%     \item US2: Desarrollar una ontología que permita definir aplicaciones web sobre datos almacenados en el propio almacenamiento
-%     \item US3: Servir páginas web estáticas
-%     \item US4: Servir páginas web que necesiten leer datos del almacenamiento (plantillas)
-%     \item US5: Servir páginas web con formularios
-% \end{itemize}
-
-% Otros objetivos que estaría bien cumplir, pero no son necesarios para tener una versión funcional son:
-% \begin{itemize}
-%     \item OUS1: Servir páginas web con sistemas de autenticación y autorización propios
-%     \item OUS2: Servir APIs web de forma similar al contenido HTML
-%     \item OUS3: Tener un endpoint de consulta SPARQL
-% \end{itemize}
