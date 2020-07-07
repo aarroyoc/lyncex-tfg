@@ -9,7 +9,7 @@ services:
     ports:
     - 11011:11011
     environment:
-    - LYNCEX_RDF_SCHEMA_VALIDATION=false
+    - LYNCEX_RDF_SCHEMA_VALIDATION=true
   test-e2e:
     build:
       context: .
